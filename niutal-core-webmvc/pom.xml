@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-webmvc</artifactId>
+	
+	<dependencies>
+		
+		<!-- ###################### niutal核心组件  ###################### -->
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-service</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-jwservice</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		
+		
+		<!-- ###################### Spring 4.x ###################### -->
+
+		<!-- REST的web服务和用于web应用程序的mvc实现 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+				
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- niukit-web : Web快速调用组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-web-ext</artifactId>
+		</dependency>
+		
+		
+		<!-- ###################### Java Web 组件 ###################### -->
+		
+		<!--json-lib是一个Java类库,提供将Java对象,包括beans,maps,collections,javaarrays和xml等转换成JSON,或者反向转换的功能-->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- Swagger API 注解包 -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
+		<!-- webjars 资源解析包 -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>webjars-locator</artifactId>
+		    <version>0.32-1</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>com.fasterxml.jackson.core</groupId>
+		    		<artifactId>jackson-core</artifactId>
+		    	</exclusion>
+		    	<exclusion>
+		    		<groupId>com.fasterxml.jackson.core</groupId>
+		    		<artifactId>jackson-databind</artifactId>
+		    	</exclusion>
+		    	<exclusion>
+		    		<groupId>org.apache.commons</groupId>
+		    		<artifactId>commons-lang3</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
+		
+<!--		&lt;!&ndash; 软件评价开发包 &ndash;&gt;-->
+
+		<dependency>
+			<groupId>com.woshidaniu</groupId>
+			<artifactId>woshidaniu-evaluate-api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		
+	</dependencies>
+	
+</project>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IStdlxxDao">
+
+	 <insert id="insertStdlxx">
+		insert into niutal_WJDC_STFLB(wjid,flid,flmc,xssx,dqfs) 
+	 	<foreach collection="list" item="item" index="index"
+				separator=" union all ">
+		   select #{item.wjid},#{item.stdlid},#{item.stdlmc},#{item.xssx},#{item.dqfs} from dual  
+		</foreach>
+	 </insert>
+	 
+	 <select id="getStldxx" resultType="com.woshidaniu.wjdc.dao.entites.StdlxxModel">
+	 	select * from niutal_WJDC_STFLB where wjid = #{wjid}
+	 </select>
+</mapper>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.woshidaniu.zxzx.dao.daointerface.ICjwtDao" >
+  <resultMap id="BaseResultMap" type="com.woshidaniu.zxzx.dao.entities.CjwtModel" >
+    <id column="WTID" property="wtid" jdbcType="VARCHAR" />
+    <result column="BKDM" property="bkdm" jdbcType="VARCHAR" />
+    <result column="WTBT" property="wtbt" jdbcType="VARCHAR" />
+    <result column="SFFB" property="sffb" jdbcType="VARCHAR" />
+    <result column="CJSJ" property="cjsj" jdbcType="VARCHAR" />
+    <result column="ZXID" property="zxid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.woshidaniu.zxzx.dao.entities.CjwtModel" extends="BaseResultMap" >
+    <result column="WTNR" property="wtnr" jdbcType="CLOB" />
+    <result column="WTHF" property="wthf" jdbcType="CLOB" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    WTID, BKDM, WTBT, SFFB, CJSJ, ZXID
+  </sql>
+  
+  <sql id="Blob_Column_List" >
+    WTNR, WTHF
+  </sql>
+  
+  <sql id="Base_Where_Clause">
+  	<where>
+  	  <trim prefixOverrides="and" >
+	  	  <if test="wtid != null and wtid != ''" >
+	        and WTID = #{wtid,jdbcType=VARCHAR}
+	      </if>
+	      <if test="wtbt != null and wtbt != ''" >
+	        and WTBT like '%'||#{wtbt,jdbcType=VARCHAR}||'%'
+	      </if>
+	      <if test="bkdm != null and bkdm != ''" >
+	        and BKDM = #{bkdm,jdbcType=VARCHAR}
+	      </if>
+	      <if test="sffb != null and sffb != ''" >
+	        and SFFB = #{sffb,jdbcType=VARCHAR}
+	      </if>
+      </trim>
+  	</where>
+  </sql>
+  
+   <select id="getModel" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from niutal_ZXZX_CJWTB
+    where WTID = #{wtid,jdbcType=VARCHAR}
+   </select>
+  
+  <select id="getPagedList" resultMap="BaseResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.CjwtModel" >
+    select 
+    	*
+    from 
+    (
+    	select 
+    		a.WTID, 
+    		a.BKDM, 
+    		a.WTBT,
+    		a.WTNR, 
+    		a.SFFB, 
+    		a.CJSJ, 
+    		a.ZXID, 
+    		b.BKMC
+    	from 
+    		niutal_ZXZX_CJWTB a left join niutal_ZXZX_BKXXB b on a.BKDM = b.BKDM
+	    order by a.sffb desc
+    )
+    <include refid="Base_Where_Clause" />
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from niutal_ZXZX_CJWTB where WTID = #{wtid,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="batchDelete" parameterType="java.util.List" >
+    BEGIN
+    <foreach collection="list" item="item" >
+       update niutal_ZXZX_ZXWTB set cjwt = '0' where zxid = (select zxid from niutal_ZXZX_CJWTB where wtid = #{item,jdbcType=VARCHAR});
+    </foreach>
+    delete from niutal_ZXZX_CJWTB
+    <where>
+		<trim prefixOverrides="or" suffix=";">
+         	<foreach collection="list" item="item" >
+           		or (WTID = #{item,jdbcType=VARCHAR})
+         	</foreach>
+       	</trim>
+	</where>
+	END;
+  </delete>
+  
+  <delete id="batchDeleteByZxid" parameterType="java.util.List" >
+    delete from niutal_ZXZX_CJWTB
+    <where>
+		<trim prefixOverrides="or" >
+         	<foreach collection="list" item="item" >
+           		or (ZXID = #{item,jdbcType=VARCHAR})
+         	</foreach>
+       	</trim>
+	</where>
+  </delete>
+  
+  <insert id="insert" parameterType="com.woshidaniu.zxzx.dao.entities.CjwtModel" >
+    insert into niutal_ZXZX_CJWTB (WTID, BKDM, WTBT, SFFB, WTNR, WTHF, CJSJ, ZXID)
+    values 
+    (#{wtid,jdbcType=VARCHAR}, 
+     #{bkdm,jdbcType=VARCHAR}, 
+     #{wtbt,jdbcType=VARCHAR}, 
+     #{sffb,jdbcType=VARCHAR}, 
+     #{wtnr,jdbcType=CLOB}, 
+     #{wthf,jdbcType=CLOB}, 
+     #{cjsj,jdbcType=VARCHAR},
+     #{zxid,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="getCount" parameterType="com.woshidaniu.zxzx.dao.entities.CjwtModel" resultType="java.lang.Integer" >
+    select count(*) from niutal_ZXZX_CJWTB
+   	<where>
+  		 <trim prefixOverrides="and" >
+	  		 <if test="wtid != null and wtid != ''" >
+		        and wtid &lt;&gt; #{wtid,jdbcType=VARCHAR}
+		     </if>
+		     <if test="wtbt != null and wtbt != ''" >
+		        and wtbt = #{wtbt,jdbcType=VARCHAR}
+		     </if>
+	     </trim>
+  	</where>
+  </select>
+  
+  <update id="update" parameterType="com.woshidaniu.zxzx.dao.entities.CjwtModel" >
+    update niutal_ZXZX_CJWTB
+    <set>
+      <if test="bkdm != null and bkdm !=''" >
+        BKDM = #{bkdm,jdbcType=VARCHAR},
+      </if>
+      <if test="wtbt != null and wtbt !=''" >
+        WTBT = #{wtbt,jdbcType=VARCHAR},
+      </if>
+      <if test="sffb != null and sffb !=''" >
+        SFFB = #{sffb,jdbcType=VARCHAR},
+      </if>
+      <if test="wtnr != null and wtnr !=''" >
+        WTNR = #{wtnr,jdbcType=CLOB},
+      </if>
+      <if test="wthf != null and wthf !=''" >
+        WTHF = #{wthf,jdbcType=CLOB},
+      </if>
+      <if test="cjsj != null and cjsj !=''" >
+        CJSJ = #{cjsj,jdbcType=VARCHAR},
+      </if>
+      <if test="zxid != null and zxid !=''" >
+        ZXID = #{zxid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where WTID = #{wtid,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="getPagedListWeb" resultMap="ResultMapWithBLOBs" parameterType="com.woshidaniu.zxzx.dao.entities.CjwtModel" >
+    select * from 
+    (select a.WTID, a.BKDM, a.WTBT, a.SFFB, a.CJSJ, a.ZXID, a.WTNR, a.WTHF, b.BKMC
+    	from niutal_ZXZX_CJWTB a left join niutal_ZXZX_BKXXB b on a.BKDM = b.BKDM)
+    where sffb = '1' order by cjsj desc
+  </select>
+  
+  <select id="getListWeb" resultMap="ResultMapWithBLOBs" parameterType="com.woshidaniu.zxzx.dao.entities.CjwtModel" >
+    select * from 
+    (select a.WTID, a.BKDM, a.WTBT, a.SFFB, a.CJSJ, a.ZXID, a.WTNR, a.WTHF, b.BKMC
+    	from niutal_ZXZX_CJWTB a left join niutal_ZXZX_BKXXB b on a.BKDM = b.BKDM)
+    where sffb = '1' order by cjsj desc
+  </select>
+  
+</mapper>

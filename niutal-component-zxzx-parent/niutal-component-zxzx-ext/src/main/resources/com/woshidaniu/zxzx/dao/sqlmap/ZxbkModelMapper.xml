@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.woshidaniu.zxzx.dao.daointerface.IkzdkDao" >
+  <resultMap id="BaseResultMap" type="com.woshidaniu.zxzx.dao.entities.kzdkModel" >
+    <result column="BKDM" property="bkdm" jdbcType="VARCHAR" />
+    <result column="BKMC" property="bkmc" jdbcType="VARCHAR" />
+    <result column="SFQY" property="sfqy" jdbcType="VARCHAR" />
+    <result column="XSXS" property="xsxs" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="BaseWithZxwtCountResultMap" type="com.woshidaniu.zxzx.dao.entities.kzdkModel" extends="BaseResultMap">
+    <result column="ZXWTCOUNT" property="zxwtCount" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    BKDM, BKMC, SFQY, XSXS
+  </sql>
+  
+  <sql id="Base_Delete_Where_Clause">
+  	<where>
+  		<trim prefixOverrides="or" >
+            <foreach collection="list" item="item" >
+              	or bkdm = #{item,jdbcType=VARCHAR}
+            </foreach>
+          </trim>
+  	</where>
+  </sql>
+  
+  <sql id="Base_Where_Clause">
+  	<where>
+  	  <trim prefixOverrides="and" >
+	  	  <if test="bkdm != null and bkdm != ''" >
+	        and bkdm = #{bkdm,jdbcType=VARCHAR}
+	      </if>
+	      <if test="bkmc != null and bkmc != ''" >
+	        and bkmc like '%'||#{bkmc,jdbcType=VARCHAR}||'%'
+	      </if>
+	      <if test="sfqy != null and sfqy != ''" >
+	        and sfqy = #{sfqy,jdbcType=VARCHAR}
+	      </if>
+	      <if test="xsxs != null and xsxs != ''" >
+	        and xsxs = #{xsxs,jdbcType=VARCHAR}
+	      </if>
+      </trim>
+  	</where>
+  </sql>
+  
+  <!-- 用于重复检查 -->
+  <select id="getCount" resultType="java.lang.Integer" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel">
+  	select count(1) from niutal_ZXZX_BKXXB
+  	<where>
+  		 <trim prefixOverrides="and" >
+	  		 <if test="bkdm != null and bkdm != ''" >
+		        and bkdm &lt;&gt; #{bkdm,jdbcType=VARCHAR}
+		     </if>
+		     <if test="bkmc != null and bkmc != ''" >
+		        and bkmc = #{bkmc,jdbcType=VARCHAR}
+		     </if>
+	     </trim>
+  	</where>
+  </select>
+  
+  <select id="getPagedList" resultMap="BaseResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel">
+  	select * from (select 
+    <include refid="Base_Column_List" />
+    from niutal_ZXZX_BKXXB
+    <include refid="Base_Where_Clause" />
+    order by sfqy desc, to_number(xsxs))
+  </select>
+  
+  <select id="getModel" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from niutal_ZXZX_BKXXB
+    where BKDM = #{bkdm,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getMaxXsxs" resultType="java.lang.Integer">
+  	select max(to_number(xsxs)) from niutal_ZXZX_BKXXB
+  </select>
+  
+  <select id="getModelList" resultMap="BaseResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel">
+  	 select 
+    <include refid="Base_Column_List" />
+    from niutal_ZXZX_BKXXB
+    <include refid="Base_Where_Clause" />
+    order by to_number(xsxs)
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from niutal_ZXZX_BKXXB
+    where BKDM = #{bkdm,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="batchDelete" parameterType="java.util.List">
+  	delete from niutal_ZXZX_BKXXB
+  	<include refid="Base_Delete_Where_Clause" />
+  </delete>
+  
+  <insert id="insert" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel" >
+    insert into niutal_ZXZX_BKXXB (BKDM, BKMC, SFQY, XSXS)
+    values (#{bkdm,jdbcType=VARCHAR}, #{bkmc,jdbcType=VARCHAR}, #{sfqy,jdbcType=VARCHAR}, #{xsxs,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel" >
+    update niutal_ZXZX_BKXXB
+    <set >
+      <if test="bkmc != null" >
+        BKMC = #{bkmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sfqy != null" >
+        SFQY = #{sfqy,jdbcType=VARCHAR},
+      </if>
+       <if test="xsxs != null" >
+        XSXS = #{xsxs,jdbcType=VARCHAR},
+      </if>
+    </set>
+   	where BKDM = #{bkdm,jdbcType=VARCHAR}
+  </update>
+    
+  <select id="checkCanDelete" parameterType="string" resultType="int">
+  	SELECT COUNT(1) FROM ((select bkdm from niutal_ZXZX_ZXWTB) union (select bkdm from niutal_ZXZX_CJWTB)) where BKDM = #{bkdm,jdbcType=VARCHAR}
+  </select>  
+    
+  <sql id="Base_Web_Where_Clause">
+  	<where>
+  		<if test="webkzdkdmList != null">
+  			<trim prefixOverrides="or" >
+            <foreach collection="webkzdkdmList" item="item" >
+              	or bkdm = #{item,jdbcType=VARCHAR}
+            </foreach>
+          </trim>
+  		</if>
+  	</where>
+  </sql> 
+  
+  <select id="getModelListWeb" resultMap="BaseWithZxwtCountResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel">
+  	select distinct * from (
+  	    select 'cjwt' BKDM,
+               '常见问题' BKMC,
+               '1' SFQY,
+               (
+               	select
+               		count(*)
+               	from 
+               		niutal_ZXZX_CJWTB 
+               	where 
+               		SFFB = '1'
+               	) ZXWTCOUNT
+        from dual
+        
+        union all
+        
+    	select  a.BKDM, 
+    			a.BKMC, 
+    			a.SFQY,
+    		   (
+    		   	select 
+    		   		COUNT(1)
+    		   	from
+    		   		niutal_zxzx_zxwtb b 
+    		   	where 
+    		   		b.BKDM=a.BKDM
+    		   	)ZXWTCOUNT
+    from 
+    	niutal_ZXZX_BKXXB a 
+    where 
+    	sfqy='1'
+    )
+    <include refid="Base_Web_Where_Clause"></include>
+    order by ZXWTCOUNT desc
+  </select>
+  
+  <select id="getkzdkModelListWeb" resultMap="BaseResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.kzdkModel">
+      select
+        a.BKDM, 
+        a.BKMC,
+        a.sfqy,
+        to_number(a.xsxs) xsxs
+      from 
+        niutal_ZXZX_BKXXB a 
+      where a.sfqy='1'
+      order by xsxs
+  </select>
+</mapper>

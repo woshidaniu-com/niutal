@@ -1,0 +1,42 @@
+@media screen and (min-width: 750px) {
+	.showPc{
+		display: block !important;
+	}
+	.showMobile{
+		display: none !important;
+	}
+}
+
+@media screen and (max-width: 749px) {
+	.showPc{
+		display: none !important;
+	}
+	.showMobile{
+		display: block !important;
+	}
+	.tableListItem{
+		padding: 10px 5px;
+		position: relative;
+		border-bottom: 1px solid gainsboro;
+	}
+	.tableListItem h4{
+		font-size: 16px;
+		color: #333333;
+		font-weight: 500;
+		margin: 0 0 5px 0;
+		width: calc(100% - 70px);
+	}
+	.tableListItem p{
+		font-size: 14px;
+		color: #666666;
+		margin-right: 15px;
+	}
+	.tableListItem .zt{
+		display: flex;
+	}
+	.tableListItem a{
+		position: absolute;
+		top: 10px;
+		right: 5px;
+	}
+}

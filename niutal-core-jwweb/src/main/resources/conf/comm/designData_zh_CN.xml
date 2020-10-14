@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 基础数据XML,修改后请重新启动服务器 -->
+<root>
+
+	<!-- 系统自定义功能类型； -->
+	<data id="funtTypeList">
+		<option key="1">数据展示</option>
+		<option key="2">数据维护</option>
+		<option key="3">预览打印</option>
+		<option key="41">快速打印(Applet模式)</option>
+		<option key="42">快速打印(Flash模式)</option>
+		<option key="43">快速打印(PDF模式)</option>
+		<option key="5">数据导出</option>
+		<option key="6">数据删除</option>
+	</data>
+
+	<!-- 系统自定义功能:功能按钮点击前JQGrid列表选择数据行检查类型 -->
+	<data id="preCheckList">
+		<option key="0">不检查</option>
+		<option key="1">只能选一行</option>
+		<option key="2">至少选择一行</option>
+	</data>
+	
+	<!-- 元素类型 -->
+	<data id="elementTypeList">
+		<option key="1">查询条件</option>
+		<option key="2">脚本控件</option>
+		<option key="3">普通字段</option>
+	</data>
+	
+	<!-- 功能所属对象 -->
+	<data id="funcRoleList">
+		<option key="all">所有</option>
+		<option key="gl">管理员</option>
+		<option key="js">教师</option>
+		<option key="xs">学生</option>
+	</data>
+	
+	<!-- 筛选条件类型 -->
+	<data id="queryTypeList">
+		<option key="0">无查询条件</option>
+		<option key="1">普通查询</option>
+		<option key="2">高级查询</option>
+	</data>
+	
+	<!-- 功能编辑状态 -->
+	<data id="editStatusList">
+		<option key="0">不可编辑</option>
+		<option key="1">可编辑</option>
+	</data>
+	
+	<!-- 是否显示-->
+	<data id="isSfxs">
+		<option key="1">显示</option>
+		<option key="0">隐藏</option>
+	</data>
+	
+	<!-- 是/否标签 -->
+	<data id="isNot">
+		<option key="0">否</option>
+		<option key="1">是</option>
+	</data>
+	
+	<!-- 是否分页 -->
+	<data id="isPagination">
+		<option key="0">不分页</option>
+		<option key="1">分页</option>
+	</data>
+	
+	<!-- 是否使用 -->
+	<data id="isUsed">
+		<option key="1">使用</option>
+		<option key="0">不使用</option>
+	</data>
+	
+</root>

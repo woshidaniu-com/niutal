@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dataauth.dao.daointerface.DataAuthDao" >
+
+	<sql id="baseColumn">
+		r.rule_id as ruleId,r.group_id as groupId,r.method_regexs as methodRegexs,r.preposition_sql as prepositionSql,
+		r.postposition_sql as postpositionSql,r.replace_regexs as replaceRegexs,r.replace_sqls as replaceSqls,r.rule_enable as ruleEnable
+	</sql>
+	
+	<select id="listByUser" resultType="com.woshidaniu.dataauth.dao.entities.DataRule" parameterType="java.lang.String">
+		select <include refid="baseColumn" />,gu.yhm,gu.item_values as itemValues from niutal_data_rule r
+			inner join niutal_data_rule_group_user gu on r.group_id = gu.group_id
+		where r.rule_enable = '1' and gu.yhm = #{yhm} and gu.jsdm = #{jsdm}
+	</select>
+	
+	<select id="listByRole" resultType="com.woshidaniu.dataauth.dao.entities.DataRule">
+		select <include refid="baseColumn" />,gr.jsdm,gr.item_values as itemValues from niutal_data_rule r
+			inner join niutal_data_rule_group_role gr on r.group_id = gr.group_id
+		where r.rule_enable = '1' and gr.jsdm in 
+		<foreach collection="jsdms" item="item" index="index" open=" ( " separator="," close=")">
+				#{item}
+		</foreach>
+	</select>
+	
+	<select id="listByType" resultType="com.woshidaniu.dataauth.dao.entities.RuleGroup" parameterType="java.lang.String">
+		select g.group_id as groupId,g.group_code as groupCode,g.group_name as groupName,g.group_type as groupType,g.select_item as selectItem
+		<if test="groupType != null and groupType == 'user' and yhm != null and yhm != '' and jsdm != null and jsdm != ''">
+			,(select count(1) from niutal_data_rule_group_user u where g.group_id=u.group_id and u.yhm = #{yhm} and u.jsdm = #{jsdm}) has
+		</if>
+		<if test="groupType != null and groupType == 'role' and jsdm != null and jsdm != ''">
+			,(select count(1) from niutal_data_rule_group_role r where g.group_id=r.group_id and r.jsdm = #{jsdm}) has
+		</if>  
+		from niutal_data_rule_group g where g.group_type = #{groupType}
+	</select>
+	
+	<select id="listRoles" resultType="HashMap">
+		select jsdm,jsmc,jssm,qyzt from niutal_xtgl_jsxxb where qyzt = '1'
+	</select>
+	
+	<select id="listUsers" resultType="HashMap">
+		select yhb.zgh as yhm,yhb.xm,yhjsb.jsdm from niutal_xtgl_yhb yhb
+			join niutal_xtgl_yhjsb yhjsb on yhb.zgh = yhjsb.zgh where yhb.sfqy = '1'
+	</select>
+	
+	<delete id="deleteUserRelation" parameterType="java.lang.String">
+		delete from niutal_data_rule_group_user 
+		<where>
+			<if test="groupId != null and groupId != ''">
+				and group_id=#{groupId}
+			</if>
+			<if test="yhm != null and yhm != ''">
+				and yhm=#{yhm}
+			</if>
+			<if test="jsdm != null and jsdm != ''">
+				and jsdm=#{jsdm}
+			</if>
+		</where>
+	</delete>
+	
+	<delete id="deleteRoleRelation" parameterType="java.lang.String">
+		delete from niutal_data_rule_group_role 
+		<where>
+			<if test="groupId != null and groupId != ''">
+				and group_id=#{groupId}
+			</if>
+			<if test="jsdm != null and jsdm != ''">
+				and jsdm=#{jsdm}
+			</if>
+		</where>
+	</delete>
+</mapper>

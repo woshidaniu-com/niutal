@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.zxzx.dao.daointerface.ICsszDao">
+ 
+  <resultMap id="BaseResultMap" type="com.woshidaniu.zxzx.dao.entities.CsszModel">
+    <id column="CSDM" jdbcType="VARCHAR" property="csdm" />
+    <result column="CSMC" jdbcType="VARCHAR" property="csmc" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List">
+    CSDM, CSMC
+  </sql>
+  
+  <select id="getModel" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from niutal_ZXZX_CSSZB where CSDM = #{csdm,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getModelList" parameterType="com.woshidaniu.zxzx.dao.entities.CsszModel" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from niutal_ZXZX_CSSZB
+  </select>
+
+  <delete id="deleteAll">
+    delete from niutal_ZXZX_CSSZB
+  </delete>
+  
+  <insert id="batchInsert" parameterType="java.util.List">
+	insert into niutal_ZXZX_CSSZB (CSDM, CSMC)
+ 	<foreach collection="list" item="item" index="index" separator=" union all ">
+	   select #{item.csdm,jdbcType=VARCHAR}, #{item.csmc,jdbcType=VARCHAR} from dual  
+	</foreach>
+  </insert>
+  
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IDymbglDao" >
+
+	<select id="getModel" parameterType="dymbglModel" resultType="dymbglModel">
+		SELECT ID, MC, QYZT, SM, MBLXDM, NR FROM niutal_XTGL_DYMB
+		<where>
+			1 = 1
+			<if test="id != null">
+				and ID = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="mc != null">
+				and MC = #{mc,jdbcType=VARCHAR}
+			</if>
+			<if test="mblxdm != null">
+				and MBLXDM = #{mblxdm,jdbcType=VARCHAR}
+			</if>
+			<if test="qyzt != null">
+				and QYZT = #{qyzt,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getModelList" parameterType="dymbglModel" resultType="dymbglModel">
+		SELECT ID, MC, QYZT, SM, MBLXDM, NR FROM niutal_XTGL_DYMB
+		<where>
+			1 = 1
+			<if test="id != null">
+				and ID = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="mc != null">
+				and MC = #{mc,jdbcType=VARCHAR}
+			</if>
+			<if test="mblxdm != null">
+				and MBLXDM = #{mblxdm,jdbcType=VARCHAR}
+			</if>
+			<if test="qyzt != null">
+				and QYZT = #{qyzt,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询打印模板列表【分页】-->
+	<select id="getPagedList" parameterType="dymbglModel" resultType="dymbglModel">
+		SELECT * FROM (
+			SELECT T1.ID, T1.MC, T1.QYZT, T1.MBLXDM, T2.MC AS MBLXMC, T4.GNMKMC
+			FROM niutal_XTGL_DYMB T1
+			LEFT JOIN niutal_XTGL_DYMBLX T2 ON T1.MBLXDM = T2.DM
+			LEFT JOIN niutal_XTGL_DYSJGNMK T3 ON T2.DM = T3.MBLXDM
+			LEFT JOIN niutal_XTGL_JSGNMKDMB T4 ON T3.GNMKDM = T4.GNMKDM
+			WHERE T1.ZGH = 'mr'
+		)
+		<where>
+			1 = 1
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询所有数据源列表 -->
+	<select id="getDysjyList" parameterType="dysjyModel" resultType="dysjyModel">
+		SELECT SJYID, SJYMC FROM niutal_XTGL_DYSJY
+	</select>
+	
+	<!-- 根据打印模板类型代码查询所有数据项列表 -->
+	<select id="getDysjxListByDymblxdm" parameterType="string" resultType="dysjxModel">
+		SELECT T2.DM, T2.MC, T2.LX
+		FROM niutal_XTGL_DYMBLX T1
+		LEFT JOIN niutal_XTGL_DYSJX T2 ON T1.SJYDM = T2.SJYDM
+		WHERE T1.DM = #{dm} ORDER BY T2.SX
+	</select>
+	
+	<!-- 插入打印模板 -->
+	<insert id="insert" parameterType="dymbglModel">
+		INSERT INTO niutal_XTGL_DYMB
+		(
+		ID,
+		MC
+		) 
+		VALUES 
+		(
+		 #{id,jdbcType=VARCHAR},
+		 #{mc,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 更新打印模板 -->
+	<update id="update" parameterType="dymbglModel">
+		UPDATE niutal_XTGL_DYMB SET 
+		<if test="nr != null">
+			NR = #{nr,jdbcType=VARCHAR},
+		</if>
+		<if test="mc != null">
+			MC = #{mc,jdbcType=VARCHAR},
+		</if>
+		<if test="mblxdm != null">
+			MBLXDM = #{mblxdm,jdbcType=VARCHAR},
+		</if>
+		<if test="qyzt != null">
+			QYZT = #{qyzt,jdbcType=VARCHAR},
+		</if>
+		ID = #{id,jdbcType=VARCHAR}
+		WHERE ID = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 根据模板名称修改 -->
+	<update id="updateDymbMc" parameterType="dymbglModel">
+		<!-- UPDATE niutal_XTGL_DYMB SET MC = #{mc,jdbcType=VARCHAR} WHERE MC = #{oldmc,jdbcType=VARCHAR} -->
+		UPDATE niutal_XTGL_DYMB SET MC = #{mc,jdbcType=VARCHAR} WHERE id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 批量删除打印模板 -->
+	<delete id="batchDelete" >
+		DELETE FROM niutal_XTGL_DYMB 
+		<where>
+			MC IN
+			<foreach item="item" index="index" collection="list" open="(" separator=" union all " close=")">
+				SELECT MC FROM niutal_XTGL_DYMB WHERE ID = #{item}
+			</foreach>
+		</where>
+	</delete>
+
+	<!-- 修改打印模板启用状态 -->
+	<update id="updateDymbQyzt" parameterType="dymbglModel">
+		UPDATE niutal_XTGL_DYMB SET QYZT = #{qyzt,jdbcType=VARCHAR} WHERE ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 根据打印模板类型获取打印模板 -->
+	<select id="getDymbByDymblx" parameterType="dymbglModel" resultType="int">
+		SELECT count(1) FROM niutal_XTGL_DYMB WHERE MBLXDM = #{mblxdm,jdbcType=VARCHAR} and QYZT = #{qyzt,jdbcType=VARCHAR}
+		<if test="id != null and id !=''">
+			and id != #{id,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<!-- 查询所有数据源列表 -->
+	<select id="getDymblxList" parameterType="dymblxModel" resultType="dymblxModel">
+		SELECT DM, MC, SJYDM FROM niutal_XTGL_DYMBLX
+	</select>
+	
+	<!-- 根据打印模板名称获取打印模板数量【排除自己】 -->
+	<select id="getModelByMc" parameterType="dymbglModel" resultType="int">
+		SELECT count(1) FROM niutal_XTGL_DYMB WHERE MC = #{mc,jdbcType=VARCHAR} and ID != #{id,jdbcType=VARCHAR} and zgh='mr'
+	</select>
+	
+	<!-- 根据打印模版类型与职工号查找打印模板内容 -->
+	<select id="getDymbByDymblxAndZgh" parameterType="map" resultType="dymbglModel">
+		SELECT NR FROM niutal_XTGL_DYMB WHERE MBLXDM = #{mblxdm,jdbcType=VARCHAR} and zgh = #{zgh,jdbcType=VARCHAR}
+			and QYZT = '1'
+	</select>
+	
+	<update id="updateBg">
+		update niutal_xtgl_dymb set bg = #{bg, jdbcType=BLOB} where id = #{id}
+	</update>
+	
+	<select id="getBg" resultType="object">
+		select bg from niutal_xtgl_dymb where id = #{id}
+	</select>
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IPlxgDao" >
+
+
+ 	<!-- 获得【数据批量修改配置表】中所有进行不重复处理后的功能模块代码信息List<PairModel>集合 -->
+ 	<select id="getGnmkdmPairList" parameterType="string" resultType="com.woshidaniu.entities.PairModel" >
+	   select a.gnmkdm as key, 
+	   		  decode(#{localeKey},'en_US',nvl(p.gnmkywmc,p.gnmkmc),p.gnmkmc) || ' - ' 
+			   || decode(a.gnmkdm,'Login',decode(#{localeKey},'en_US','System login','系统登录'),decode(#{localeKey},'en_US',nvl(b.gnmkywmc,b.gnmkmc),b.gnmkmc)) as value
+		    from (select distinct t.gnmkdm from niutal_xtgl_plxgxxb t) a,
+		         niutal_xtgl_jsgnmkdmb b,
+		         niutal_xtgl_jsgnmkdmb p
+		   where a.gnmkdm = b.gnmkdm(+)
+		     and b.fjgndm = p.gnmkdm(+)
+		     and b.dyym is not null
+		     and p.gnmkdm is not null
+		order by p.gnmkdm,b.gnmkdm asc
+	</select>
+	
+	<!-- 功能数据批量修改配置信息 -->
+	<select id="getPagedList" parameterType="com.woshidaniu.entities.PlxgModel" resultType="com.woshidaniu.entities.PlxgModel">
+		select t.gnmkdm, 
+			   decode(#{localeKey},'en_US',nvl(p.gnmkywmc,p.gnmkmc),p.gnmkmc) || ' - ' || decode(#{localeKey},'en_US',nvl(b.gnmkywmc,b.gnmkmc),b.gnmkmc) as gnmkmc
+		  from (select distinct a.gnmkdm from niutal_xtgl_plxgxxb a) t,
+		       niutal_xtgl_jsgnmkdmb b,
+		       niutal_xtgl_jsgnmkdmb p
+		 where t.gnmkdm = b.gnmkdm
+		   and b.fjgndm = p.gnmkdm(+)
+		   and b.sfxs = '1'
+		   and b.dyym is not null
+		   and p.gnmkdm is not null
+	       <if test=" gnmkdm != null and gnmkdm != '' ">
+	       and t.gnmkdm = #{gnmkdm}
+	       </if>
+		 order by p.gnmkdm, t.gnmkdm asc
+	</select>
+	
+	<!-- 功能数据批量修改配置信息 -->
+	<select id="getModelList" parameterType="com.woshidaniu.entities.PlxgModel" resultType="com.woshidaniu.entities.PlxgModel">
+		select t.gnmkdm, 
+			   decode(#{localeKey},'en_US',nvl(b.gnmkywmc,b.gnmkmc),b.gnmkmc) as gnmkmc,
+			   t.zddm, 
+			   t.zdmc, 
+			   t.zdbm,
+			   t.sfqy
+          from niutal_xtgl_plxgxxb   t, 
+               niutal_xtgl_jsgnmkdmb b
+         where t.gnmkdm = b.gnmkdm
+           and t.gnmkdm = #{gnmkdm}
+         order by t.xssx asc
+	</select>
+    
+    <!-- 修改功能数据批量修改配置启用状态 -->
+    <update id="batchUpdate" parameterType="hashMap">
+   	declare
+   	begin
+		<if test="list != null and list.size() > 0 ">
+			<foreach collection="list" item="item" index="index" >
+	          update niutal_xtgl_plxgxxb t set t.sfqy = #{item.sfqy} where t.gnmkdm = #{item.gnmkdm} and t.zddm = #{item.zddm};
+	        </foreach>
+		</if>
+	end;
+    </update>
+    
+	<!-- 得到启用的功能数据批量修改配置信息 -->
+	<select id="getBatchModelList" parameterType="com.woshidaniu.entities.PlxgModel" resultType="com.woshidaniu.entities.PlxgModel">
+		select t.zddm, t.zdmc
+          from niutal_xtgl_plxgxxb   t
+         where t.gnmkdm = #{gnmkdm}
+           and t.sfqy = '1'
+         order by t.xssx asc
+	</select>
+	
+	<!-- 功能数据批量修改配置信息 -->
+	<select id="getModel" parameterType="com.woshidaniu.entities.PlxgModel" resultType="com.woshidaniu.entities.PlxgModel">
+		select t.zddm, t.zdmc,t.zdcd,t.zdbm
+          from niutal_xtgl_plxgxxb   t
+         where t.gnmkdm = #{gnmkdm}
+           and t.zddm = #{zddm}
+         order by t.xssx asc
+	</select>
+    
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="xtgl" namespace="/xtgl" extends="configuration">
+
+		<!-- 公共ACTION -->
+		<action name="comm_*" class="com.woshidaniu.globalweb.action.CommonSqlAction" method="{1}">
+			<interceptor-ref name="RequiredStack" />
+		</action>
+
+		<!-- 公共验证ACTION -->
+		<action name="validate_*" class="com.woshidaniu.globalweb.action.CommonValidationAction" method="{1}">
+			<interceptor-ref name="RequiredStack" />
+		</action>
+		
+		<!-- 公共获取照片 -->
+		<action name="photo_*" class="com.woshidaniu.globalweb.action.CommonPhotoAction" method="{1}">
+		</action>
+		
+		<!-- 公共进度ACTION -->
+		<action name="progress_*" class="com.woshidaniu.globalweb.action.CommonProgressAction" method="{1}">
+			<interceptor-ref name="RequiredStack" />	 
+		</action>
+		
+		<!-- 公共的功能时间控制action  -->
+		<action name="timeSetting_*" class="com.woshidaniu.globalweb.action.CommonTimeSettingAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/gnsjkz/{1}.jsp</result>
+		</action>
+
+		<!-- JQGrid字段配置ACTION -->
+		<action name="zdpz_*" class="com.woshidaniu.globalweb.action.ZdpzAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/zdpz/jqGridZdpz.jsp</result>
+		</action>
+		
+		<!-- 数据批量修改action -->
+		<action name="plxg_*" class="com.woshidaniu.globalweb.action.PlxgAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/plxg/{1}.jsp</result>
+			<result name="batchUpdateData">/WEB-INF/pages/globalweb/comp/xtgl/plxg/batchUpdateData.jsp</result>
+		</action>
+		
+		<!-- 用户登录验证ACTION -->
+	    <action name="login_*" class="com.woshidaniu.globalweb.action.LoginAction" method="{1}">
+	  	  	<interceptor-ref name="MinStack" />
+	  	 	<result name="success" type="redirect">/xtgl/index_initMenu.html?jsdm=${roleid}&amp;_t=${nowTime}</result>
+	  	 	<result name="login">/WEB-INF/pages/globalweb/login/loginForward.jsp</result>
+	  	  	<!-- 动态获得跳转的位置 --> 
+	      	<result name="false">/WEB-INF/pages/globalweb/login.jsp</result>
+	      	<result name="yzm">/WEB-INF/pages/globalweb/yzm.jsp</result>
+	    </action>
+	    
+		<action name="dl_*" class="com.woshidaniu.globalweb.action.LoginAction" method="{1}">
+	  	  	<interceptor-ref name="MinStack" />
+	  	  	<result name="success" type="redirect">/xtgl/index_initMenu.html?jsdm=${roleid}&amp;_t=${nowTime}</result>
+	  	  	<result name="login" type="redirect">/xtgl/login_slogin.html?language=${localeKey}&amp;_t=${nowTime}</result>
+	    </action>
+
+		<!-- 首页 ACTION-->
+		<action name="index_*" class="com.woshidaniu.globalweb.action.IndexAction" method="{1}">
+			<result name="teapage">/WEB-INF/pages/globalweb/index_v5${xxdm}.jsp</result>
+			<result name="index">/WEB-INF/pages/globalweb/index.jsp</result>
+			<result name="content">/WEB-INF/pages/globalweb/content.jsp</result>
+			<result name="contentPage" type="redirect">${url}</result>
+			<result name="{1}">/WEB-INF/pages/globalweb/{1}.jsp</result>
+			<result name="cxYhxxJwIndex">/WEB-INF/pages/globalweb/cxYhxxJwIndex.jsp</result>
+		</action>
+		
+		<!-- 初始化功能 -->
+		<action name="init_*" class="com.woshidaniu.globalweb.action.IndexAction" method="{1}">
+			<interceptor-ref name="RequiredStack" />
+			<result name="gnPage">/WEB-INF/pages/globalweb/yhGnPage.jsp</result>
+			<result name="fkIndex">/WEB-INF/pages/globalweb/fkIndex.jsp</result>
+			<result name="cxFkGnPage">/WEB-INF/pages/globalweb/cxFkGnPage.jsp</result>
+		</action>
+		
+		<!-- 角色管理 ACTION-->
+		<action name="jsgl_*" class="com.woshidaniu.globalweb.action.JsglAction" method="{1}">
+			<interceptor-ref name="AccessStack"></interceptor-ref>
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/jsgl/{1}.jsp</result>
+			<result name="zjJsxx">/WEB-INF/pages/globalweb/comp/xtgl/jsgl/zjJsxx.jsp</result>
+			<result name="xgJsxx">/WEB-INF/pages/globalweb/comp/xtgl/jsgl/xgJsxx.jsp</result>
+			<result name="fpyhSaveJs" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="cxJsxx">/WEB-INF/pages/globalweb/comp/xtgl/jsgl/cxJsxx.jsp</result>
+			<result name="jskc">/WEB-INF/pages/globalweb/comp/xtgl/jsgl/jskc.jsp</result>
+			<result name="scJsxx" type="redirect">jsgl_cxJsxx.html</result>
+		</action>
+		
+		<!-- 角色功能模块管理 ACTION-->
+		<action name="jsgnmk_*" class="com.woshidaniu.globalweb.action.JsgnmkAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/jsgl/{1}.jsp</result>
+		</action>
+
+		<!-- 用户管理 ACTION-->
+		<action name="yhgl_*" class="com.woshidaniu.globalweb.action.YhglAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/{1}.jsp</result>
+			<result name="zjYhxx">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/zjYhxx.jsp</result>
+			<result name="xgYhxx">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/xgYhxx.jsp</result>
+			<result name="szSsjs">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/szSsjs.jsp</result>
+			<result name="cxYhxx">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/cxYhxx.jsp</result>
+			<result name="cxPlsjsq">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/cxPlsjsq.jsp</result>
+		</action>
+		
+		<!-- 用户密码管理 -->
+		<action name="mmgl_*" class="com.woshidaniu.globalweb.action.YhglAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/{1}.jsp</result>
+		</action>
+		
+		<!-- 基础数据维护ACTION-->
+		<action name="jcsj_*" class="com.woshidaniu.globalweb.action.JcsjAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/jcsj/{1}.jsp</result>
+			<result name="zjJcsj">/WEB-INF/pages/globalweb/comp/xtgl/jcsj/zjJcsj.jsp</result>
+			<result name="xgJcsj">/WEB-INF/pages/globalweb/comp/xtgl/jcsj/xgJcsj.jsp</result>
+		</action>
+		
+		<!-- 系统设置ACTION -->
+		<action name="xtsz_*" class="com.woshidaniu.globalweb.action.XtszAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xtsz/{1}.jsp</result>
+			<result name="xtszXg" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+		</action>
+		
+		<!-- 系统操作描述ACTION -->
+		<action name="xtczms_*" class="com.woshidaniu.globalweb.action.XtczmsAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xtczms/{1}.jsp</result>
+		</action>
+		
+		<!-- 业务数据排序信息控制ACTION -->
+		<action name="ywsjPxxx_*" class="com.woshidaniu.globalweb.action.YwsjPxxxAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/ywsjpx/{1}.jsp</result>
+		</action>
+
+		<!-- 新闻管理ACTION -->
+		<action name="xwgl_*" class="com.woshidaniu.globalweb.action.XwglAction" method="{1}">
+			<result name="{1}">/WEB-INF/pages/globalweb/comp/xtgl/xwgl/{1}.jsp</result>
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xwgl/{1}.jsp</result>
+			<result name="zjXw">/WEB-INF/pages/globalweb/comp/xtgl/xwgl/zjXw.jsp</result>
+			<result name="xgXw">/WEB-INF/pages/globalweb/comp/xtgl/xwgl/xgXw.jsp</result>
+			<result name="xgBcXw" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+		</action>
+		
+		<!-- 新闻查看ACTION -->
+		<action name="xwck_*" class="com.woshidaniu.globalweb.action.XwglAction" method="{1}">
+			<interceptor-ref name="RequiredStack" />
+			<result name="{1}">/WEB-INF/pages/globalweb/comp/xtgl/xwgl/{1}.jsp</result>
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xwgl/{1}.jsp</result>
+		</action>
+		
+		
+		<!-- 菜单管理 ACTION-->
+		<action name="cdgl_*" class="cdglAction" method="{1}">
+			<result name="list">/WEB-INF/pages/globalweb/comp/xtgl/cdgl/cdgl_{1}.jsp</result>
+			<result name="edit">/WEB-INF/pages/globalweb/comp/xtgl/cdgl/cdgl_{1}.jsp</result>
+			<result name="view">/WEB-INF/pages/globalweb/comp/xtgl/cdgl/cdgl_view.jsp</result>
+			<result name="view2">/WEB-INF/pages/globalweb/index.jsp</result>
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/cdgl/cdgl_{1}.jsp</result>
+		</action>
+
+		<!-- 操作按钮ACTION -->
+		<action name="wdyy_*" class="com.woshidaniu.globalweb.action.WdyyAction" method="{1}"></action>
+		
+		<!-- 日志管理 ACTION-->
+		<action name="rzgl_*" class="com.woshidaniu.globalweb.action.RzglAction" method="{1}">
+			<result name="cxRz">/WEB-INF/pages/globalweb/comp/xtgl/rzgl/cxRz.jsp</result>
+			<result name="ckRzxx">/WEB-INF/pages/globalweb/comp/xtgl/rzgl/ckRzxx.jsp</result>
+		</action>
+		
+		<!-- 学校信息设置 -->
+		<action name="xxxxsz_*" class="com.woshidaniu.globalweb.action.XxxxwhAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xxxx/cxXxxxszIndex.jsp</result>
+		</action>
+		
+		<!-- 校区信息 -->
+		<action name="xqxx_*" class="com.woshidaniu.globalweb.action.XqxxwhAction" method="{1}">
+			 <result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xqxxwh/{1}.jsp</result>
+		</action>
+		
+		<!-- 机构信息 -->
+		<action name="jgxx_*" class="com.woshidaniu.globalweb.action.JgxxwhAction" method="{1}">
+			 <result name="success">/WEB-INF/pages/globalweb/comp/xtgl/jgxxwh/{1}.jsp</result>
+		</action>
+		
+		<!-- 专业信息 -->
+		<action name="zyxx_*" class="com.woshidaniu.globalweb.action.ZyxxwhAction" method="{1}">
+			 <result name="success">/WEB-INF/pages/globalweb/comp/xtgl/zyxxwh/{1}.jsp</result>
+		</action>
+		
+		<!-- 学信专业 -->
+		<action name="xxzy_*" class="com.woshidaniu.globalweb.action.XxzywhAction" method="{1}">
+			 <result name="success">/WEB-INF/pages/globalweb/comp/xtgl/xxzywh/{1}.jsp</result>
+		</action>
+
+		<!-- 口令维护ACTION -->
+		<action name="klwh_*" class="com.woshidaniu.globalweb.action.KlwhAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/klwh/{1}.jsp</result>
+		</action>
+		
+		<!-- 缓存管理ACTION -->
+		<action name="cache_*" class="com.woshidaniu.globalweb.action.CacheManageAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/cache/{1}.jsp</result>
+		</action>
+		
+	</package>
+
+</struts>

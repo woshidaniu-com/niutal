@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="cygl" namespace="/cygn" extends="configuration">
+		<action name="jcdm_*" class="com.woshidaniu.globalweb.action.JcdmAction" method="{1}">
+			 <result name="success">/WEB-INF/pages/globalweb/comm/cygn/{1}.jsp</result>
+		</action>
+	</package> 
+</struts>

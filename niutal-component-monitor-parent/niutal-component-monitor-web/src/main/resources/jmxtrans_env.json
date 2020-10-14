@@ -1,0 +1,23 @@
+{
+    "outputWriters": [
+    	{
+	        "@class": "com.woshidaniu.metrics.jmxtrans.ZFInfluxDbOutputWriter",
+	        "settings": {
+	            "enabled": "${jmxtrans.writer.influxdb.enabled:false}",
+	            "url": "${jmxtrans.writer.influxdb.url:DewmDn4dbY1MohzgHUL5lLXGxMN6/0r/n5jrQDhGcyU=}",
+	            "database": "${jmxtrans.writer.influxdb.database:Metrics_127.0.0.1}",
+	            "user": "${jmxtrans.writer.influxdb.user:997cNHzyoo2fmOtAOEZzJQ==}",
+	            "password": "${jmxtrans.writer.influxdb.password:997cNHzyoo2fmOtAOEZzJQ==}",
+	            "tags": "${jmxtrans.writer.influxdb.tags:host=#hostaddress#}",
+	            "connectTimeoutMillis": "${jmxtrans.writer.influxdb.connectTimeoutMillis:3000}",
+	            "readTimeoutMillis": "${jmxtrans.writer.influxdb.readTimeoutMillis:5000}",
+	            "retryTimes": "${jmxtrans.writer.influxdb.retryTimes:10}"
+	        }
+    	} 
+    ],
+    "queryIntervalInSeconds": "${jmxtrans.queryIntervalInSeconds:5}",
+	"numQueryThreads": "${jmxtrans.numQueryThreads:1}",
+	"numExportThreads": "${jmxtrans.numExportThreads:1}",
+	"exportIntervalInSeconds": "${jmxtrans.exportIntervalInSeconds:10}",
+	"exportBatchSize": "${jmxtrans.exportBatchSize:50}"
+}

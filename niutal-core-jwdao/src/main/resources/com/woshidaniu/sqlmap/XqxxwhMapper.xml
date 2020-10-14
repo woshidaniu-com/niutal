@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IXqxxwhDao" >
+
+    <!-- 分页查询机构信息-->
+    <select id="getPagedByScope" parameterType="com.woshidaniu.entities.XqxxwhModel" resultType="com.woshidaniu.entities.XqxxwhModel">
+	select t.xqh_id,
+		   t.kkhbxqh_id,
+           t.kkxkxq_id,
+       	   t.xqh,
+       	   t.xqmc,
+           t.xqdz,
+           t.zjr,
+           t.zjsj,
+           t.xgr,
+           t.xgsj,
+          (select wm_concat(xq.xqmc)
+             from (select xq.xqh_id, xq.xqmc
+                     from niutal_xtgl_xqdmb xq
+                   order by xq.xqmc) xq
+            where instr(',' || t.kkhbxqh_id || ',', ',' || xq.xqh_id || ',') > 0) kkhbxqhmc,
+          (select wm_concat(xq.xqmc)
+             from (select xq.xqh_id, xq.xqmc
+                     from niutal_xtgl_xqdmb xq
+                   order by xq.xqmc) xq
+            where instr(',' || t.kkxkxq_id || ',', ',' || xq.xqh_id || ',') > 0) kkxkxqmc
+          from niutal_xtgl_xqdmb t
+ 
+		<where>
+			<if test="xqh!=null and xqh!=''">
+				t.xqmc like '%'||#{xqh}||'%' or t.xqh like '%'||#{xqh}||'%'
+			</if>
+		</where>
+    </select>
+    
+    <!-- 修改界面单个查询 -->
+    <select id="getModel" parameterType="com.woshidaniu.entities.XqxxwhModel" resultType="com.woshidaniu.entities.XqxxwhModel">
+		select t.xqh_id,
+		   t.kkhbxqh_id,
+           t.kkxkxq_id,
+       	   t.xqh,
+       	   t.xqmc,
+           t.xqdz,
+           t.zjr,
+           t.zjsj,
+           t.xgr,
+           t.xgsj,
+          (select wm_concat(xq.xqmc)
+             from (select xq.xqh_id, xq.xqmc
+                     from niutal_xtgl_xqdmb xq
+                   order by xq.xqmc) xq
+            where instr(',' || t.kkhbxqh_id || ',', ',' || xq.xqh_id || ',') > 0) kkhbxqhmc,
+          (select wm_concat(xq.xqmc)
+             from (select xq.xqh_id, xq.xqmc
+                     from niutal_xtgl_xqdmb xq
+                   order by xq.xqmc) xq
+            where instr(',' || t.kkxkxq_id || ',', ',' || xq.xqh_id || ',') > 0) kkxkxqmc
+          from niutal_xtgl_xqdmb t
+			where xqh_id=#{xqh_id}
+    </select>
+    
+    <!-- 更新机构信息 -->
+    <update id="update" parameterType="com.woshidaniu.entities.XqxxwhModel" >
+    	update niutal_xtgl_xqdmb t
+    	<set>
+    		<if test="xqh!=null and xqh!=''">
+    			t.xqh=#{xqh},
+    		</if>
+    		<if test="xqmc!=null and xqmc!=''">
+    			t.xqmc=#{xqmc},
+    		</if>
+    		<if test="xqdz!=null and xqdz!=''">
+    			t.xqdz=#{xqdz},
+    		</if>
+    		<if test="zjr!=null and zjr!=''">
+    			t.zjr=#{zjr},
+    		</if>
+    		<if test="zjsj!=null and zjsj!=''">
+    			t.zjsj=#{zjsj},
+    		</if>
+    		<if test="xgr!=null and xgr!=''">
+    			t.xgr=#{xgr},
+    		</if>
+    		<if test="xgsj!=null and xgsj!=''">
+    			t.xgsj=#{xgsj},
+    		</if>
+    			t.kkhbxqh_id=#{kkhbxqh_id},
+    			t.kkxkxq_id=#{kkxkxq_id}
+    	</set>
+    	   where t.xqh_id=#{xqh_id}
+    </update>
+    
+	<insert id="insert" parameterType="com.woshidaniu.entities.XqxxwhModel">
+		insert into niutal_xtgl_xqdmb(xqh,xqmc,xqdz,zjr,zjsj,xgr,xgsj,kkhbxqh_id,kkxkxq_id)
+			values(#{xqh,jdbcType=VARCHAR},
+			#{xqmc,jdbcType=VARCHAR},
+			#{xqdz,jdbcType=VARCHAR},
+			#{zjr,jdbcType=VARCHAR},
+			to_char(sysdate, 'YYYY-MM-DD'),
+			#{xgr,jdbcType=VARCHAR},
+			#{xgsj,jdbcType=VARCHAR},
+			#{kkhbxqh_id,jdbcType=VARCHAR},
+			#{kkxkxq_id,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="delete" parameterType="com.woshidaniu.entities.XqxxwhModel">
+		delete niutal_xtgl_xqdmb where xqh_id = #{xqh_id}
+	</delete>
+
+
+</mapper>

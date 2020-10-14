@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>niutal-core-files</artifactId>
+	<packaging>jar</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- 跳过单元测试 -->
+					<skip>true</skip>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<dependencies>
+
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+
+		<!-- fastdoc : 基于XML的Word文档快速生成组件 -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastdoc-docx4j</artifactId>
+		</dependency>
+		<!-- <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastpdf-core</artifactId>
+		</dependency> -->
+
+		<!-- ###################### Spring 4.x 核心框架 ###################### -->
+
+		<!-- 应用程序的运行时环境，包括调度和远程处理的抽象 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+		</dependency>
+		<!-- An open source java library to handle zip files -->
+		<dependency>
+			<groupId>net.lingala.zip4j</groupId>
+			<artifactId>zip4j</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-freemarker</artifactId>
+			<version>${niukit.version}</version>
+		</dependency>
+
+		<!-- ######################org.apache.xmlgraphics ###################### -->
+		
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-svg-dom</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-bridge</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-awt-util</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-gvt</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-extension</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-ext</artifactId>
+			<version>${batik.version}</version>
+		</dependency>
+
+	</dependencies>
+
+</project>

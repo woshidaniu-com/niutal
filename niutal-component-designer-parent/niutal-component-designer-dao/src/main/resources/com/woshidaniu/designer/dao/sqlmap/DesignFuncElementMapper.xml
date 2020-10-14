@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignFuncElementDao" >
+
+	<!-- 分页查询【功能页面自定义元素】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel">
+		select t.func_guid,
+		       t.func_code,
+		       t.opt_code,
+		       t.func_name,
+		       t.func_desc,
+		       a.element_guid,
+		       a.element_id,
+		       a.element_related_guid,
+		       a.element_type,
+		       a.element_width,
+		       a.element_desc,
+		       a.element_ordinal
+		  from niutal_designer_func 			t, 
+		  	   niutal_designer_func_elements a
+		 where t.func_guid = a.func_guid
+     	<if test=" func_name != null and func_name != '' ">
+     		and t.func_name like '%'||#{func_name}||'%' 
+     	</if>
+	     order by a.element_ordinal asc
+	</select>
+	
+	<!-- 根据【功能代码+操作代码 】查询【功能页面自定义元素】信息-->
+	<select id="getFuncElementList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel">
+	    select t.func_guid,
+		       t.func_code,
+		       t.opt_code,
+		       t.func_name,
+		       t.func_desc,
+		       a.element_guid,
+		       a.element_id,
+		       a.element_related_guid,
+		       a.element_type,
+		       a.element_width,
+		       a.element_desc,
+		       a.element_ordinal
+		  from niutal_designer_func          t, 
+		       niutal_designer_func_elements a
+		 where t.func_guid = a.func_guid
+		   and t.func_code = #{func_code}
+		   and t.opt_code = #{opt_code}
+		 order by a.element_ordinal asc
+	</select>
+	
+	<!-- 查询元素可关联的其他元素信息-->
+	<select id="getRelatedElementList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel">
+	    select t.func_guid,
+		       t.func_code,
+		       t.opt_code,
+		       t.func_name,
+		       t.func_desc,
+		       a.element_guid,
+		       a.element_id,
+		       a.element_related_guid,
+		       a.element_type,
+		       a.element_width,
+		       a.element_desc,
+		       a.element_ordinal
+		  from niutal_designer_func          t, 
+		       niutal_designer_func_elements a
+		 where t.func_guid = a.func_guid
+		   and t.func_code = #{func_code}
+		   and t.opt_code = #{opt_code}
+		   <if test="element_guid != null and element_guid != '' ">
+		   and a.element_guid != #{element_guid}
+		   </if>
+		 order by a.element_ordinal asc
+	</select>
+	
+	
+	
+	<!-- 查询【功能页面自定义元素】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel">
+	    select t.func_guid,
+		       t.func_code,
+		       t.opt_code,
+		       t.func_name,
+		       t.func_desc,
+		       a.element_guid,
+		       a.element_id,
+		       a.element_related_guid,
+		       a.element_type,
+		       a.element_width,
+		       a.element_desc,
+		       a.element_ordinal
+		  from niutal_designer_func 			t, 
+		  	   niutal_designer_func_elements a
+		 where t.func_guid = a.func_guid
+	       and a.element_guid = #{element_guid}
+	</select>
+	
+	<!-- 添加【功能页面自定义元素】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" >
+	insert into niutal_designer_func_elements(
+				func_guid,
+				element_id,
+				element_related_guid,
+				element_type,
+				element_desc,
+				element_width,
+				element_ordinal)
+	values(		#{func_guid},
+				#{element_id,jdbcType=VARCHAR},
+				#{element_related_guid,jdbcType=VARCHAR},
+				#{element_type,jdbcType=VARCHAR},
+				#{element_desc},
+				#{element_width,jdbcType=VARCHAR},
+				#{element_ordinal,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 删除【功能页面自定义元素】信息 -->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" >
+		delete niutal_designer_func_elements t where t.element_guid 	= #{element_guid}
+	</delete>
+	
+	<!-- 更新【功能页面自定义元素】信息-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel">
+	 update niutal_designer_func_elements t
+		set t.element_id			= #{element_id,jdbcType=VARCHAR},
+			t.element_related_guid	= #{element_related_guid,jdbcType=VARCHAR},
+			t.element_type			= #{element_type,jdbcType=VARCHAR},
+			t.element_desc 			= #{element_desc,jdbcType=VARCHAR},
+			t.element_width 		= #{element_width,jdbcType=VARCHAR},
+			t.element_ordinal		= #{element_ordinal,jdbcType=VARCHAR}
+	  where t.element_guid 			= #{element_guid}
+	</update>
+	
+	<!-- 更新【功能页面自定义元素】类型信息-->
+	<update id="updateElementType" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel">
+	 update niutal_designer_func_elements t
+		set t.element_type			= #{element_type,jdbcType=VARCHAR}
+	  where t.element_guid 			= #{element_guid}
+	</update>
+	
+	<!-- 删除元素上绑定的元素关联实体对象数据 -->
+	<delete id="deleteElementEntity" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" >
+		declare
+		begin
+			delete niutal_designer_query_fields a
+			 where exists (select 'x'
+			          from niutal_designer_func_querys b
+			         where a.query_guid = b.query_guid
+			           and exists (select 'x'
+			                  from niutal_designer_func_elements c
+			                 where c.element_guid = b.element_guid
+			                   and c.element_guid = #{element_guid})
+			        
+			        );
+			        
+			delete niutal_designer_func_querys a
+			 where exists (select 'x'
+			          from niutal_designer_func_elements b
+			         where b.element_guid = a.element_guid
+			           and b.element_guid = #{element_guid});
+			
+			delete niutal_designer_jqgrid_fields a
+			 where exists (select 'x'
+			          from niutal_designer_func_widgets b
+			         where a.func_widget_guid = b.func_widget_guid
+			           and exists (select 'x'
+			                  from niutal_designer_func_elements c
+			                 where c.element_guid = b.element_guid
+			                   and c.element_guid = #{element_guid})
+			        
+			        );
+			        
+			delete niutal_designer_func_resources a
+			 where a.func_guid = #{func_guid}
+			   and exists (select 'x'
+			          from niutal_designer_func_widgets b
+			         where a.widget_guid = b.widget_guid
+			           and exists (select 'x'
+			                  from niutal_designer_func_elements c
+			                 where c.element_guid = b.element_guid
+			                   and c.element_guid = #{element_guid})
+			        );
+        
+			delete niutal_designer_func_widgets a
+			 where exists (select 'x'
+			          from niutal_designer_func_elements b
+			         where b.element_guid = a.element_guid
+			           and b.element_guid = #{element_guid});
+           
+			delete niutal_designer_func_fields a where a.element_guid =  #{element_guid};
+			
+		end;
+	</delete>
+    
+</mapper>

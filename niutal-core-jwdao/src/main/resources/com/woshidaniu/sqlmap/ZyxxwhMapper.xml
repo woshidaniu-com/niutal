@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IZyxxwhDao" >
+
+    <!-- 分页查询专业信息-->
+    <select id="getPagedByScope" parameterType="com.woshidaniu.entities.ZyxxwhModel" resultType="com.woshidaniu.entities.ZyxxwhModel">
+		select t.zyjc,
+		       t.zyywmc,
+		       t.cydm_id_xkml,
+		       (select cy.dmmc from niutal_xtgl_cydmb cy where cy.cydm_id = t.cydm_id_xkml) xkmlmc,
+		       t.xz,
+		       t.ccdm,
+		       (select cy.dmmc from niutal_xtgl_cydmb cy where cy.cydm_id = t.ccdm) ccmc,
+		       t.sfty,
+		       t.bz,
+		       t.zyh_id,
+		       t.zyh,
+		       t.jg_id,
+		       (select jg.jgmc from niutal_xtgl_jgdmb jg where jg.jg_id = t.jg_id) jgmc,
+		       t.xkmlm,
+		       t.bzkzym,
+		       '' bzkzymc,
+		       t.jlny,
+		       t.yjszym,
+		       '' yjszymc,
+		       t.zymc,
+		       t.yxj,
+		       t.dlbs,
+		       t.zyjj,
+		       case when length(t.zyjj)>20 then to_char(substr(t.zyjj,0,20))||'...' else to_char(t.zyjj) end zyjj_cx
+		  from niutal_xtgl_zydmb t
+		  <where> 
+			  <if test="jg_id!=null and jg_id!=''">
+			  	and t.jg_id=#{jg_id}
+			  </if>
+			  <if test="zyh!=null and zyh!=''">
+			  	and (t.zyh like '%'||#{zyh}||'%' or t.zymc like '%'||#{zyh}||'%') 
+			  </if>
+			  <if test="sfty!=null and sfty!=''">
+			  	and t.sfty=#{sfty} 
+			  </if>
+			  and t.dlbs='zy'
+		  </where>
+    </select>
+    
+    <!-- 分页查询专业信息-->
+    <select id="getModel" parameterType="com.woshidaniu.entities.ZyxxwhModel" resultType="com.woshidaniu.entities.ZyxxwhModel">
+		select t.zyjc,
+		       t.zyywmc,
+		       t.cydm_id_xkml,
+		       (select cy.dmmc from niutal_xtgl_cydmb cy  where cy.cydm_id = t.cydm_id_xkml) xkmlmc,
+		       t.xz,
+		       t.ccdm,
+		       (select cy.dmmc from niutal_xtgl_cydmb cy where cy.cydm_id = t.ccdm) ccmc,
+		       t.sfty,
+		       t.bz,
+		       t.zyh_id,
+		       t.zyh,
+		       t.jg_id,
+		       (select jg.jgmc from niutal_xtgl_jgdmb jg where jg.jg_id = t.jg_id) jgmc,
+		       t.xkmlm,
+		       t.bzkzym,
+		       '' bzkzymc,
+		       t.jlny,
+		       t.yjszym,
+		       '' yjszymc,
+		       t.zymc,
+		       t.yxj,
+		       t.dlbs,
+		       t.zyjj
+		  from niutal_xtgl_zydmb t
+		  where t.zyh_id=#{zyh_id}
+    </select>
+    
+    <!-- 插入专业信息 -->
+    <insert id="insert" parameterType="com.woshidaniu.entities.ZyxxwhModel" >
+    	 insert into niutal_xtgl_zydmb (zyjc,zyywmc,cydm_id_xkml,xz,ccdm,sfty,bz,zjr,zjsj,zyh_id,zyh,jg_id,xkmlm,bzkzym,jlny,yjszym,zymc,yxj,dlbs,zyjj)
+		 values(#{zyjc,jdbcType=VARCHAR},#{zyywmc,jdbcType=VARCHAR},#{cydm_id_xkml,jdbcType=VARCHAR},#{xz,jdbcType=VARCHAR},#{ccdm,jdbcType=VARCHAR},#{sfty,jdbcType=VARCHAR},#{bz,jdbcType=VARCHAR},#{zjr,jdbcType=VARCHAR},
+		 to_char(sysdate,'yyyy-mm-dd HH24:mm:ss'),sys_guid(),#{zyh,jdbcType=VARCHAR},#{jg_id,jdbcType=VARCHAR},#{xkmlm,jdbcType=VARCHAR},#{bzkzym,jdbcType=VARCHAR},
+		 #{jlny,jdbcType=VARCHAR},#{yjszym,jdbcType=VARCHAR},#{zymc,jdbcType=VARCHAR},#{yxj,jdbcType=VARCHAR},#{dlbs,jdbcType=VARCHAR},#{zyjj,jdbcType=CLOB})
+    </insert>
+    
+    <!-- 更新专业信息 -->
+    <update id="update" parameterType="com.woshidaniu.entities.ZyxxwhModel" >
+    	update niutal_xtgl_zydmb t
+		   set t.zyjc         = #{zyjc,jdbcType=VARCHAR},
+		       t.zyywmc       = #{zyywmc,jdbcType=VARCHAR},
+		       t.cydm_id_xkml = #{cydm_id_xkml,jdbcType=VARCHAR},
+		       t.xz           = #{xz,jdbcType=VARCHAR},
+		       t.ccdm         = #{ccdm,jdbcType=VARCHAR},
+		       t.sfty         = #{sfty,jdbcType=VARCHAR},
+		       t.bz           = #{bz,jdbcType=VARCHAR},
+		       t.xgr          = #{xgr,jdbcType=VARCHAR},
+		       t.zyh          = #{zyh,jdbcType=VARCHAR},
+		       t.jg_id        = #{jg_id,jdbcType=VARCHAR},
+		       t.xkmlm        = #{xkmlm,jdbcType=VARCHAR},
+		       t.bzkzym       = #{bzkzym,jdbcType=VARCHAR},
+		       t.jlny         = #{jlny,jdbcType=VARCHAR},
+		       t.yjszym       = #{yjszym,jdbcType=VARCHAR},
+		       t.zymc         = #{zymc,jdbcType=VARCHAR},
+		       t.yxj          = #{yxj,jdbcType=VARCHAR},
+		       t.zyjj         = #{zyjj,jdbcType=VARCHAR},
+		       t.dlbs         = #{dlbs,jdbcType=VARCHAR},
+		       t.xgsj         = to_char(sysdate, 'yyyy-mm-dd HH24:mm:ss')
+		 where t.zyh_id = #{zyh_id}
+    </update>
+    
+    <!-- 停用启用专业信息 -->
+    <update id="updateSfty" parameterType="com.woshidaniu.entities.ZyxxwhModel" >
+    	update niutal_xtgl_zydmb t set t.sfty = #{sfty}
+    	where t.zyh_id in
+    	<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+    		#{item}
+    	</foreach>
+    </update>
+    
+    <!--删除专业信息 -->
+    <delete id="delete" parameterType="com.woshidaniu.entities.ZyxxwhModel">
+    	delete niutal_xtgl_zydmb t
+    	where t.zyh_id in
+    	<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+    		#{item}
+    	</foreach>
+    </delete>
+    
+    <!-- 层次集合-->
+    <select id="getCcList" parameterType="com.woshidaniu.entities.ZyxxwhModel" resultType="com.woshidaniu.entities.ZyxxwhModel">
+		  select cy.dmmc ccmc,cy.cydm_id ccdm from niutal_xtgl_cydmb cy where cy.sfyx='1' and cy.dmlx='CC'
+    </select>
+    
+     <!-- 学科门类集合-->
+    <select id="getXkmlList" parameterType="com.woshidaniu.entities.ZyxxwhModel" resultType="com.woshidaniu.entities.ZyxxwhModel">
+		 select cy.dmmc xkmlmc,cy.cydm_id cydm_id_xkml from niutal_xtgl_cydmb cy where cy.sfyx='1' and cy.dmlx='XKML'
+    </select>
+    
+    <!-- 查询专业是否已被使用 -->
+    <select id="getCount" parameterType="com.woshidaniu.entities.ZyxxwhModel" resultType="int">
+    	select nvl(count(*),0) from (select zxjh.jxzxjhxx_id from jw_jh_jxzxjhxxb zxjh where zxjh.zyh_id in 
+    	<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+    		#{item}
+    	</foreach>
+    	union all
+    	select pyfa.pyfaxx_id from jw_jh_pyfaxxb pyfa where pyfa.zyh_id in 
+    	<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+    		#{item}
+    	</foreach>)
+    </select>
+
+</mapper>

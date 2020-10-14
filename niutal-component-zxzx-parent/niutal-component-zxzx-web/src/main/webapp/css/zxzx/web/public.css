@@ -1,0 +1,132 @@
+@charset "utf-8";
+/*====================================================
+Version:4.0.0(2011-04-02)
+Website:http://www.woshidaniu.com
+Auther:Sunleoo
+Recently:Sunleoo(2011-04-02)
+=======================================================*/
+/*========全局CSS定义========*/
+body { margin:0; padding:0; font:normal 100 12px tahoma, "微软雅黑","宋体";}
+dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, lable, textarea, select, p, blockquote, button, tr, td, th, thead, caption { margin:0; padding:0; }
+img, button { border:none; }
+h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:12px; }
+button { cursor:pointer; }
+ol, ul, li { list-style:none; }
+table { border-collapse:collapse; }
+input, select, textarea, button, em, cite, samp { font-style:normal; vertical-align:middle; }
+a { text-decoration:none; color:#0967b0; }
+a:hover { text-decoration:underline; color:#0967b0; }
+/*===========框架样式start===========*/
+/*==========全局框架样式==========*/
+.body_bg { background:#fff; }
+.mainbody { width:997px; margin:0 auto; }
+.mainbody-newtopic {width:680px; margin:0 auto; }
+.topframe { width:100%; height:43px; }
+.mainframe { margin-top:8px; background:#fff url(../images/mainframe_bg.gif) 169px top repeat-y; min-height:400px; _height:400px; border:#c0e3f9 1px solid; border-radius:3px 3px 3px 3px; }
+.mainframe:after { content:"."; display:block; visibility:hidden; height:0; clear:both; }
+.leftframe { width:158px; float:left; padding:10px 0 0 10px; }
+.midframe { width:583px; float:left; display:inline; margin-left:12px; padding-top:10px; }
+.rightframe { width:805px; float:right; padding:10px 10px 10px 0; }
+.left { width:600px; float:left; }
+.right { width:190px; float:right; }
+.botframe { width:100%; height:80px; clear:both; margin-top:10px; }
+.type_left01 { width:74%; float:left; padding-left:8px; }
+.type_right01 { width:24%; float:left; }
+.type_left02 { width:79%; margin-left:1%; float:left; display:inline; }
+.type_right02 { width:17%; margin-right:1%; float:right; display:inline; background:#f6f6f6; border-left:#daecf6 1px solid; padding-left:8px; }
+.type_left03 { width:76%; float:left; }
+.type_right03 { width:22%; float:right; }
+/*2011年10月28日14:33:36加入头部固定样式*/
+.topframe-new { width:100%; position:fixed; _position:static; top:0; left:0; z-index:99999; height:45px; background:url(../images/body_bg.png) left top repeat-x; }
+.topframe-con { width:955px; margin:0 auto; }
+.mainbody-new { _padding-top:0; }
+/*========相册弹出层框架========*/
+.openwindow_01 { width:955px; background:#171717; margin:0 auto; }
+.openwindow_01 .close { width:100%; height:15px; padding-top:5px; }
+.openwindow_01 .close a { width:15px; height:15px; background:url(../images/ico_gb.gif) no-repeat; float:right; display:inline; margin-right:10px; }
+.openwindow_01_bot { background:#fff; clear:both; width:100%; min-height:300px; _height:300px; }
+.openwindow_01_bot:after { content:"."; display:block; visibility:hidden; height:0; clear:both; }
+.openwindow_01_bot_left { width:200px; float:left; display:inline; margin-left:20px; padding:10px 0; }
+.openwindow_01_bot_right { width:600px; float:left; display:inline; margin-left:50px; padding:10px 0; }
+/*==========logo==========*/
+.logo { float:left; margin-top:3px; }
+/*==========导航==========*/
+.nav { float:left; margin-top:5px; padding-left:15px; }
+.nav li { float:left; height:28px; line-height:28px; position:relative; }
+.nav li a { font-size:14px; color:#048bc5; text-decoration:none!important; padding:0 10px; }
+.nav li a:hover { color:#005eac; }
+.nav .current a { font-weight:bold; }
+.nav li .ico { background:url(../images/ico_12.gif) right 3px no-repeat; }
+.nav .downmenu { width:100px; border:#46aee0 1px solid; position:absolute; top:28px; left:0; background:#fff; }
+.nav .downmenu ul { padding:5px 0; }
+.nav .downmenu li { height:25px; line-height:25px; width:100%; clear:both; }
+.nav .downmenu li a { font-size:12px; }
+/*==========新消息==========*/
+.news { float:right; margin-top:5px; line-height:28px; }
+.news .name { float:left; }
+.news .name a { padding-right:10px; background:url(../images/ico_12.gif) right center no-repeat; }
+.news .message { float:left; }
+.news .message a { float:left; width:14px; height:11px; background:url(../images/ico_51.gif) left center no-repeat; margin-top:7px; }
+.news .message span { float:left; width:10px; height:11px; background:url(../images/ico_52.gif) left center no-repeat; color:#fff; line-height:11px; text-align:center; font-size:9px; margin:2px 0 0 -10px; }
+.news a { text-decoration:none!important; color:#048bc5; margin:0 5px; }
+.news a:hover { color:#005eac; }
+/*==========搜索==========*/
+.search { float:right; margin-top:5px; }
+.search input { border:#76b8e7 1px solid; border-right:none; padding:2px; line-height:16px; height:16px; width:145px; color:#9a9a9a; }
+.search button { width:24px; height:22px; line-height:22px; background:url(../images/btn_21.gif) left center no-repeat; color:#333; font-size:0; margin-left:-5px;
+}
+/*==========链接==========*/
+.textlink { width:100%; padding-top:5px; text-align:center; }
+.textlink p { line-height:30px; color:#005eac; }
+/*========版权========*/
+.copy { text-align:center; line-height:180%; color:#639ec0; }
+/*========内页框架========*/
+.typeframe { width:99.8%; border:#daecf6 1px solid; min-height:300px; _height:300px; padding-bottom:10px; background:#fff; }
+.typeframe:after { content:"."; display:block; visibility:hidden; height:0; clear:both; }
+.typeframe h2 { width:100%; height:22px; line-height:22px; border-bottom:#daecf6 1px solid; background:url(../images/type_top.gif) left top repeat-x; }
+.typeframe h2 span { font-weight:bold; color:#3c91d2; padding-left:10px; }
+/*========选项卡1========*/
+.title_xxk { width:98%; margin:5px auto; height:26px; border-bottom:#a7d1e1 1px solid; }
+.title_xxk li { float:left; display:inline; margin-right:5px; height:25px; line-height:25px; border:#a7d1e1 1px solid; border-bottom:none; background:#e4eff3; }
+.title_xxk li a { text-decoration:none!important; color:#5c5b60; display:block; padding:0 10px; }
+.title_xxk .current { height:26px; background:#fff; }
+/*========选项卡2========*/
+.title_xxk02 { width:98%; margin:0 auto; padding-top:10px; margin-bottom:10px; height:40px; line-height:40px; background:#fff url(../images/line_01.gif) left bottom repeat-x; }
+.title_xxk02 li { float:left; margin-right:25px; display:inline; }
+.title_xxk02 li a { float:left; height:40px; font-size:14px; text-decoration:none!important; }
+.title_xxk02 li a.current { background:url(../images/xxk_current.gif) center bottom no-repeat; font-weight:bold; color:#333; }
+.title_xxk02 li span { padding-left:25px; color:#999; float:left; }
+.morediv { float:right; padding-right:10px; position:relative; z-index:999; margin-top:10px; }
+.morediv .more { background:url(../images/ico_12.gif) right center no-repeat; padding-right:10px; }
+.morediv .morelist { position:absolute; right:0; top:33px; width:100px; margin-right:0; border-top:0; z-index:999; border:1px solid #67AAF0; background:#fff url(../images/morelistbg.gif) repeat-y left top; }
+.morediv .morelist ul { width:100%; padding:5px 0; }
+.morediv .morelist li { width:100%; padding:0; height:23px; line-height:23px; margin:0; overflow:hidden; }
+.morediv .morelist a { display:block; width:100%; height:23px; font-size:12px; font-weight:normal; color:#3B3B3B; padding-left:1em; }
+.morediv .morelist a:hover { color:#ffffff; background:#87C1F2; }
+/*========标题形式1========*/
+.title01 { width:100%; height:24px; line-height:24px; border-bottom:#daecf6 1px solid; color:#5b5b5b; }
+.title01 span { font-weight:bold; }
+/*========按钮1========*/
+.button { padding:0 10px; text-align:center; cursor: pointer; margin: 0 2px; background:url(../images/button.gif) left top repeat-x; overflow:visible;/*===解决左右两侧的间距随文字增加而变大yyl===*/ height:19px; line-height:19px; outline:1px solid #4D93EA; border:1px solid #C6DAF4!important; color:#FFFFFF; }
+.button:hover { background:url(../images/button_hover.gif) repeat-x left top; }
+/*========评论========*/
+.Comment { padding:8px; background:#f2f3f4; clear:both; }
+.Comment textarea { overflow:hidden; border:#d3d9e0 1px solid; width:98.5%; padding:3px; }
+.Comment .textarea_hfing textarea { border:#8daccf 1px solid; }
+.Comment .textarea_hfing .btn { text-align:right; padding-top:8px; line-height:21px; }
+.Comment .textarea_hfing .btn button { width:42px; height:21px; background:url(../images/btn_07.gif) left center no-repeat; color:#333333; }
+.Comment .Reply_Open { border-bottom:#fff 1px solid; padding-bottom:8px; margin-bottom:8px; }
+.Comment .Reply_Open a { background:url(../images/ico_04.gif) left center no-repeat; padding-left:15px; }
+.Comment .Reply_list { line-height:150%; border-bottom:#fff 1px solid; padding-bottom:8px; margin-bottom:8px; clear:both; }
+.Comment .Reply_list:after { content:"."; display:block; visibility:hidden; height:0; clear:both; }
+.Comment .Reply_list h4 span { padding-left:15px; color:#a8a8a8; }
+.Comment .Reply_list p { color:#555555; }
+.Comment .Reply_list p a { padding-left:15px; word-break:keep-all; }
+.Comment .Reply_list .Child_Reply_list { margin-left:40px; clear:both; }
+.Comment .Reply_list .Child_Reply_list:after { content:"."; display:block; visibility:hidden; height:0; clear:both; }
+.Comment .Reply_list .list_line { border-bottom:#fff 1px solid; padding-bottom:8px; }
+/*========分页========*/
+.page { width:100%; height:30px; line-height:30px; text-align:center; clear:both; }
+.page .disabled, .page .current, .page .disabled, .page .text { color:#545454; }
+.page .num { width:24px; border:#d3d9e0 1px solid; }
+.page button { width:42px; height:21px; background:url(../images/btn_07.gif) left center no-repeat; color:#333333; line-height:21px; }

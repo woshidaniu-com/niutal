@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IWjdjztDao">
+	
+	<select id="getDjztListCount" resultType="int">
+		select count(*) from view_niutal_wjdc_djzt
+		<where>
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+
+	<select id="getPagedDjztList" resultType="map">
+		select * from view_niutal_wjdc_djzt
+		<where>
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getDjztList" resultType="map">
+		SELECT *
+		FROM (
+			SELECT ROWNUM AS rowno, x.*
+			FROM
+			(
+					select * from view_niutal_wjdc_djzt
+					<where>
+						<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+							and ${searchModel.querySQL}
+						</if>
+					</where>
+			)x
+			WHERE ROWNUM &lt;= #{endRow}) tmp
+		WHERE tmp.rowno > #{startRow}
+	</select>
+	
+	<select id="getStflMapList" resultType="map">
+		select flid,flmc from niutal_wjdc_stflb where wjid = #{wjid} order by xssx
+	</select>
+	
+	<select id="getStflfz" resultType="map">
+		select 
+			wjid,
+			flid,
+			flmc,
+			djrid,
+			to_char(sum(xxfz)) xxfz
+		from 
+		(
+			select 
+				s.wjid,
+				s.djrid,
+				s.xxfz,
+				x.flid,
+				x.flmc 
+			from 
+			(
+				select 
+					a.wjid,
+					a.djrid,
+					b.stid,
+					sum(b.xxfz) xxfz
+				from
+					niutal_WJDC_WJHDB a, niutal_WJDC_WJSTXXB b 
+				where a.wjid = b.wjid and a.stid = b.stid and a.xxid = b.xxid and a.wjid = #{wjid}
+				group by a.wjid,a.djrid,b.stid
+			)s left join niutal_WJDC_WJSTB t
+			on s.wjid = t.wjid and s.stid = t.stid 
+			left join niutal_wjdc_stflb x
+			on s.wjid = x.wjid and t.flid = x.flid
+		) y group by wjid,flid,flmc,djrid
+	</select>
+	
+	<select id="getWjCount" resultType="int">
+		select count(*) from niutal_wjdc_wjxxb where wjid = #{wjid}
+	</select>
+	
+	<select id="getYffWjList" resultType="map">
+		select * from niutal_WJDC_WJXXB where WJZT = 'RUN'
+	</select>
+	
+</mapper>

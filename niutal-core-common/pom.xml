@@ -1,0 +1,161 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-common</artifactId>
+	<name>业务框架-通用实现</name>
+	<packaging>jar</packaging>
+
+	<dependencies>
+	
+		
+		<!-- ###################### 我是大牛软件授权实现  ###################### -->
+		
+		<dependency>
+			<groupId>com.woshidaniu</groupId>
+			<artifactId>niutal-license</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+			
+		 <!-- niukit-base : 快速开发基础工具组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-security</artifactId>
+		</dependency>
+		
+		<!-- niukit-base : 快速开发基础工具组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-basicutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-spring</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-xmlhub</artifactId>
+		</dependency>
+		
+		<!-- niukit-web : Web快速调用组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-shiro</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-safety</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-web</artifactId>
+		</dependency>
+		<!-- niukit-cache : 缓存操作快速开发组件 -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-cache-core</artifactId>
+		</dependency> 
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-cache-ehcache</artifactId>
+		</dependency> 
+		<!-- niukit-orm : ORM/持久层框架快速开发组件 -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-orm-mybatis</artifactId>
+		</dependency>
+		<!-- niukit-db : 数据库操作快速开发组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-db-core</artifactId>
+		</dependency>
+		
+		<!-- JavaServer Pages(TM) Standard Tag Library API -->
+		<!-- JSTL（JSP Standard Tag Library，JSP标准标签库) 是一个不断完善的开放源代码的JSP标签库，是由apache的jakarta小组来维护的。 -->
+		<dependency>
+		    <groupId>javax.servlet.jsp.jstl</groupId>
+		    <artifactId>javax.servlet.jsp.jstl-api</artifactId>
+		</dependency>
+		<!-- An implementation of the JSP Standard Tag Library (JSTL).  -->
+		<!-- Taglibs是为JSP定制标签库和相关的项目提供的一个开源仓库，如TagLibraryValidator类，和对页面生成工具的扩展来支持标签 库。 -->
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+		</dependency>
+		
+		<!-- ######################日志组件工具包###################### -->
+		
+		<!-- The slf4j API  -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		
+		<!-- Log4j 2.x 包含了基于LMAX 分离库的下一代的异步日志系统，在多线程环境下，异步日志系统比 Log4j 1.x 和Logback 提高了10倍性能提升（吞吐量和延迟率 ）-->  
+	        
+        <!-- The Apache Log4j Implementation  -->
+        <dependency>  
+            <groupId>org.apache.logging.log4j</groupId>  
+            <artifactId>log4j-core</artifactId>  
+        </dependency>  
+        <!-- The Apache Log4j support for web servlet containers  -->
+        <dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-web</artifactId>
+		</dependency>
+		<!-- The Apache Log4j SLF4J API binding to Log4j 2 Core  -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+		</dependency>
+		<!-- The Apache Log4j Commons Logging Adapter  -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jcl</artifactId>
+		</dependency>
+		<!-- The Apache Log4j implementation of java.util.logging  -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jul</artifactId>
+		</dependency>
+		<!-- Disruptor它是一个开源的并发框架,并获得2011 Duke’s 程序框架创新奖,能够在无锁的情况下实现网络的Queue并发操作。 -->
+		<dependency>
+		    <groupId>com.lmax</groupId>
+		    <artifactId>disruptor</artifactId>
+		</dependency>
+		
+		
+	</dependencies>
+
+</project>

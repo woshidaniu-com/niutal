@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+     <!-- 该属性设置是否每次HTTP请求到达时，系统都重新加载资源文件。该属性默认值是false。在开发阶段将该属性设置为true会更有利于开发，但在产品发布阶段应将该属性设置为false。 -->
+     <constant name="struts.i18n.reload" value="false" />
+     <!-- 该属性指定Struts 2应用所需要的国际化资源文件，如果有多份国际化资源文件，则多个资源文件的文件名以英文逗号（,）隔开 -->
+     <constant name="struts.custom.i18n.resources" value="message" />
+     <!-- 该属性设置Struts 2应用是否使用开发模式。如果设置该属性为true，则可以在应用出错时显示更多、更友好的出错提示 -->
+     <constant name="struts.devMode" value="false" />
+     <constant name="struts.multipart.maxSize" value="50000000000" />
+     <!-- 该属性设置当struts.xml文件改变后，系统是否自动重新加载该文件。该属性的默认值是false。 -->
+     <constant name="struts.configuration.xml.reload" value="true" />
+     <!-- 通过ognl访问静态方法 -->
+     <constant name="struts.ognl.allowStaticMethodAccess" value="true" />
+     <constant name="struts.objectFactory" value="spring" />
+	 <constant name="struts.action.extension" value="html" /> 
+	 <constant name="struts.action.excludePattern" value="/druid/.*" /> 
+	 <package name="configuration" extends="json-default">
+		<!-- 自定义拦截器 -->
+		<interceptors>
+			<!-- 自定义登录拦截器 -->
+			<interceptor name="ancdInterceptor" class="com.woshidaniu.globalweb.interceptor.AncdInterceptor"></interceptor>
+			<interceptor name="pageForwardInterceptor" class="com.woshidaniu.globalweb.interceptor.PageForwardInterceptor"></interceptor>
+			<interceptor name="actionMethodInvokeInterceptor" class="com.woshidaniu.globalweb.interceptor.ActionMethodInvokeInterceptor" />
+			<interceptor-stack name="SimpleStack">
+				<interceptor-ref name="defaultStack">
+					<param name="exception.logEnabled">true</param>
+					<param name="exception.logLevel">error</param>
+				</interceptor-ref>
+			</interceptor-stack>
+			<interceptor-stack name="TokenStack">
+			    <interceptor-ref name="token" />
+				<interceptor-ref name="defaultStack">
+					<param name="exception.logEnabled">true</param>
+					<param name="exception.logLevel">error</param>
+				</interceptor-ref>
+			</interceptor-stack>
+			<!-- 将自定义拦截器加载到拦截器栈 -->
+			<interceptor-stack name="BaseStack">
+				<interceptor-ref name="defaultStack">
+					<param name="exception.logEnabled">true</param>
+					<param name="exception.logLevel">error</param>
+				</interceptor-ref>
+				<interceptor-ref name="ancdInterceptor" />
+				<interceptor-ref name="pageForwardInterceptor"/>
+				<interceptor-ref name="actionMethodInvokeInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+		<!-- 将自定义拦截器栈设置为默认拦截器 -->
+		<default-interceptor-ref name="BaseStack" />
+		<global-results>
+            <result name="login">/WEB-INF/pages/globalweb/login.jsp</result>
+            <result name="sessionOut">/WEB-INF/pages/globalweb/sessionOut.jsp?tzurl=${tzurl}</result>
+            <result name="input">/WEB-INF/pages/globalweb/comm/log/requestError.jsp</result>
+            <result name="indexPage">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/xgMmQz.jsp</result>
+			<result name="data" type="json">  
+                <param name="root">data</param>  
+         	</result> 
+         	
+         	<result name="exportExcel" type="stream">
+		        <!-- 指定下载文件的内容类型，text/plain是默认类型 -->
+		        <param name="contentType">application/vnd.ms-excel</param>
+		        <!-- inputName默认值是inputStream，如果action中用于读取下载文件内容的属性名是inputStream，那么可以省略这个参数 -->
+		        <param name="inputName">inputStream</param>
+		        <!--动态获取文件名，从Action中的取得filename-->
+		        <param name="contentDisposition">
+		            attachment;filename="${fileName}"
+		        </param>
+		        <param name="bufferSize">2048</param>
+		    </result>
+         	
+         	<result name="exportPdf" type="stream">
+		        <!-- 指定下载文件的内容类型，text/plain是默认类型 -->
+		        <param name="contentType">application/pdf</param>
+		        <!-- inputName默认值是inputStream，如果action中用于读取下载文件内容的属性名是inputStream，那么可以省略这个参数 -->
+		        <param name="inputName">inputStream</param>
+		        <!--动态获取文件名，从Action中的取得filename-->
+		        <param name="contentDisposition">
+		            attachment;filename="${fileName}"
+		        </param>
+		        <param name="bufferSize">2048</param>
+		    </result>
+		    
+		    <result name="exporpZip" type="stream">
+		        <!-- 指定下载文件的内容类型，text/plain是默认类型 -->
+		        <param name="contentType">application/octet-stream</param>
+		        <!-- inputName默认值是inputStream，如果action中用于读取下载文件内容的属性名是inputStream，那么可以省略这个参数 -->
+		        <param name="inputName">inputStream</param>
+		        <!--动态获取文件名，从Action中的取得filename-->
+		        <param name="contentDisposition">
+		            attachment;filename="${fileName}"
+		        </param>
+		        <param name="bufferSize">2048</param>
+		    </result>
+		    
+         	<result name="toExportConfig" type="redirect">
+         		/niutal/dc/export_exportConfig.html?dcclbh=${dcclbh}
+         	</result>
+         	
+         	<!-- 异常处理页面 -->
+         	<result name="error">/WEB-INF/pages/globalweb/comm/exception/error.jsp</result>
+			<result name="unknowException">/WEB-INF/pages/globalweb/comm/exception/error.jsp</result>
+			<result name="businessException">/WEB-INF/pages/globalweb/comm/exception/businessException.jsp</result>
+			<result name="serviceException">/WEB-INF/pages/globalweb/comm/exception/businessException.jsp</result>
+			<result name="dataIntegrityViolationException">/WEB-INF/pages/globalweb/comm/exception/voilationException.jsp</result>         	
+			<result name="unauthorizedException">/WEB-INF/pages/globalweb/comm/exception/unauthorizedException.jsp</result>
+		</global-results>
+		<!-- 利用strus2的异常框架 -->       
+		<global-exception-mappings>   
+			<exception-mapping result="error" exception="java.lang.Exception"/>
+			<exception-mapping result="unknowException" exception="java.lang.Exception"></exception-mapping>
+			<exception-mapping result="businessException" exception="com.woshidaniu.common.exception.BusinessException"></exception-mapping>
+			<exception-mapping result="serviceException" exception="com.woshidaniu.common.exception.ServiceException"></exception-mapping>
+			<exception-mapping result="dataIntegrityViolationException" exception="org.springframework.dao.DataIntegrityViolationException"></exception-mapping>			 
+			<exception-mapping result="unauthorizedException" exception="org.apache.shiro.authz.UnauthorizedException"></exception-mapping>	
+			<exception-mapping result="sessionOut" exception="org.apache.shiro.session.InvalidSessionException"></exception-mapping>
+		</global-exception-mappings>   
+	 </package>
+
+	<!-- 引入子工程的公共配置文件  -->
+	<include file="conf/struts/struts-*.xml"/>
+	<include file="conf/struts/struts-search.xml"></include>
+	<include file="conf/struts/struts-dc.xml"></include>
+	<include file="conf/struts/struts-dr.xml"></include>
+	<include file="conf/struts/struts-tjcx.xml"></include>
+	<include file="conf/struts/struts-wjdc.xml"></include>
+	<include file="conf/struts/struts-zdybd.xml"></include>
+</struts>

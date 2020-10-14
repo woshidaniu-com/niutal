@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IBaseWidgetDetailDao" >
+
+	<!-- 分页查询【功能组件描述】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+		select t.widget_guid,
+		       t.widget_name,
+		       t.widget_desc,
+		       t.widget_hasResource,
+		       t.widget_hasParameter,
+		       t.widget_used
+		  from (select x.widget_guid,
+				       x.widget_name,
+				       x.widget_desc,
+				       (case when (select count(1) from niutal_widget_resources a where a.widget_guid = x.widget_guid) > 0 then
+				          '1'
+				         else
+				          '0'
+				       end) widget_hasResource,
+				       (case when (select count(1)  from niutal_widget_parameters b where b.widget_guid = x.widget_guid) > 0 then
+				          '1'
+				         else
+				          '0'
+				       end) widget_hasParameter,
+				       (case when ((select count(1)
+				                  from niutal_widget_resources a
+				                 where a.widget_guid = x.widget_guid) +
+				              (select count(1)
+				                  from niutal_widget_parameters b
+				                 where b.widget_guid = x.widget_guid) +
+				              (select count(1)
+				                  from niutal_designer_func_widgets c
+				                 where c.widget_guid = x.widget_guid)) > 0 then
+				          '1'
+				         else
+				          '0'
+				       end) widget_used
+				  from niutal_widget_details x 
+			) t
+	     <where>
+	     	<if test=" widget_name != null and widget_name != '' ">
+	     		and t.widget_name like '%'||#{widget_name}||'%' 
+	     	</if>
+	     	<if test=" widget_hasResource != null and widget_hasResource != '' ">
+	     		and t.widget_hasResource = #{widget_hasResource} 
+	     	</if>
+	     	<if test=" widget_hasParameter != null and widget_hasParameter != '' ">
+	     		and t.widget_hasParameter = #{widget_hasParameter} 
+	     	</if>
+	     	<if test=" widget_used != null and widget_used != '' ">
+	     		and t.widget_used = #{widget_used} 
+	     	</if>
+	     </where>
+	</select>
+	
+	<!-- 查询所以的组件基本信息，返回字段：widget_guid,widget_name -->
+	<select id="getWidgetDetailList" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+		select t.widget_guid,
+		       t.widget_name
+		  from niutal_widget_details t
+	</select>
+	
+	<!-- 根据功能ID查询的当前功能没有使用的组件基本信息，返回字段：widget_guid,widget_name -->
+	<select id="getFuncWidgetDetailList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel"  resultType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+		select t.widget_guid, t.widget_name
+		  from niutal_widget_details t
+		 where not exists (select 'x'
+		          from niutal_designer_func a, niutal_designer_func_resources b
+		         where a.func_guid = b.func_guid
+		           and b.widget_guid is not null
+		           and b.widget_guid = t.widget_guid
+		           and a.func_guid = #{func_guid}
+		        )
+	</select>
+	
+	<!-- 查询【功能组件描述】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+	 select t.widget_guid,
+			t.widget_name,
+			t.widget_desc,
+	       (case when (select count(1) from niutal_widget_resources a where a.widget_guid = t.widget_guid) > 0 then
+	          '1'
+	         else
+	          '0'
+	       end) widget_hasResource,
+	       (case when (select count(1)  from niutal_widget_parameters b where b.widget_guid = t.widget_guid) > 0 then
+	          '1'
+	         else
+	          '0'
+	       end) widget_hasParameter,
+	       (case when ((select count(1)
+	                  from niutal_widget_resources a
+	                 where a.widget_guid = t.widget_guid) +
+	              (select count(1)
+	                  from niutal_widget_parameters b
+	                 where b.widget_guid = t.widget_guid) +
+	              (select count(1)
+	                  from niutal_designer_func_widgets c
+	                 where c.widget_guid = t.widget_guid)) > 0 then
+	          '1'
+	         else
+	          '0'
+	       end) widget_used
+	   from niutal_widget_details  t 
+	  where t.widget_guid = #{widget_guid}
+	</select>
+	
+	<!-- 添加【功能组件描述】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel" >
+	insert into niutal_widget_details(
+				widget_guid,
+				widget_name,
+				widget_desc)
+	values(		#{widget_guid},
+				#{widget_name},
+				#{widget_desc,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 查询【功能组件描述】被使用次数 -->
+	<select id="getUseCount" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel" resultType="int"  >
+		<if test="deleteList!=null and deleteList.size()>0">
+			select count(1)  as counts from niutal_designer_func_widgets t
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.widget_guid = #{item} ]]>
+			</foreach>
+		 </if>
+	</select>
+	
+	<!-- 删除【功能组件描述】信息-->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+	<if test="deleteList!=null and deleteList.size()>0">
+		declare
+		begin
+			delete niutal_widget_resources t 
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.widget_guid = #{item} ]]>
+			</foreach>;
+			delete niutal_widget_parameters t 
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.widget_guid = #{item} ]]>
+			</foreach>;
+			delete niutal_widget_details t 
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.widget_guid = #{item} ]]>
+			</foreach>;
+		end;
+	 </if>
+	</delete>
+	
+	<!-- 更新【功能组件描述】信息-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+	 update niutal_widget_details t
+		set t.widget_name 	= #{widget_name,jdbcType=VARCHAR},
+			t.widget_desc 	= #{widget_desc,jdbcType=VARCHAR}
+	  where t.widget_guid = #{widget_guid}
+	</update>
+    
+</mapper>

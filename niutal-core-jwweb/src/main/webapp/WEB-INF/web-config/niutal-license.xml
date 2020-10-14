@@ -1,0 +1,64 @@
+<!-- 我是大牛软件：授权认证参数 -->
+
+<!-- license 配置 -->
+<!-- 1. 校验执行周期:单位MINUTES -->
+<!-- 参数license_check_period代表检测线程的时间周期，单位：分钟（默认为：60）。即每10分钟检测一次系统是否在有效期内 -->
+<context-param>
+	<param-name>license_check_period</param-name>
+	<param-value>10</param-value>
+</context-param>
+
+<context-param>
+	<param-name>product_name_provider</param-name>
+	<param-value>com.woshidaniu.license.DefaultProductNameProvider</param-value>
+</context-param>
+
+<!-- 只有在license开启dev模式下才能使用 -->
+<!-- 为便于测试，授权文件增加了开发模式，可以添加以下参数（以下参数只有在授权文件为开发模式时适用）：
+	_dev_license_enable:是否开启授权模块
+	_dev_license_thread_delay：表示自增线程初始化时间，0表示立刻执行
+	_dev_license_thread_period：表示自增线程执行周期
+	_dev_license_thread_timeunit：表示时间单位
+ -->
+<!-- 2. 是否开启license功能 -->
+<context-param>
+	<param-name>_dev_license_enable</param-name>
+	<param-value>true</param-value>
+</context-param>
+<!-- 3. license自增线程初始化时间 -->
+<context-param>
+	<param-name>_dev_license_thread_delay</param-name>
+	<param-value>0</param-value>
+</context-param>
+<!-- 4. license自增线程执行周期 -->
+<context-param>
+	<param-name>_dev_license_thread_period</param-name>
+	<param-value>5</param-value>
+</context-param>
+<!-- 4. license自增线程执行周期时间单位：SECONDS,MINUTES,HOURS,DAYS -->
+<context-param>
+	<param-name>_dev_license_thread_timeunit</param-name>
+	<param-value>SECONDS</param-value>
+</context-param>
+<!-- 只有在license开启dev模式下才能使用 -->
+
+<listener>
+	<listener-class>com.woshidaniu.license.integration.LicenseContextListener</listener-class>
+</listener>
+
+<!-- 请求授权监听 -->
+<!-- <filter>
+	<description>请求授权监听</description>
+	<filter-name>RequestLicenseFilter</filter-name>
+	<filter-class>com.woshidaniu.globalweb.filter.HttpRequestLicenseFilter</filter-class>
+	<init-param>
+		<param-name>redirectURL</param-name>
+		<param-value>/WEB-INF/pages/exception/license.jsp</param-value>
+	</init-param>
+</filter>
+<filter-mapping>
+	<filter-name>RequestLicenseFilter</filter-name>
+	<url-pattern>/*</url-pattern>
+</filter-mapping> -->
+		
+<!-- license 配置 -->

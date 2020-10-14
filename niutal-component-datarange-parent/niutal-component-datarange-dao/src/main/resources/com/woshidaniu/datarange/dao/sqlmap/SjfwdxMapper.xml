@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.datarange.dao.daointerface.ISjfwdxDao" >
+    
+    <select id="getModel" resultType="SjfwdxModel" parameterType="SjfwdxModel">
+		select t.sjfwdx_id, t.bm, t.zddm, t.zdmc, t.zwmc, t.xssx, t.sfqy, t.zdcx
+		  from niutal_xtgl_sjfwdxb t
+		 where t.sfqy = '1'
+		   and t.bm	= #{bm}
+		   and t.kzdx = #{kzdx}
+	</select>
+	
+	<!-- 查询数据范围对象信息 -->
+	<select id="cxSjfwdx" resultType="SjfwdxModel" parameterType="SjfwdxModel">
+		select t.sjfwdx_id, t.bm, t.zddm, t.zdmc, t.zwmc, t.xssx, t.sfqy, t.zdcx
+		  from niutal_xtgl_sjfwdxb t
+		 where t.sfqy = '1'
+		 <if test="kzdx != null and kzdx != ''">
+		   and t.kzdx = #{kzdx,jdbcType=VARCHAR}
+		 </if>
+		 order by to_number(t.xssx)
+	</select>
+	
+	<!-- 根据数据范围对象，查询数据范围内容 -->
+	<select id="cxSjfwnr" resultType="SjfwdxModel" parameterType="SjfwdxModel">
+		select t.${zddm} as zddm ,t.${zdmc} as zdmc from ${bm} t
+	</select>
+	
+	<!-- 查询数据范围内容  不分页-->
+	<select id="getModelListByScope" resultType="SjfwdxModel" parameterType="SjfwdxModel">
+		select 
+			t.${zddm} as zddm ,
+			t.${zdmc} as zdmc 
+			<if test="bm != null and bm == 'niutal_xtgl_jgdmb'">
+			,t.lssjjgid
+			</if>
+			<if test="bm != null and bm == 'niutal_xtgl_zydmb'">
+			,t.jg_id as ls_bmdm
+			</if>
+			<if test="bm != null and bm == 'niutal_xtgl_bjdmb'">
+			,t.jg_id as ls_bmdm
+			,t.zyh_id as ls_zydm
+			,t.njdm_id as ls_njdm
+			</if>
+			<if test="bm != null and bm == 'view_xjgl_xsjbxxb'">
+			,t.jg_id as ls_bmdm
+			,t.zyh_id as ls_zydm
+			,t.bh_id as ls_bjdm
+			,t.njdm_id as ls_njdm
+			</if>
+		from ${bm} t where 1=1
+		<if test="lssjjgid != null and lssjjgid != ''">
+			and t.lssjjgid = #{lssjjgid}
+		</if>
+		<if test="ls_bmdm != null and ls_bmdm != ''">
+			and t.jg_id = #{ls_bmdm}
+		</if>
+		<if test="ls_zydm != null and ls_zydm != ''">
+			and t.zyh_id = #{ls_zydm}
+		</if>
+		<if test="ls_bjdm != null and ls_bjdm != ''">
+			and t.bh_id = #{ls_bjdm}
+		</if>
+		<if test="ls_njdm != null and ls_njdm != ''">
+			and t.njdm_id = #{ls_njdm}
+		</if>
+		<!-- 根据学号或者姓名模糊查询 ；这里的 xm 为  xm||' ('|| xh || ')' -->
+		<if test="ls_xh != null and ls_xh != ''">
+			and t.xm like '%' || #{ls_xh} || '%' 
+		</if>
+		<if test="cydm_id_bmlb != null and cydm_id_bmlb != ''">
+			and t.jglb = #{cydm_id_bmlb}
+		</if>		
+		<if test="bm != null and bm == 'niutal_xtgl_xqdmb'">
+		{ limit('niutal_xtgl_xqdmb';'xqh_id';'xqh_id')}
+		</if>
+		<if test="bm != null and bm == 'niutal_xtgl_jgdmb'">
+		{ t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+		<if test="bm != null and bm == 'niutal_xtgl_zydmb'">
+		{ t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		{limit('niutal_xtgl_zydmb';'zyh_id';'zyh_id')}
+		</if>
+		<if test="bm != null and bm == 'niutal_xtgl_bjdmb'">
+		{ t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		{limit('niutal_xtgl_bjdmb';'zyh_id,bh_id,xqh_id,njdm_id';'zyh_id,bh_id,xqh_id,njdm_id')}
+		</if>
+		<if test="bm != null and bm == 'view_xjgl_xsjbxxb'">
+		{ bitand('t.xsbj';'xsxzm')}
+		{limit('view_xjgl_xsjbxxb';'xh_id,lssjjgid,zyh_id,bh_id,njdm_id';'xh_id,jg_id,zyh_id,bh_id,njdm_id')}
+		</if> 
+		<if test="bm != null and bm == 'view_xjgl_xsxzdmb'">
+		{t.xsxzm in func('jw_xjgl_xsxzdmb';'xsxzm';'xsxzm';'xsxzm')}
+		</if>
+		<if test="bm != null and bm == 'view_xtgl_kkbm'">
+		{t.kkbm_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'kkbm_id')}
+		</if>
+		<if test="bm != null and bm == 'view_xtgl_jsbm'">
+		{ t.jsbm_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+		<if test="bm != null and bm == 'view_xtgl_cdbm'">
+		{t.cdbm_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+	</select>
+	
+	<!-- 查询数据范围内容  分页-->
+	<select id="getPagedList" resultType="SjfwdxModel" parameterType="SjfwdxModel">
+		select t.${zddm} as zddm ,t.${zdmc} as zdmc from ${bm} t
+		<where>
+			<if test="ls_bmdm != null and ls_bmdm != ''">
+				and t.jg_id = #{ls_bmdm}
+			</if>
+			<if test="ls_zydm != null and ls_zydm != ''">
+				and t.zyh_id = #{ls_zydm}
+			</if>		
+		</where>
+		
+	</select>
+</mapper>

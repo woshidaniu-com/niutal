@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignFuncSQLScriptDao" >
+
+	<!-- 根据功能代码查询功能模块代码信息-->
+	<select id="getFuncMenuList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	   select t.* from niutal_xtgl_jsgnmkdmb t
+	 	where t.gnmkdm in(select a.gnmkdm
+		  from niutal_xtgl_jsgnmkdmb a 
+		 start with a.gnmkdm = #{func_code}
+		connect by prior a.gnmkdm = a.fjgndm)
+		order by t.gnmkdm asc
+	</select>
+	
+	<!-- 根据功能代码查询功能操作代码信息-->
+	<select id="getFuncBtnList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	select t.* from niutal_xtgl_gnmkczb t
+	where t.gnmkdm in(select a.gnmkdm
+			  from niutal_xtgl_jsgnmkdmb a 
+			 start with a.gnmkdm = #{func_code}
+			connect by prior a.gnmkdm = a.fjgndm)
+	order by t.gnmkdm asc
+	</select>
+	
+	<!-- 根据功能代码查询角色功能操作代码信息-->
+	<select id="getFuncRoleBtnList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	select t.* from niutal_xtgl_jsgnmkczb t
+	 where t.gnmkdm in(select a.gnmkdm
+		  from niutal_xtgl_jsgnmkdmb a 
+		 start with a.gnmkdm = #{func_code}
+		connect by prior a.gnmkdm = a.fjgndm)
+	order by t.gnmkdm asc
+	</select>
+	 
+	<!-- 根据功能代码查询自定义功能信息-->
+	<select id="getDesignFuncList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	select t.* from niutal_designer_func t
+	 where t.func_code in(select a.gnmkdm
+		  from niutal_xtgl_jsgnmkdmb a 
+		 start with a.gnmkdm = #{func_code}
+		connect by prior a.gnmkdm = a.fjgndm)
+	order by t.func_code asc
+	</select>
+	
+	<!-- 根据功能代码查询自定义功能关联元素信息-->
+	<select id="getDesignFuncElementList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	 select a.*
+	  from niutal_designer_func_elements a
+	 where exists (select 'x'
+	          from niutal_designer_func t
+	         where t.func_guid = a.func_guid
+	           and t.func_code in(select a.gnmkdm
+				  from niutal_xtgl_jsgnmkdmb a 
+				 start with a.gnmkdm = #{func_code}
+				connect by prior a.gnmkdm = a.fjgndm)
+	           )
+	 order by a.func_guid, a.element_ordinal asc
+	</select>
+	
+	<resultMap type="com.woshidaniu.common.query.BaseMap" id="widgetMap">  
+		<result property="func_widget_guid" column="func_widget_guid" />
+		<result property="element_guid" column="element_guid" />
+		<result property="widget_guid" column="widget_guid" />
+		<result property="widget_title" column="widget_title" />
+		<result property="widget_desc" column="widget_desc" />
+		<result property="widget_params" column="widget_params" />
+		<result property="widget_pageable" column="widget_pageable" />
+		<result property="widget_cacheable" column="widget_cacheable" />
+		<result property="widget_data_url" column="widget_data_url" />
+        <result property="widget_sql" column="widget_sql"  javaType="java.lang.String" jdbcType="CLOB" typeHandler="org.apache.ibatis.type.ClobTypeHandler" />
+    </resultMap>
+  	
+	<!-- 根据功能代码查询自定义功能关联元素上绑定的组件信息-->
+	<select id="getDesignFuncWidgetList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultMap="widgetMap">
+	 select a.* from niutal_designer_func_widgets a 
+		   where exists (select 'x' from niutal_designer_func_elements b
+		  		 where a.element_guid = b.element_guid
+		  			and exists (select 'x' from niutal_designer_func t
+		  				where t.func_guid = b.func_guid 
+		  				  and t.func_code in(select a.gnmkdm
+						  from niutal_xtgl_jsgnmkdmb a 
+						 start with a.gnmkdm = #{func_code}
+						connect by prior a.gnmkdm = a.fjgndm)
+		  			)        
+		  		)
+ 	 order by a.func_widget_guid asc   
+	</select>
+	
+	<!-- 根据功能代码查询自定义功能关联元素绑定的JQGrid组件列信息-->
+	<select id="getDesignFuncGQGridFieldList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	 select a.* from niutal_designer_jqgrid_fields a 
+		   where exists (select 'x' from niutal_designer_func_widgets b 
+		   	where a.func_widget_guid = b.func_widget_guid 
+		   	  and exists (select 'x' from niutal_designer_func_elements c 
+		  		 where b.element_guid = c.element_guid 
+		  			and exists (select 'x' from niutal_designer_func t 
+		  				where t.func_guid = c.func_guid 
+		  				  and t.func_code in(select a.gnmkdm
+							  from niutal_xtgl_jsgnmkdmb a 
+							 start with a.gnmkdm = #{func_code}
+							connect by prior a.gnmkdm = a.fjgndm)
+		  			)        
+		  		)
+		  	)
+	  order by a.func_widget_guid, a.field_ordinal asc
+	</select>
+	
+	<!-- 根据功能代码查询元素关联查询条件数据-->
+	<select id="getDesignFuncQueryList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	 select a.* from niutal_designer_func_querys a
+ 		where exists (select 'x' from niutal_designer_func_elements b
+	         where a.element_guid = b.element_guid
+	           	and exists (select 'x' from niutal_designer_func t
+	                 where t.func_guid = b.func_guid
+	                   and t.func_code like #{func_code}||'%'
+	               )
+         	 )
+     	order by a.element_guid asc
+	</select>
+	
+	<!-- 根据功能代码查询元素关联查询条件字段数据-->
+	<select id="getDesignFuncQueryFieldList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	 select a.* from niutal_designer_query_fields a
+		 where exists (select 'x' from niutal_designer_func_querys b 
+		         where a.query_guid = b.query_guid 
+		           and exists (select 'x' from niutal_designer_func_elements c
+		                 where b.element_guid = c.element_guid
+		                   and exists (select 'x' from niutal_designer_func t
+		                         where t.func_guid = c.func_guid
+		                           and t.func_code in(select a.gnmkdm
+									  from niutal_xtgl_jsgnmkdmb a 
+									 start with a.gnmkdm = #{func_code}
+									connect by prior a.gnmkdm = a.fjgndm)
+		                       )
+		                )
+		       )
+         order by a.query_guid, a.field_ordinal asc
+	</select>
+	
+	<!-- 根据功能代码查询元素关联字段数据-->
+	<select id="getDesignFuncFieldList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+	 select a.* from niutal_designer_func_fields a
+		 where exists (select 'x' from niutal_designer_func_elements b
+		         where a.element_guid = b.element_guid
+		           and exists (select 'x' from niutal_designer_func t
+		                 where t.func_guid = b.func_guid
+		                   and t.func_code in(select a.gnmkdm
+							  from niutal_xtgl_jsgnmkdmb a 
+							 start with a.gnmkdm = #{func_code}
+							connect by prior a.gnmkdm = a.fjgndm)
+		               )
+		      )
+	     order by a.element_guid,a.field_ordinal asc
+	</select>
+	
+	<!-- 根据功能代码查询功能相关的自动完成查询输入框信息-->
+	<select id="getDesignFuncAutoQueryFieldList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select t.*
+		   from niutal_designer_auto_fields t,
+		        (select a.*
+		           from niutal_designer_query_fields a
+		          where exists (select 'x' from niutal_designer_func_querys b
+		                  where a.query_guid = b.query_guid
+		                    and exists (select 'x' from niutal_designer_func_elements c
+		                          where b.element_guid = c.element_guid
+		                            and exists (select 'x'
+		                                   from niutal_designer_func t
+		                                  where t.func_guid = c.func_guid
+		                                    and t.func_code in(select a.gnmkdm
+											  from niutal_xtgl_jsgnmkdmb a 
+											 start with a.gnmkdm = #{func_code}
+											connect by prior a.gnmkdm = a.fjgndm)
+		                               )
+		                        )
+		                )
+		        ) c
+		  where t.target_guid = c.table_guid
+	</select>
+	
+	<!-- 根据功能代码查询功能相关的自动完成输入框信息-->
+	<select id="getDesignFuncAutoFieldList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select t.*
+		   from niutal_designer_auto_fields t,
+		        (select a.*
+		           from niutal_designer_func_fields a
+		          where exists (select 'x' from niutal_designer_func_elements b
+		                  where a.element_guid = b.element_guid
+		                    and exists (select 'x' from niutal_designer_func t
+		                          where t.func_guid = b.func_guid
+		                            and t.func_code in(select a.gnmkdm
+									  from niutal_xtgl_jsgnmkdmb a 
+									 start with a.gnmkdm = #{func_code}
+									connect by prior a.gnmkdm = a.fjgndm)
+		                        )
+		                )
+		        ) c
+		  where t.target_guid = c.table_guid
+	</select>
+	
+	<!-- 根据功能代码查询功能相关的js,css资源信息-->
+	<select id="getDesignFuncResourceList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select a.*
+		  from niutal_designer_func_resources a
+		 where exists (select 'x'
+		          from niutal_designer_func t
+		         where t.func_guid = a.func_guid
+		           and t.func_code in(select a.gnmkdm
+					  from niutal_xtgl_jsgnmkdmb a 
+					 start with a.gnmkdm = #{func_code}
+					connect by prior a.gnmkdm = a.fjgndm)
+		        )
+		 order by a.resource_ordinal asc
+	</select>
+	
+	<!-- 根据功能代码自定义报表信息-->
+	<select id="getDesignFuncReportList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select a.func_guid,a.report_guid
+		  from niutal_designer_reports a
+		 where exists (select 'x'
+		          from niutal_designer_func t
+		         where t.func_guid = a.func_guid
+		           and t.func_code in(select a.gnmkdm
+					  from niutal_xtgl_jsgnmkdmb a 
+					 start with a.gnmkdm = #{func_code}
+					connect by prior a.gnmkdm = a.fjgndm)
+		        ) 
+	</select>
+	
+</mapper>

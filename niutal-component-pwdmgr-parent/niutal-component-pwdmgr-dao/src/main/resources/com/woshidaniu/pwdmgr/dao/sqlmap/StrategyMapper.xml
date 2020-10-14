@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.pwdmgr.dao.daointerface.StrategyDao">
+	
+	<resultMap type="com.woshidaniu.pwdmgr.dao.entities.StrategyModel" id="StrategyMap">
+		<id property="id" column="strategy_id"/>  
+	    <result property="name" column="strategy_name"/>
+	    <result property="desc" column="strategy_desc"/>
+	    <result property="status" column="strategy_stat"/> 
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.woshidaniu.pwdmgr.dao.entities.StrategyModel">
+		INSERT INTO niutal_PWD_STRATEGY(STRATEGY_NAME,STRATEGY_DESC,STRATEGY_STAT) VALUES(#{name},#{desc},'1')
+	</insert>
+
+	<delete id="delete" parameterType="com.woshidaniu.pwdmgr.dao.entities.StrategyModel">
+		DELETE FROM niutal_PWD_STRATEGY WHERE　STRATEGY_ID =　#{id} 
+	</delete>
+	
+	<update id="update" parameterType="com.woshidaniu.pwdmgr.dao.entities.StrategyModel">
+		update niutal_pwd_strategy t set strategy_stat = #{status} where t.strategy_id = #{id}
+	</update>
+	
+	<select id="getModel" parameterType="com.woshidaniu.pwdmgr.dao.entities.StrategyModel" resultMap="StrategyMap">
+		SELECT strategy_id,strategy_name,strategy_desc,strategy_stat FROM niutal_PWD_STRATEGY WHERE　STRATEGY_ID = #{id}
+	</select>
+	
+	<select id="getModelList" parameterType="com.woshidaniu.pwdmgr.dao.entities.StrategyModel" resultMap="StrategyMap">
+		SELECT strategy_id,strategy_name,strategy_desc,strategy_stat FROM niutal_PWD_STRATEGY
+		<where>
+			<if test="status != null and status != '' ">
+				and strategy_stat = #{status}
+			</if>
+		</where>
+		ORDER BY STRATEGY_ID
+	</select>
+	
+</mapper>

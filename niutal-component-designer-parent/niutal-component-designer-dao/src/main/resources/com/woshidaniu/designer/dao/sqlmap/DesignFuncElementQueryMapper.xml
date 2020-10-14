@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignFuncElementQueryDao" >
+
+	<!-- 添加【自定义查询条件】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel" >
+	insert into niutal_designer_func_querys(
+				element_guid,
+				query_name,
+				query_column,
+				query_desc)
+	values(		#{element_guid},
+				#{query_name},
+				#{query_column,jdbcType=VARCHAR},
+				#{query_desc,jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<!-- 删除【自定义查询条件】信息 -->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel" >
+	<![CDATA[
+		declare
+		begin
+			delete niutal_designer_query_fields t where t.query_guid = #{query_guid};
+			delete niutal_designer_func_querys where t.query_guid = #{query_guid};
+		end;
+	]]>
+	</delete>
+	
+	<!-- 更新【自定义查询条件】信息-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel">
+	 update niutal_designer_func_querys t
+		set t.query_name 		= #{query_name,jdbcType=VARCHAR},
+			t.query_column 		= #{query_column,jdbcType=VARCHAR},
+			t.query_desc 		= #{query_desc,jdbcType=VARCHAR}
+	  where t.query_guid = #{query_guid}
+	</update>
+	
+	<!-- 添加【查询条件字段】信息 -->
+	<insert id="insertQueryField" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryFieldModel" >
+	insert into niutal_designer_query_fields(
+			query_guid,
+			field_guid,
+			field_id,
+			field_name,
+			field_name_width,
+			field_text,
+			field_value,
+			field_alias,
+			field_parent,
+            field_shape,
+			field_type,
+            field_class,
+			field_attr,
+			field_mapper,
+            field_placeholder,
+            field_chosen,
+            field_autocomplete,
+            field_filtertype,
+            field_required,
+            field_ordinal)
+	values(	#{query_guid},
+			#{field_guid,jdbcType=VARCHAR},
+			#{field_id,jdbcType=VARCHAR},
+			#{field_name,jdbcType=VARCHAR},
+			#{field_name_width,jdbcType=VARCHAR},
+			#{field_text,jdbcType=VARCHAR},
+			#{field_value,jdbcType=VARCHAR},
+			#{field_alias,jdbcType=VARCHAR},
+			#{field_parent,jdbcType=VARCHAR},
+			#{field_shape,jdbcType=VARCHAR},
+			#{field_type,jdbcType=VARCHAR},
+			#{field_class,jdbcType=VARCHAR},
+			#{field_attr,jdbcType=VARCHAR},
+			#{field_mapper,jdbcType=VARCHAR},
+			#{field_placeholder,jdbcType=VARCHAR},
+			#{field_chosen,jdbcType=VARCHAR},
+			#{field_autocomplete,jdbcType=VARCHAR},
+			#{field_filtertype,jdbcType=VARCHAR},
+			#{field_required,jdbcType=VARCHAR},
+			#{field_ordinal,jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<!-- 删除【查询条件字段】信息 -->
+	<delete id="deleteQueryField" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryFieldModel" >
+	<![CDATA[
+		delete niutal_designer_query_fields t 
+		 where t.query_guid 		= #{query_guid}
+    	   and t.table_guid			= #{table_guid}
+	]]>
+	</delete>
+	
+	<!-- 更新【查询条件字段】信息-->
+	<update id="updateQueryField" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryFieldModel">
+	 update niutal_designer_query_fields t
+		set t.field_guid			= #{field_guid,jdbcType=VARCHAR},
+			t.field_id				= #{field_id,jdbcType=VARCHAR},
+			t.field_name			= #{field_name,jdbcType=VARCHAR},
+			t.field_name_width		= #{field_name_width,jdbcType=VARCHAR},
+			t.field_text			= #{field_text,jdbcType=VARCHAR},
+			t.field_value			= #{field_value,jdbcType=VARCHAR},
+			t.field_alias			= #{field_alias,jdbcType=VARCHAR},
+			t.field_parent			= #{field_parent,jdbcType=VARCHAR},
+            t.field_shape			= #{field_shape,jdbcType=VARCHAR},
+			t.field_type			= #{field_type,jdbcType=VARCHAR},
+            t.field_class			= #{field_class,jdbcType=VARCHAR},
+			t.field_attr			= #{field_attr,jdbcType=VARCHAR},
+			t.field_mapper			= #{field_mapper,jdbcType=VARCHAR},
+            t.field_placeholder		= #{field_placeholder,jdbcType=VARCHAR},
+            t.field_chosen			= #{field_chosen,jdbcType=VARCHAR},
+            t.field_autocomplete	= #{field_autocomplete,jdbcType=VARCHAR},
+            t.field_filtertype		= #{field_filtertype,jdbcType=VARCHAR},
+            t.field_required		= #{field_required,jdbcType=VARCHAR},
+            t.field_ordinal			= #{field_ordinal,jdbcType=VARCHAR}
+	  where t.query_guid 			= #{query_guid} 
+	    and t.table_guid			= #{table_guid}
+	</update>
+	
+	<!-- 根据组件model查询查询条件列名称  -->
+    <select id="getQueryFieldNameList"  parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel" resultType="string">
+	    select c.field_name
+		  from niutal_designer_query_fields c
+		 where c.query_guid = #{query_guid}
+		 order by c.field_ordinal
+    </select>
+    
+	<!-- 查询【自定义查询条件】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel">
+	    select t.func_guid,
+          	   t.func_code,
+          	   t.opt_code,
+	    	   a.element_guid,
+		       a.element_id,
+		       a.element_related_guid,
+		       a.element_width,
+		       b.query_guid,
+		       b.query_name,
+		       b.query_column,
+		       b.query_desc
+		  from niutal_designer_func          t,
+		       niutal_designer_func_elements a,
+		       niutal_designer_func_querys   b
+		 where t.func_guid = a.func_guid
+		   and a.element_guid = b.element_guid
+		   <if test="element_guid !=null and element_guid != '' ">
+		   and a.element_guid = #{element_guid}
+		   </if>
+		   <if test="query_guid !=null and query_guid != '' ">
+		   and b.query_guid = #{query_guid}
+		   </if>
+	</select>
+	
+	<!-- 根据【功能代码+操作代码 】查询【自定义查询条件】信息-->
+	<select id="getFuncElementQueryList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel">
+		<![CDATA[
+		select a.element_guid,
+		       a.element_id,
+		       a.element_related_guid,
+		       a.element_width,
+		       b.query_guid,
+		       b.query_name,
+		       b.query_column,
+		       b.query_desc
+		  from niutal_designer_func          t,
+		       niutal_designer_func_elements a,
+		       niutal_designer_func_querys   b
+		 where t.func_guid = a.func_guid
+		   and a.element_guid = b.element_guid
+		   and t.func_code = #{func_code}
+		   and t.opt_code = #{opt_code}
+		 ]]>
+	</select>
+	
+   	<!-- 查询功能代码+操作代码对应的自定义字段-->
+	<select id="getFuncElementQueryFieldList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryFieldModel">
+		<![CDATA[
+		select b.table_guid,
+		       b.query_guid,
+		       b.field_guid,
+		       nvl(b.field_id,c.field_id) as field_id, 
+		       nvl(b.field_parent,'') as field_parent, 
+		       nvl(b.field_mapper,'') as field_mapper, 
+		       nvl(b.field_name,c.field_name) as field_name, 
+		       nvl(b.field_alias,'') as field_alias, 
+		       nvl(b.field_name_width,c.field_name_width) as field_name_width, 
+		       nvl(b.field_text,c.field_text) as field_text, 
+     		   nvl(c.field_update_url,'') as field_update_url, 
+		       nvl(c.field_list,'') as field_list, 
+		       nvl(c.field_listKey,'') as field_listKey, 
+		       nvl(c.field_listValue,'') as field_listValue, 
+		       nvl(c.field_headerKey,'') as field_headerKey, 
+		       nvl(c.field_headerValue,'') as field_headerValue,
+		       (case when c.field_guid is not null then '1' else nvl(b.field_shape,'1') end) as field_shape,  
+		       (case when c.field_guid is not null then '' else nvl(b.field_type,'1') end) as field_type,
+		       nvl(c.field_scope,'') as field_scope, 
+		       nvl(c.field_source,'') as field_source, 
+		       nvl(c.field_class,'') || ' ' || nvl(b.field_class,'') as field_class, 
+		       nvl(c.field_desc,'') as field_desc,       
+		       nvl(b.field_attr,'') as field_attr,
+		       nvl(b.field_chosen,'0') as field_chosen,
+		       nvl(b.field_autocomplete,'0') as field_autocomplete,
+		       nvl(b.field_filtertype,'1') as field_filtertype,
+		       nvl(b.field_required,'0') as field_required,
+		       nvl(b.field_placeholder,c.field_placeholder) as field_placeholder,
+		       b.field_ordinal
+		  from niutal_designer_func           t,
+		       niutal_designer_func_elements  t1,               
+		       niutal_designer_func_querys    a,
+		       niutal_designer_query_fields   b,
+		       niutal_query_fields            c
+		 where t.func_guid = t1.func_guid
+		   and t1.element_guid = a.element_guid
+		   and a.query_guid = b.query_guid
+		   and b.field_guid = c.field_guid(+)
+		   and t.func_code = #{func_code}
+		   and t.opt_code = #{opt_code}
+		 order by b.query_guid,b.field_ordinal asc
+		 ]]>
+	</select>
+	
+	
+   	<!-- 查询功能代码+操作代码对应的自定义字段-->
+	<select id="getFuncElementQueryFieldList2" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementQueryFieldModel">
+		<![CDATA[
+		select b.table_guid,
+		       b.query_guid,
+		       b.field_guid,
+		       nvl(b.field_id,c.field_id) as field_id, 
+		       nvl(b.field_parent,'') as field_parent, 
+		       nvl(b.field_mapper,'') as field_mapper, 
+		       nvl(b.field_name,c.field_name) as field_name,
+		       nvl(b.field_alias,'') as field_alias, 
+		       nvl(b.field_name_width,c.field_name_width) as field_name_width, 
+		       nvl(b.field_text,c.field_text) as field_text, 
+     		   nvl(c.field_update_url,'') as field_update_url, 
+		       nvl(c.field_list,'') as field_list, 
+		       nvl(c.field_listKey,'') as field_listKey, 
+		       nvl(c.field_listValue,'') as field_listValue, 
+		       nvl(c.field_headerKey,'') as field_headerKey, 
+		       nvl(c.field_headerValue,'') as field_headerValue,
+		       (case when c.field_guid is not null then '1' else nvl(b.field_shape,'1') end) as field_shape,  
+		       (case when c.field_guid is not null then '' else nvl(b.field_type,'1') end) as field_type,
+		       nvl(c.field_scope,'') as field_scope,       
+		       nvl(c.field_source,'') as field_source, 
+		       nvl(c.field_class,'') || ' ' || nvl(b.field_class,'') as field_class, 
+		       nvl(c.field_desc,'') as field_desc,       
+		       nvl(b.field_attr,'') as field_attr,
+		       nvl(b.field_chosen,'0') as field_chosen,
+		       nvl(b.field_autocomplete,'0') as field_autocomplete,
+		       nvl(b.field_filtertype,'1') as field_filtertype,
+		       nvl(b.field_required,'0') as field_required,
+		       nvl(b.field_placeholder,c.field_placeholder) as field_placeholder,
+		       b.field_ordinal
+		  from niutal_designer_func           t,
+		       niutal_designer_func_elements  t1,               
+		       niutal_designer_func_querys    a,
+		       niutal_designer_query_fields   b,
+		       niutal_query_fields            c
+		 where t.func_guid = t1.func_guid
+		   and t1.element_guid = a.element_guid
+		   and a.query_guid = b.query_guid
+		   and b.field_guid = c.field_guid(+)
+		   and t1.element_guid = #{element_guid}
+		 order by b.field_ordinal asc
+		 ]]>
+	</select>
+	
+ 	<!-- 根据【功能代码+操作代码 】查询查询条件对应的自定义自动完成字段-->
+	<select id="getDesignAutoFieldList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignAutoCompleteFieldModel">
+		<![CDATA[
+		select a.table_guid,
+		       a.auto_guid,
+		       t.element_guid,
+		       a.target_guid,
+		       nvl(a.field_name, b.field_name) field_name,
+		       nvl(a.field_text, b.field_text) field_text,
+		       nvl(a.field_minLength, a.field_minLength) field_minLength,
+		       nvl(a.field_items, b.field_items) field_items,
+		       nvl(a.field_delay, b.field_delay) field_delay,
+		       nvl(a.field_setvalue, b.field_setvalue) field_setvalue,
+		       nvl(a.field_realvalue, b.field_realvalue) field_realvalue,
+		       nvl(a.field_format, b.field_format) field_format,
+		       b.field_action
+		  from (select x1.element_guid, x3.table_guid, x3.field_ordinal
+		          from niutal_designer_func          x0,
+		               niutal_designer_func_elements x1,
+		               niutal_designer_func_querys   x2, 
+		               niutal_designer_query_fields  x3
+		         where x0.func_guid = x1.func_guid
+		           and x1.element_guid = x2.element_guid
+		           and x2.query_guid = x3.query_guid
+		           and x0.func_code = #{func_code}
+		           and x0.opt_code = #{opt_code}
+		         order by x3.field_ordinal asc
+		       ) t,
+		       niutal_designer_auto_fields a,
+		       niutal_autocomplete_fields  b
+		 where t.table_guid = a.target_guid 
+		   and a.auto_guid = b.auto_guid 
+		]]>
+	</select>
+	
+	<!-- 根据SQL查询数据结果集合 -->
+	<select id="getFieldDataListByScope" resultType="com.woshidaniu.common.query.BaseMap" parameterType="string" >
+		${querySQL}
+	</select>
+    
+</mapper>

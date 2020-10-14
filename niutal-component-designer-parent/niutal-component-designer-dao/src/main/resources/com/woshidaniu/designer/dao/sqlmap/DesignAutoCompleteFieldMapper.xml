@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignAutoCompleteFieldDao" >
+
+	<!-- 自定义自动完成字段信息Map映射 -->
+	<resultMap type="com.woshidaniu.designer.dao.entities.DesignAutoCompleteFieldModel" id="designAutoFieldMap">  
+        <result property="field_thumbnail" column="field_thumbnail"  javaType="byte[]" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler" />
+    </resultMap>
+	
+	<select id="getDesignAutoFieldThumbnail" parameterType="string" resultMap="designAutoFieldMap">
+		select t.field_thumbnail from niutal_designer_auto_fields t where t.auto_guid = #{auto_guid}
+	</select>
+	
+  	
+    
+</mapper>

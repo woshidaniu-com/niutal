@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--配置文件的详细介绍可参考:http://limingnihao.iteye.com/blog/1060764-->
+<configuration>
+    <settings>
+        <!--全局地禁用或启用延迟加载。禁用时，所有关联查询会被马上加载default:true-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--当启用时，使用延迟加载属性的对象在发起任何延迟属性的调用时会被完全加载。否则，每个属性在请求时就加载。default:true-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="jdbcTypeForNull" value="VARCHAR"/>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    
+    <typeAliases>
+    	<package name="com.woshidaniu.dao"/>
+    	
+    	<package name="com.woshidaniu.zsxt"/>
+    	<package name="com.woshidaniu.yxxt"/>
+    	<package name="com.woshidaniu.xgxt"/>
+    	<package name="com.woshidaniu.jyxt"/>
+    	<package name="com.woshidaniu.lxxt"/>
+    	<package name="com.woshidaniu.xyxt"/>
+    	
+    	<package name="com.woshidaniu.twxt"/>
+    </typeAliases>
+    
+    <plugins>
+		<plugin interceptor="com.woshidaniu.service.common.sqlplugin.SqlPluginInterceptor">
+			<property name="dialect" value="oracle"/>
+			<property name="scopeId" value=".*ByScope*.*"/><!-- 数据范围拦截,配置以*byScope*开始的Id-->
+			<property name="pageSqlId" value=".*getPaged*.*"/><!-- 分页拦截,配置以*getPaged*开始的Id-->
+		</plugin>
+
+	</plugins>
+</configuration>  

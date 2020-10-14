@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.pwdmgr.dao.daointerface.VerifiDao">
+	
+	<resultMap type="com.woshidaniu.pwdmgr.dao.entities.VerifiModel" id="VerifiMap">
+		<id property="id" column="verifi_id"/>  
+	    <result property="name" column="verifi_name"/>
+	    <result property="label" column="verifi_label"/> 
+	    <result property="desc" column="verifi_desc"/>
+	    <result property="rules" column="verifi_rules"/>
+	    <result property="required" column="required"/>
+	    <result property="status" column="verifi_stat"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.woshidaniu.pwdmgr.dao.entities.VerifiModel">
+		INSERT INTO niutal_PWD_VERIFI(verifi_name,verifi_label,verifi_desc,verifi_rules,required,verifi_stat) 
+		VALUES(#{name},#{label},#{desc},#{rules},#{required},'1')
+	</insert>
+	
+	<delete id="delete" parameterType="com.woshidaniu.pwdmgr.dao.entities.VerifiModel">
+		DELETE FROM niutal_PWD_VERIFI WHERE　VERIFI_ID = #{id} 
+	</delete>
+	
+	<update id="update" parameterType="com.woshidaniu.pwdmgr.dao.entities.VerifiModel">
+		update niutal_PWD_VERIFI t
+		   set verifi_name  = #{name},
+		       verifi_label = #{label},
+		       verifi_desc  = #{desc},
+		       verifi_rules = #{rules},
+		       required     = #{required},
+		       verifi_stat  = #{status}
+		 where t.verifi_id = #{id}
+	</update>
+	 
+	<select id="getModel" parameterType="com.woshidaniu.pwdmgr.dao.entities.VerifiModel" resultMap="VerifiMap">
+		SELECT verifi_id,verifi_name,verifi_label,verifi_desc,verifi_rules,required,verifi_stat FROM niutal_PWD_VERIFI WHERE　VERIFI_ID = #{id}
+	</select>
+	
+	<select id="getModelList" parameterType="com.woshidaniu.pwdmgr.dao.entities.VerifiModel" resultMap="VerifiMap">
+		SELECT verifi_id,verifi_name,verifi_label,verifi_desc,verifi_rules,required,verifi_stat FROM niutal_PWD_VERIFI
+		<where>
+			<if test="status != null and status != '' ">
+				and verifi_stat = #{status}
+			</if>
+		</where>
+		ORDER BY VERIFI_ID
+	</select>
+	  
+</mapper>

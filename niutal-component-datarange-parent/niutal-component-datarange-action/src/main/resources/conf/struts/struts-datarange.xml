@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+	<!-- 数据范围 -->
+	<package name="datarange" namespace="/datarange" extends="configuration">
+		
+		<!-- 数据范围对象ACTION -->
+		<action name="sjfwdx_*" class="com.woshidaniu.datarange.action.SjfwdxAction" method="{1}">
+			<result name="testIndex">/WEB-INF/pages/globalweb/comp/xtgl/sjfw/html_index.jsp</result>
+		</action>
+		
+		<!-- 用户的角色数据范围管理 ACTION-->
+		<action name="yhjssjfw_*" class="com.woshidaniu.datarange.action.YhjsSjfwAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comp/xtgl/sjfw/{1}.jsp</result>
+			<result name="cxSjsq">/WEB-INF/pages/globalweb/comp/xtgl/sjfw/cxSjsq.jsp</result>
+			<result name="szSjsq">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/szSjsq.jsp</result>
+		</action>
+		
+	</package>
+	
+</struts>

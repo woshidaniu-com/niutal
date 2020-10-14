@@ -1,0 +1,145 @@
+.header-3 {
+	background-color: #4889F5;
+	height: 50px;
+	line-height: 50px;
+	padding: 0 20px;
+	font-size: 18px;
+	color: #fff;
+	font-weight: 600;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 99;
+}
+
+.container {
+	background-color: #fff;
+	padding: 20px;
+	margin: 80px auto 20px;
+}
+
+.wjdc .title {
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 50px;
+}
+
+.wjdc .tip {
+	background-color: #F6F5F5;
+	line-height: 50px;
+	padding: 0 15px;
+}
+
+.wjdc .content {
+	margin: 15px 0;
+}
+
+.wjdc .item {
+	margin-bottom: 15px;
+}
+
+.wjdc .default-radio+label:after {
+	top: 7px;
+}
+
+.wjdc .default-checkbox+label:after {
+	top: 2px;
+}
+
+.wjdc .default-radio+label:before, .wjdc .default-checkbox+label:before
+	{
+	top: 2px;
+}
+
+.wjdc .answer {
+	margin-top: 10px;
+}
+
+.wjdc label .form-control {
+	width: auto;
+	display: inline-block;
+	margin-left: 15px;
+	height: 20px;
+}
+
+.wjdc .tip-2 {
+	color: #999;
+	line-height: 25px;
+	padding: 0 15px;
+}
+
+.wjdc .btn {
+	color: #fff !important;
+}
+
+.wjdc .submit {
+	margin-left: 45%;
+	padding: 15px;
+}
+.wjdc textarea {
+	height: 150px;
+}
+
+.wjdc label {
+	font-weight: 400;
+}
+.wj-blue-h3 {
+	color: #3B7ED2;
+	font-size: 20px;
+}
+.col-sm-12 {
+    /**height: 40px;**/
+}
+.st_finish .question{
+	background-color: #63cab654;	
+}
+.question .question_title_ul{
+	list-style: none;
+	height: 35px;
+}
+.question li{
+	float: left;	
+	padding-right: 15px;
+}
+.question .stmc_title{
+	padding-top: 5px;
+}
+.st_tips{
+	font-size: 12px;
+	padding-top: 8px;
+	color: #dd5a43;
+}
+.st_red{
+	font-size: 30px;
+	color: #dd5a43;
+}
+.sort_div{
+	float:left;
+	width:40%;
+}
+.sort_div_left{
+	padding-top:2px;
+	padding-left:4px;
+	box-shadow: 1px 2px 6px #000 inset;
+	float:left;
+	border-style: outset;
+	border-width: 1px;
+	width: 85%;
+}
+.sort_div_left li{
+	cursor:pointer;
+}
+.sort_choose{
+	background-color: rgb(99,163,255);
+	color: white;
+}
+.sort_div_right{
+	margin-left:5px;
+	float:left;
+	width:10%;
+}
+.sort_div_right button{
+	margin-top:10%;
+	clear:both;
+}

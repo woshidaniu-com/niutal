@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IBaseWidgetResourceDao" >
+
+	<!-- 分页查询【组件脚本样式资源】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel">
+		select t.widget_name,
+		       a.resource_guid,
+		       a.resource_desc,
+		       a.resource_href,
+		       a.resource_from,
+		       a.resource_ordinal
+		  from niutal_widget_details   t, 
+		       niutal_widget_resources a
+		 where t.widget_guid = a.widget_guid
+     	 <if test=" widget_name != null and widget_name != '' ">
+     		and t.widget_name like '%'||#{widget_name}||'%' 
+     	 </if>
+	</select>
+	
+	<!-- 根据功能组件ID查询该【组件脚本样式资源】信息-->
+	<select id="getWidgetResourceList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel">
+		select t.widget_name,
+		       a.resource_guid,
+		       a.resource_desc,
+		       a.resource_href,
+		       a.resource_from,
+		       a.resource_ordinal
+		  from niutal_widget_details   t, 
+		       niutal_widget_resources a
+		 where t.widget_guid = a.widget_guid 
+	       and t.widget_guid = #{widget_guid}
+	</select>
+	
+	<!-- 查询【组件脚本样式资源】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel">
+		select t.widget_name,
+		       a.resource_guid,
+		       a.resource_desc,
+		       a.resource_href,
+		       a.resource_from,
+		       a.resource_ordinal
+		  from niutal_widget_details   t, 
+		       niutal_widget_resources a
+		 where t.widget_guid = a.widget_guid 
+	       and a.resource_guid = #{resource_guid}
+	</select>
+	
+	<!-- 添加【组件脚本样式资源】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel" >
+	insert into niutal_widget_resources(
+				widget_guid,
+				resource_desc,
+				resource_href,
+				resource_from,
+				resource_ordinal)
+	values(		#{widget_guid},
+				#{resource_desc,jdbcType=VARCHAR},
+				#{resource_href,jdbcType=VARCHAR},
+				#{resource_from,jdbcType=VARCHAR},
+				#{resource_ordinal,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 查询【组件脚本样式资源】被使用次数 -->
+	<select id="getUseCount" parameterType="string" resultType="int"  >
+		select count(1)
+		  from niutal_designer_func_widgets t
+		 where exists (select '1'
+		          from niutal_widget_resources a
+		         where a.widget_guid = t.widget_guid
+		           and a.resource_guid = #{resource_guid}
+		       )
+	</select>
+	
+	<!-- 删除【组件脚本样式资源】信息-->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+	<![CDATA[
+		delete niutal_widget_resources t where t.resource_guid = #{resource_guid}
+	]]>
+	</delete>
+	
+	<!-- 更新【组件脚本样式资源】信息-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetResourceModel">
+	 update niutal_widget_resources t
+		set t.resource_desc 	= #{resource_desc,jdbcType=VARCHAR},
+			t.resource_href 	= #{resource_href,jdbcType=VARCHAR},
+			t.resource_from 	= #{resource_from,jdbcType=VARCHAR},
+			t.resource_ordinal 	= #{resource_ordinal,jdbcType=VARCHAR}
+	  where t.resource_guid = #{resource_guid}
+	</update>
+    
+</mapper>

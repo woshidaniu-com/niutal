@@ -1,0 +1,48 @@
+{
+  "name": "ng-formio",
+  "version": "2.17.0",
+  "authors": [
+    "Travis Tidwell <travis@form.io>"
+  ],
+  "main": [
+    "dist/formio.js",
+    "css/formio.css"
+  ],
+  "description": "The Form.IO form renderer.",
+  "keywords": [
+    "angularjs",
+    "ionic",
+    "form"
+  ],
+  "dependencies": {
+    "angular": "^1.6.4",
+    "ng-file-upload": "^12.2.13",
+    "angular-sanitize": "^1.6.4",
+    "ng-dialog": "^1.0.1",
+    "angular-moment": "^1.0.1",
+    "bootstrap": "^3.3.7",
+    "bootstrap-ui-datetime-picker": "^2.5.4",
+    "angular-ui-mask": "formio/ui-mask#1.8.8-beta.1",
+    "angular-file-saver": "^1.1.3",
+    "angular-ui-select": "^0.19.8",
+    "angular-bootstrap": "^2.5.0"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/formio/ngFormio",
+  "_release": "2.17.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.17.0",
+    "commit": "edd4dd25c3efd096db35c91dde5259cfbce7a46a"
+  },
+  "_source": "https://github.com/formio/ngFormio.git",
+  "_target": "^2.17.0",
+  "_originalSource": "ng-formio"
+}

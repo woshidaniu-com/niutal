@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- Spring3.0以上必须增加ignore-unresolvable="true"否则报错 
+	<context:property-placeholder location="classpath*:system.properties" ignore-unresolvable="true" />  -->
+	<util:properties id="dbProps" location="classpath:db.properties" />
+	
+	<bean id="wall-filter-config" class="com.alibaba.druid.wall.WallConfig" init-method="init">
+		  <property name="dir" value="META-INF/druid/wall/oracle" />
+	      <property name="commentAllow" value="true" />
+	      <property name="noneBaseStatementAllow" value="true" />
+	      <property name="multiStatementAllow" value="true" />
+	</bean>
+
+  	<bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+      	<property name="config" ref="wall-filter-config" />
+    </bean>
+    
+	<!-- 配置数据源 -->
+	<bean name="dataSource" class="com.woshidaniu.db.core.datasource.NewDruidDataSource" init-method="init" destroy-method="close"  scope="singleton">
+		
+		<!--这一项可配可不配，如果不配置druid会根据url自动识别dbType，然后选择相应的driverClassName-->
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<!--jdbcUrl: 连接数据库的url -->
+		<property name="url" value="#{dbProps['db.url']}"/>
+		<!--username: 连接数据库的用户名 -->
+		<property name="username" value="#{dbProps['db.username']}"/>
+		<!--password: 连接数据库的密码 -->
+		<property name="password" value="#{dbProps['db.password']}"/>
+		<!--connectionProperties: 连接数据库的额外参数 -->
+		<property name="connectionProperties" value="#{dbProps['db.connectionProperties']}" />
+		
+		<!-- druid 连接池参数 -->
+		
+		<!--配置初始化大小、最小、最大 连接池数量-->
+		<!--initialSize: 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时 -->
+		<property name="initialSize" value="#{dbProps['db.initialSize']}"></property>
+		<!--minIdle: 连接池最小连接数量 -->
+		<property name="minIdle" value="#{dbProps['db.minIdle']}" /> 
+		<!--maxActive: 连接池最大连接数量 -->
+		<property name="maxActive" value="#{dbProps['db.maxActive']}"></property>
+	    <!-- 获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+	    <property name="maxWait" value="#{dbProps['db.maxWait']}"></property> -->
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒;有两个含义：1) Destroy线程会检测连接的间隔时间 2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明 -->
+	    <property name="timeBetweenEvictionRunsMillis" value="#{dbProps['db.timeBetweenEvictionRunsMillis']}"></property>
+	    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒  -->
+	    <property name="minEvictableIdleTimeMillis" value="#{dbProps['db.minEvictableIdleTimeMillis']}"></property>
+	    <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="#{dbProps['db.removeAbandoned']}" />
+        <!-- 超过时间限制多长，单位是毫秒 ，180000毫秒=3分钟 -->
+        <property name="removeAbandonedTimeout" value="#{dbProps['db.removeAbandonedTimeout']}" />
+		<!-- 用来检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会其作用。-->
+	    <property name="validationQuery" value="#{dbProps['db.validationQuery']}"></property>
+	    <!-- 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。 -->
+	    <property name="testWhileIdle" value="#{dbProps['db.testWhileIdle']}"></property>
+	    <!-- 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 -->
+	    <property name="testOnBorrow" value="#{dbProps['db.testOnBorrow']}"></property>
+	    <!-- 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 -->
+	    <property name="testOnReturn" value="#{dbProps['db.testOnReturn']}"></property>
+	    <!-- 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。5.5及以上版本有PSCache，建议开启。 -->
+	    <property name="poolPreparedStatements" value="#{dbProps['db.poolPreparedStatements']}"></property>
+	    <!-- 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100--> 
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="#{dbProps['db.maxPoolPreparedStatementPerConnectionSize']}"></property>
+		<!-- Druid的监控统计功能:属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：                 
+			#监控统计用的filter:stat
+			#日志用的filter:slf4j
+			#防御SQL注入的filter:wall 
+		-->  
+		<property name="filters" value="#{dbProps['db.filters']}"></property>
+		<!-- SQL安全过滤 -->
+		<property name="proxyFilters">
+          	<list>
+              	<ref bean="wall-filter"/>
+          	</list>
+     	</property>
+		
+	</bean>
+
+	<!-- 事务管理对象 -->
+	<bean name="transactionManager" id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 支持事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 管理事务操作 -->
+	<aop:config>
+		<aop:pointcut id="servicesPointcut" expression="execution(* com.woshidaniu..service..*.*(..))  and !execution(* com.woshidaniu.workflow.service..*(..)) " />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="servicesPointcut" />
+	</aop:config>
+	
+	<!-- 事务控制 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="zj*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="xg*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="sc*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="*" propagation="SUPPORTS" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- Session工厂  --> 
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:conf/comm/sqlMapConfig.xml" />
+		<property name="mapperLocations" value="classpath*:com/woshidaniu/**/sqlmap/**/*.xml" />
+	</bean>
+	
+	<!-- Dao接口扫描 -->
+    <bean id="mapperScannerConfigurer"  class="com.woshidaniu.orm.mybatis.spring.mapper.MybatisMapperScannerConfigurer">
+    	<!-- 记得加注解 @Repository -->
+    	<property name="annotationClass" value="org.springframework.stereotype.Repository" />
+    	<!-- 自动扫描Dao的根目录，多个使用,分割 -->
+    	<property name="basePackage" value="com.woshidaniu.**.dao" />
+   	 	<!-- 在单数据源情况下的可以不写,如果要配置多数据源,必须加上 -->
+     	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="serviceFactory" class="com.woshidaniu.common.factory.ServiceFactory" />
+	
+	<!-- 
+		<context:component-scan/>标签注意事项：
+		1、<context:component-scan>有一个use-default-filters属性，该属性值为true时表示会扫描指定包下的全部的标有
+			@Component、@Repository、@Service和@Controller的类并注册成bean;
+		2、因为base-package="com.woshidaniu"在这个目录下包含了Action,Service,Dao;
+			如果配置文件中<context:component-scan base-package="com.woshidaniu"/>未指定 use-default-filters="false" ，
+			 默认不仅仅扫描指定规则的Bean，还扫描标注有@Component、@Repository、@Service和@Controller的Bean，可能造成一些问题。
+			 原因可参见网络博客：http://jinnianshilongnian.iteye.com/blog/1762632
+		3、 仅仅指定base-package的扫描方式粒度比较，我们需要指定扫描和不扫描的规则，获得更好的扫描效率。此时子标签
+			<context:incluce-filter>和<context:include-filter> 就起到了勇武之地。
+		       如下所示：
+			<context:component-scan base-package="com.woshidaniu" use-default-filters="false">  
+				<context:include-filter type="regex" expression="com.woshidaniu.*.impl.*"/>
+				<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+			</context:component-scan>  
+		      备注：
+		    context:exclude-filter 子节点指定排除哪些指定表达式的组件
+    		context:include-filter 子节点指定包含哪些表达式的组件，该子节点需要use-default-filters="false"配合使用（如果use-default-filters="ture"
+    		则使用系统默认扫描所有带有@Component@Controller@Service@Repository的组件）
+		4、filter标签在Spring3有五个type，如下：
+		|	Filter Type |	Examples Expression 		|	Description														|
+		|	annotation 	|	org.example.SomeAnnotation 	|	符合SomeAnnoation的target class									|
+		|	assignable 	|	org.example.SomeClass 		|	指定class或interface的全名											|
+		|	aspectj 	|	org.example..*Service+ 		|	AspectJ语法														|
+		|	regex 		|	org\.example\.Default.* 	|	Regelar Expression												|
+		|	custom 		|	org.example.MyTypeFilter 	|	Spring3新增自訂Type，实作org.springframework.core.type.TypeFilter	|
+    
+	 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.woshidaniu.**" />
+	<context:component-scan base-package="com.woshidaniu.**.impl" />
+	
+</beans>

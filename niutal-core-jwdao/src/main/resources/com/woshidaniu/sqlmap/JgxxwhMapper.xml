@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IJgxxwhDao" >
+
+    <!-- 分页查询机构信息-->
+    <select id="getPagedByScope" parameterType="com.woshidaniu.entities.JgxxwhModel" resultType="com.woshidaniu.entities.JgxxwhModel">
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       (select jgmc from niutal_xtgl_jgdmb where jg_id = t.lssjjgid) lssjjgmc,
+		       t.lsxqid,
+		       (select xqmc from niutal_xtgl_xqdmb where xqh_id = t.lsxqid) lsxqmc,
+		       t.jgyxbs,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.jlny,
+		       t.jgyzbm,
+		       t.fzrjgh,
+		       (select xm from jw_jg_jzgxxb where jgh = t.fzrjgh) xm,
+		       t.kkxy,
+		       t.jglb,
+		       t.jgjj,
+  		       t.kkbmxh,
+		       t.xsxyxh,
+		       case when length(t.jgjj)>20 then to_char(substr(t.jgjj,0,20))||'...' else to_char(t.jgjj) end jgjj_cx
+		  from niutal_xtgl_jgdmb t
+		<where>
+			<if test="jgdm!=null and jgdm!=''">
+				t.jgmc like '%'||#{jgdm}||'%' or t.jgdm like '%'||#{jgdm}||'%'
+			</if>
+		</where>
+    </select>
+    
+    <!-- 修改界面单个查询 -->
+    <select id="getModel" parameterType="com.woshidaniu.entities.JgxxwhModel" resultType="com.woshidaniu.entities.JgxxwhModel">
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       t.lsxqid,
+		       t.jgyxbs,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.jlny,
+		       t.jgyzbm,
+		       t.fzrjgh,
+		       (select xm from jw_jg_jzgxxb where jgh = t.fzrjgh) xm,
+		       t.kkxy,
+		       t.jglb,
+   		       t.kkbmxh,
+		       t.xsxyxh,
+		       t.jgjj
+		  from niutal_xtgl_jgdmb t
+			where jg_id=#{jg_id}
+    </select>
+    
+    <!-- 更新机构信息 -->
+    <update id="update" parameterType="com.woshidaniu.entities.JgxxwhModel" >
+    	update niutal_xtgl_jgdmb t
+    	<set>
+    		<if test="jgdm!=null and jgdm!=''">
+    			t.jgdm=#{jgdm},
+    		</if>
+    		<if test="jgmc!=null and jgmc!=''">
+    			t.jgmc=#{jgmc},
+    		</if>
+    		<if test="jgywmc!=null and jgywmc!=''">
+    			t.jgywmc=#{jgywmc},
+    		</if>
+    		<if test="jgjc!=null and jgjc!=''">
+    			t.jgjc=#{jgjc},
+    		</if>
+    		<if test="jgjp!=null and jgjp!=''">
+    			t.jgjp=#{jgjp},
+    		</if>
+    		<if test="jgdz!=null and jgdz!=''">
+    			t.jgdz=#{jgdz},
+    		</if>
+    		<if test="lssjjgid!=null and lssjjgid!=''">
+    			t.lssjjgid=#{lssjjgid},
+    		</if>
+    		<if test="lsxqid!=null and lsxqid!=''">
+    			t.lsxqid=#{lsxqid},
+    		</if>
+    		<if test="jgyxbs!=null and jgyxbs!=''">
+    			t.jgyxbs=#{jgyxbs},
+    		</if>
+    		<if test="sfjxbm!=null and sfjxbm!=''">
+    			t.sfjxbm=#{sfjxbm},
+    		</if>
+    		<if test="sfst!=null and sfst!=''">
+    			t.sfst=#{sfst},
+    		</if>
+    		<if test="jlny!=null and jlny!=''">
+    			t.jlny=#{jlny},
+    		</if>
+    		<if test="jgyzbm!=null and jgyzbm!=''">
+    			t.jgyzbm=#{jgyzbm},
+    		</if>
+    		<if test="fzrjgh!=null and fzrjgh!=''">
+    			t.fzrjgh=#{fzrjgh},
+    		</if>
+    		<if test="kkxy!=null and kkxy!=''">
+    			t.kkxy=#{kkxy},
+    		</if>
+    		<if test="jglb!=null and jglb!=''">
+    			t.jglb=#{jglb},
+    		</if>
+    		<if test="jgjj!=null and jgjj!=''">
+    			t.jgjj=#{jgjj},
+    		</if>
+    		<if test="kkbmxh!=null and kkbmxh!=''">
+    			t.kkbmxh=#{kkbmxh},
+    		</if>
+    		<if test="xsxyxh!=null and xsxyxh!=''">
+    			t.xsxyxh=#{xsxyxh},
+    		</if>
+    		
+    	</set>
+    	   where t.jg_id=#{jg_id}
+    </update>
+    
+	<insert id="insert" parameterType="com.woshidaniu.entities.JgxxwhModel">
+		insert into niutal_xtgl_jgdmb(jgdm,jgmc,jgywmc,jgjc,jgjp,jgdz,lssjjgid,lsxqid,jgyxbs,sfjxbm,sfst,jlny,jgyzbm,fzrjgh,kkxy,jglb,jgjj,kkbmxh,xsxyxh)
+		values(#{jgdm,jdbcType=VARCHAR},#{jgmc,jdbcType=VARCHAR},#{jgywmc,jdbcType=VARCHAR},#{jgjc,jdbcType=VARCHAR},#{jgjp,jdbcType=VARCHAR},#{jgdz,jdbcType=VARCHAR},
+		#{lssjjgid,jdbcType=VARCHAR},#{lsxqid,jdbcType=VARCHAR},#{jgyxbs,jdbcType=VARCHAR},#{sfjxbm,jdbcType=VARCHAR},#{sfst,jdbcType=VARCHAR},#{jlny,jdbcType=VARCHAR},
+		#{jgyzbm,jdbcType=VARCHAR},#{fzrjgh,jdbcType=VARCHAR},#{kkxy,jdbcType=VARCHAR},#{jglb,jdbcType=VARCHAR},#{jgjj,jdbcType=VARCHAR},#{kkbmxh,jdbcType=NUMERIC},#{xsxyxh,jdbcType=NUMERIC})
+	</insert>
+	
+	<delete id="delete" parameterType="com.woshidaniu.entities.JgxxwhModel">
+		delete niutal_xtgl_jgdmb where jg_id = #{jg_id}
+	</delete>
+
+
+</mapper>

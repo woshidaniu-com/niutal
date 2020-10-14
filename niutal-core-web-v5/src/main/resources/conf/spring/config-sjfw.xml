@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="xydmSjfwMap" key-type="java.lang.String"  value-type="java.lang.Object" >
+		<entry key="sjdm" value="xydm"  />
+		<entry key="sjmc" value="学院" />
+		<entry key="service" value="bmdmService" /><!-- 该service需实现com.woshidaniu.common.datarange.DataItemService接口 -->
+	</util:map>
+	
+	<util:map id="zydmSjfwMap" key-type="java.lang.String"  value-type="java.lang.Object" >
+		<entry key="sjdm" value="zydm" />
+		<entry key="sjmc" value="专业" />
+		<entry key="service" value="zydmService" />
+	</util:map>
+	
+	<bean id="sjfwList" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="xydmSjfwMap"/>
+				<ref bean="zydmSjfwMap"/>
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>

@@ -1,0 +1,171 @@
+
+新结构开发注意事项：
+
+
+1、多个chosen列表在同一个元素内需要在该组下来列表后面初始化chosen
+2、全局引用文件删除：
+	请在各自的jsp页面删除以下多余的引用 
+	
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/uiwidget/uiwidget.utils.commons-min.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/uiwidget/uiwidget.utils.concatenation-min.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/uiwidget/uiwidget.utils.array-1.0.0.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript"src="<%=systemPath %>/js/jquery/uiwidget/uiwidget.utils.wrap-min.js?ver=<%=jsVersion%>"></script>
+
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/validation/jquery.validate.idcard-min.js"></script>
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/validation/jquery.validate.password-min.js"></script>
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/uiwidget/uiwidget.utils.strength-min.js"></script>
+
+<script src="<%=stylePath %>/js/jquery.scroll/jquery.mousewheel.min.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/uiwidget/uiwidget.utils.date-min.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/jqGrid4.6/uiwidget.jqGrid-min.js?ver=<%=jsVersion%>" ></script>
+ 
+3、日历组件引用
+
+<script type="text/javascript" src="<%=systemPath%>/js/My97DatePicker/WdatePicker.js?ver=<%=jsVersion%>"></script>
+改为
+<script type="text/javascript" src="<%=stylePath %>/js/plugins/My97DatePicker/WdatePicker.js?ver=<%=jsVersion%>"></script>
+	
+4、jquery.ui组件引用
+
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/jquery-ui-1.10.3/jquery.ui.core.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/jquery-ui-1.10.3/jquery.ui.widget.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/jquery-ui-1.10.3/jquery.ui.mouse.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/jquery-ui-1.10.3/jquery.ui.selectable.js?ver=<%=jsVersion%>"></script>
+删除以上代码;已全局引用
+
+5、当页面已有jqGrid4.6.ini时不需要tooltips.ini
+
+6、简单的校验组件
+
+如果页面没有jqGrid.ini则删除
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/validation/uiwidget.simplevalidate-1.0.1.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/validation/uiwidget.simplevalidate-1.0.1.js"></script>
+否则改为：
+<script type="text/javascript" src="<%=stylePath %>/js/plugins/validation/jquery.simplevalidate-min.js?ver=<%=jsVersion%>"></script>
+ 
+
+7、全局变量引用调整：
+
+<%
+	String systemPath = request.getContextPath();
+%>
+改为：
+<%@ include file="/WEB-INF/pages/globalweb/head/pagehead_v5.ini"%> 
+
+8、凡是没有加上时间搓的js和css引用，都需要加上
+
+?ver=<%=jsVersion%>
+?ver=<%=cssVersion%>
+
+9、treeview插件引用修改：
+
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/ztree/jquery.treeview.js?ver=<%=jsVersion%>"></script>
+改为：
+<script type="text/javascript" src="<%=stylePath %>/js/treeview/jquery.treeview-min.js?ver=<%=jsVersion%>"></script>
+
+10、百度图表修改：
+
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/echarts/echarts.js?ver=<%=jsVersion%>"></script>
+改为：
+<script type="text/javascript" src="<%=stylePath%>/js/plugins/echarts/echarts.js?ver=<%=jsVersion%>"></script>
+
+ 11、引用地址修改：
+
+<%=stylePath%>js
+改为：
+<%=stylePath%>/js
+
+12、修改 loadResources 的加载方式 为
+jQuery(function($){
+
+});
+
+13、去除对operation.js的方法依赖：使用替代方法替换使用的operation.js中的方法
+ 
+14、
+ <script type="text/javascript" src="<%=systemPath %>/js/jquery/fixedtop/uiwidget.fixedtop-1.0.0.js?ver=<%=jsVersion%>"></script>
+ 改为：
+ <%@ include file="/WEB-INF/pages/globalweb/head/fixedtop.ini"%>
+ 
+15、ztree引用修改：
+
+<link rel="stylesheet" href="<%=systemPath %>/js/jquery/ztree/css/zTreeStyle/zTreeStyle.css?ver=<%=cssVersion%>" type="text/css">
+<link rel="stylesheet" href="<%=systemPath %>/js/jquery/ztree/css/tree.css?ver=<%=cssVersion%>" type="text/css">
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/ztree/jquery.ztree.core-3.5.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/ztree/jquery.ztree.excheck-3.5.js?ver=<%=jsVersion%>"></script>
+改为：
+ <%@ include file="/WEB-INF/pages/globalweb/head/ztree.ini"%>
+
+16、所有标注为作废的方法，请将引用对象修改为其父类对象；如果名称不同需要全部替换
+
+17、dropdown引用修改：
+ 
+<link type="text/css" rel="stylesheet" href="<%=systemPath %>/js/jquery/bootstrap/dropdown/jquery.dropdown.css?ver=<%=cssVersion%>" />
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/bootstrap/dropdown/jquery.dropdown.js?ver=<%=jsVersion%>"></script>
+
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/dropdown.ini"%>
+
+18、contextmenu引用修改：
+
+<script type="text/javascript" src="<%=systemPath%>/js/jquery/contextmenu/jquery.contextmenu.js?ver=<%=jsVersion%>"></script>
+<link rel="stylesheet" href="<%=systemPath%>/js/jquery/contextmenu/jquery.contextmenu.css?ver=<%=cssVersion%>">
+
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/contextmenu.ini"%>
+
+19、countdown引用修改：
+
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/countdown/jquery.countdown.js?ver=<%=jsVersion%>"></script>
+
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/countdown.ini"%>
+
+20、echarts引用修改：
+
+<script type="text/javascript" src="<%=stylePath%>/js/plugins/echarts/echarts.js?ver=<%=jsVersion%>"></script>
+
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/echarts.ini"%>
+
+
+20、dragsort引用修改：
+
+<script type="text/javascript" src="<%=stylePath%>/js/jquery.dragsort/jquery.dragsort.js?ver=<%=jsVersion%>"></script>
+
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/dragsort.ini"%>
+
+21、syncscroll引用修改：
+
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/syncscroll/uiwidget.syncscroll-1.0.0-min.js?ver=<%=jsVersion%>"></script>
+
+改为：
+
+<script type="text/javascript" src="<%=systemPath %>/js/plugins/jquery.syncscroll-min.js?ver=<%=jsVersion%>"></script>
+
+
+22、daterangepicker引用修改：
+
+<link type="text/css" rel="stylesheet" href="<%=systemPath %>/js/jquery/boostrap-DateRangepicker/css/daterangepicker-bs.css?ver=<%=cssVersion%>" />
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/boostrap-DateRangepicker/js/moment.min.js?ver=<%=jsVersion%>"></script>
+<script type="text/javascript" src="<%=systemPath %>/js/jquery/boostrap-DateRangepicker/js/daterangepicker.js?ver=<%=jsVersion%>"></script>
+
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/daterangepicker.ini"%>
+
+23、fullavatareditor引用修改：
+
+<script type="text/javascript" src="<%=systemPath%>/js/fullavatareditor/scripts/swfobject.js"></script>
+<script type="text/javascript" src="<%=systemPath%>/js/fullavatareditor/scripts/fullAvatarEditor.js"></script>
+改为：
+
+<%@ include file="/WEB-INF/pages/globalweb/head/fullavatareditor.ini"%>
+
+

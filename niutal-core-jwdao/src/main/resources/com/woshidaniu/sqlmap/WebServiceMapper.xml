@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IWebServiceDao" >
+	<!-- 查询学生成绩列表 -->
+	<select id="getXscjList" parameterType="com.woshidaniu.entities.webservice.ParamModel" resultType="com.woshidaniu.entities.webservice.XscjModel">
+		select t.xnmc,t.xqmc,t.kcmc,t.cj,t.cjxz,t.kcxz
+		  from (
+				select (select xn.xnmc from jw_jcdm_xnb xn where xn.xnm = cj.xnm) as xnmc,
+				       (select xq.mc from niutal_xtgl_jcsjb xq where xq.lx = '0001' and xq.dm = cj.xqm) as xqmc,
+				       kc.kcmc,
+				       cj.cj,
+				       (select cjxz.mc from niutal_xtgl_jcsjb cjxz where cjxz.lx = '0034' and cjxz.dm = cj.cjxzm) as cjxz,
+				       decode(cj.kcbj, '0', '主修', '1', '辅修', '2', '二专业', '3', '二学位', '') as kcxz,
+				       row_number() over(order by xnm desc, xqm desc) rn
+				  from jw_cj_xscjb cj, jw_jh_kcdmb kc
+				 where cj.kch_id = kc.kch_id
+				   and cj.xh_id = #{yhid}
+			   ) t
+		<![CDATA[ where rn <= #{num}]]>
+	</select>
+	
+	<!-- 查询通知公告列表 -->
+	<select id="getTzggList" parameterType="com.woshidaniu.entities.webservice.ParamModel" resultType="com.woshidaniu.entities.webservice.TzggModel">
+		<if test="yhlx==1">
+		 <![CDATA[
+	       select  * from  (
+	         select  a.xwbh,substr(a.xwbt, 0, 25) || case when length(a.xwbt) > 25 then '...' end xwbt,
+				   a.sfzd,substr(a.fbsj, 0, 10) fbsj,a.sffb,a.fbr,'xtgl/xwgl_ckXw.html?xwbh='||a.xwbh url
+	             from niutal_xtgl_xwfbb a where exists (select 'x' from (
+	        select  a.xwbh from niutal_XTGL_XWFBB a where exists(
+	        select 'X' from  niutal_xtgl_tzmxxsdxb t1,(
+	        select (select xqh_id from niutal_xtgl_bjdmb where bh_id=m.bh_id)xqh_id,m.jg_id,m.zyh_id,m.zyfx_id,m.njdm_id,m.bh_id,n.xbm,m.xslbdm,m.pyccdm,m.xh_id
+	        from jw_xjgl_xsxjxxb m,jw_xjgl_xsjbxxb n where m.xh_id=n.xh_id and n.xh=#{yhm}
+	        )t2 where t1.xzlb = 'mx' and nvl(t1.xqh_id,t2.xqh_id)=t2.xqh_id and
+	          nvl(t1.jg_id,t2.jg_id)=t2.jg_id and nvl(t1.zyh_id,t2.zyh_id)=t2.zyh_id and 
+	          nvl(t1.zyfx_id,t2.zyfx_id)=t2.zyfx_id and nvl(t1.njdm_id,t2.njdm_id)=t2.njdm_id and
+	          nvl(t1.bh_id,t2.bh_id)=t2.bh_id and nvl(t1.xbm,t2.xbm)=t2.xbm and
+	          nvl(t1.xslbm,t2.xslbdm)=t2.xslbdm and nvl(t1.ccdm,t2.pyccdm)=t2.pyccdm and 
+	          nvl(t1.xh_id,t2.xh_id)=t2.xh_id and t1.mxdxbh = a.mxdxbh  
+	      ) and not exists (select 'X' from  niutal_xtgl_tzmxxsdxb t1,(
+	          select (select xqh_id from niutal_xtgl_bjdmb where bh_id=m.bh_id)xqh_id,m.jg_id,m.zyh_id,m.zyfx_id,m.njdm_id,m.bh_id,n.xbm,m.xslbdm,m.pyccdm,m.xh_id
+	          from jw_xjgl_xsxjxxb m,jw_xjgl_xsjbxxb n where m.xh_id=n.xh_id and n.xh=#{yhm}
+	      )t2 where  t1.xzlb = 'xz' and nvl(t1.xqh_id,t2.xqh_id)=t2.xqh_id and
+	        nvl(t1.jg_id,t2.jg_id)=t2.jg_id and nvl(t1.zyh_id,t2.zyh_id)=t2.zyh_id and 
+	        nvl(t1.zyfx_id,t2.zyfx_id)=t2.zyfx_id and nvl(t1.njdm_id,t2.njdm_id)=t2.njdm_id and
+	        nvl(t1.bh_id,t2.bh_id)=t2.bh_id and nvl(t1.xbm,t2.xbm)=t2.xbm and
+	        nvl(t1.xslbm,t2.xslbdm)=t2.xslbdm and nvl(t1.ccdm,t2.pyccdm)=t2.pyccdm and 
+	        nvl(t1.xh_id,t2.xh_id)=t2.xh_id and t1.mxdxbh = a.mxdxbh           
+	       )
+	       union 
+	       select  a.xwbh from niutal_XTGL_XWFBB a where not exists
+	       (select 'X' from  niutal_xtgl_tzmxxsdxb t1,(
+	          select (select xqh_id from niutal_xtgl_bjdmb where bh_id=m.bh_id)xqh_id,m.jg_id,m.zyh_id,m.zyfx_id,m.njdm_id,m.bh_id,n.xbm,m.xslbdm,m.pyccdm,m.xh_id
+	          from jw_xjgl_xsxjxxb m,jw_xjgl_xsjbxxb n where m.xh_id=n.xh_id and n.xh=#{yhm}
+	      )t2 where t1.xzlb = 'xz' and nvl(t1.xqh_id,t2.xqh_id)=t2.xqh_id and
+	            nvl(t1.jg_id,t2.jg_id)=t2.jg_id and nvl(t1.zyh_id,t2.zyh_id)=t2.zyh_id and  nvl(t1.zyfx_id,t2.zyfx_id)=t2.zyfx_id and 
+	            nvl(t1.njdm_id,t2.njdm_id)=t2.njdm_id and nvl(t1.bh_id,t2.bh_id)=t2.bh_id and
+	            nvl(t1.xbm,t2.xbm)=t2.xbm and nvl(t1.xslbm,t2.xslbdm)=t2.xslbdm and
+	            nvl(t1.ccdm,t2.pyccdm)=t2.pyccdm and   nvl(t1.xh_id,t2.xh_id)=t2.xh_id and t1.mxdxbh = a.mxdxbh  
+	        ) and not exists(select 'X' from niutal_xtgl_tzmxxsdxb c where c.xzlb = 'mx' and c.mxdxbh = a.mxdxbh)
+	        )t where t.xwbh=a.xwbh) and a.sffb = 1 and a.fbsj <= to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')
+                  order by a.sfzd desc, a.fbsj desc) where  rownum <= #{num}
+    	 ]]>
+		</if>
+		<!-- 任课教师 -->
+		<if test="yhlx==2">
+		 <![CDATA[
+	         select  * from  (
+		         select  a.xwbh,substr(a.xwbt, 0, 25) || case when length(a.xwbt) > 25 then '...' end xwbt,
+					    a.sfzd,substr(a.fbsj, 0, 10) fbsj,a.sffb,a.fbr,'xtgl/xwgl_ckXw.html?xwbh='||a.xwbh url
+		             from niutal_xtgl_xwfbb a where exists (select 'x' from (
+		          select t1.xwbh from niutal_xtgl_xwfbb t1 where exists(
+		           select 'x' from niutal_xtgl_tzmxfxsdxb a,(
+		           select a.xnm,a.xqm,a.xqh_id,(select jg_id from jw_jg_jzgxxb where jgh_id=b.jgh_id)szbmjg_id,
+		           (select kkbm_id from jw_jh_kcdmb where kch_id=a.kch_id)kkbmjg_id,
+		           (select xbm from jw_jg_jzgxxb where jgh_id=b.jgh_id)xbm,b.jgh_id from jw_jxrw_jxbxxb a,jw_jxrw_jxbjsrkb b where a.jxb_id=b.jxb_id
+		           and exists(select 'x' from jw_jg_jzgxxb where jgh_id=b.jgh_id and jgh=#{yhm})
+		           )b
+		           where a.xzlb='mx' and a.jsdm is null  and  nvl(a.xnm,b.xnm)=b.xnm and nvl(a.xqm,b.xqm)=b.xqm
+		           and nvl(a.xqh_id,b.xqh_id)=b.xqh_id and nvl(a.szbmjg_id,b.szbmjg_id)=b.szbmjg_id
+		           and nvl(a.kkbmjg_id,b.kkbmjg_id)=b.kkbmjg_id and nvl(a.xbm,b.xbm)=b.xbm
+		           and nvl(a.jgh_id,b.jgh_id)=b.jgh_id and a.mxdxbh=t1.mxdxbh 
+		         ) and not exists(
+		                select 'x' from niutal_xtgl_tzmxfxsdxb a,(
+		               select a.xnm,a.xqm,a.xqh_id,(select jg_id from jw_jg_jzgxxb where jgh_id=b.jgh_id)szbmjg_id,
+		               (select kkbm_id from jw_jh_kcdmb where kch_id=a.kch_id)kkbmjg_id,
+		               (select xbm from jw_jg_jzgxxb where jgh_id=b.jgh_id)xbm,b.jgh_id from jw_jxrw_jxbxxb a,jw_jxrw_jxbjsrkb b where a.jxb_id=b.jxb_id
+		                and exists(select 'x' from jw_jg_jzgxxb where jgh_id=b.jgh_id and jgh=#{yhm})
+		               )b
+		               where a.xzlb='xz' and a.jsdm is null  and  nvl(a.xnm,b.xnm)=b.xnm and nvl(a.xqm,b.xqm)=b.xqm
+		               and nvl(a.xqh_id,b.xqh_id)=b.xqh_id and nvl(a.szbmjg_id,b.szbmjg_id)=b.szbmjg_id
+		               and nvl(a.kkbmjg_id,b.kkbmjg_id)=b.kkbmjg_id and nvl(a.xbm,b.xbm)=b.xbm
+		               and nvl(a.jgh_id,b.jgh_id)=b.jgh_id and a.mxdxbh=t1.mxdxbh
+		         )
+		         union
+		       select t1.xwbh from niutal_xtgl_xwfbb t1 where   not exists(
+		                select 'x' from niutal_xtgl_tzmxfxsdxb a,(
+		               select a.xnm,a.xqm,a.xqh_id,(select jg_id from jw_jg_jzgxxb where jgh_id=b.jgh_id)szbmjg_id,
+		               (select kkbm_id from jw_jh_kcdmb where kch_id=a.kch_id)kkbmjg_id,
+		               (select xbm from jw_jg_jzgxxb where jgh_id=b.jgh_id)xbm,b.jgh_id from jw_jxrw_jxbxxb a,jw_jxrw_jxbjsrkb b where a.jxb_id=b.jxb_id
+		                and exists(select 'x' from jw_jg_jzgxxb where jgh_id=b.jgh_id and jgh=#{yhm})
+		               )b
+		               where a.xzlb='xz' and a.jsdm is null  and  nvl(a.xnm,b.xnm)=b.xnm and nvl(a.xqm,b.xqm)=b.xqm
+		               and nvl(a.xqh_id,b.xqh_id)=b.xqh_id and nvl(a.szbmjg_id,b.szbmjg_id)=b.szbmjg_id
+		               and nvl(a.kkbmjg_id,b.kkbmjg_id)=b.kkbmjg_id and nvl(a.xbm,b.xbm)=b.xbm
+		               and nvl(a.jgh_id,b.jgh_id)=b.jgh_id and a.mxdxbh=t1.mxdxbh
+		         )and not exists(select 'X' from niutal_xtgl_tzmxxsdxb c where c.xzlb = 'mx' and c.mxdxbh = t1.mxdxbh)
+		        
+		        )t where t.xwbh=a.xwbh) and a.sffb = 1 and a.fbsj <= to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')
+		                  order by a.sfzd desc, a.fbsj desc) where  rownum <= #{num}
+	    	 ]]>
+			</if>
+			<!-- 其它，岗位 -->
+			<if test="yhlx==3">
+			 <![CDATA[
+		       select  * from  (
+	         	select  a.xwbh,substr(a.xwbt, 0, 25) || case when length(a.xwbt) > 25 then '...' end xwbt,
+				           a.sfzd,substr(a.fbsj, 0, 10) fbsj,a.sffb,a.fbr,'xtgl/xwgl_ckXw.html?xwbh='||a.xwbh url
+	             from niutal_xtgl_xwfbb a where exists (select 'x' from (
+			         select  t1.xwbh from  niutal_xtgl_xwfbb t1 where exists(
+			       select 'x' from  niutal_xtgl_tzmxfxsdxb a,niutal_xtgl_yhjsb b,niutal_xtgl_yhb c
+			       where a.xnm is null and a.xzlb='mx' and nvl(a.jsdm,b.jsdm)=b.jsdm and nvl(a.jgh_id,b.yhm)=b.yhm and b.yhm=c.yhm
+			       and a.mxdxbh=t1.mxdxbh and c.yhm=#{yhm}
+			  )
+			  and not exists(
+			      select 'x' from  niutal_xtgl_tzmxfxsdxb a,niutal_xtgl_yhjsb b,niutal_xtgl_yhb c
+			      where a.xnm is null and a.xzlb='xz' and nvl(a.jsdm,b.jsdm)=b.jsdm and nvl(a.jgh_id,b.yhm)=b.yhm and b.yhm=c.yhm
+			      and a.mxdxbh=t1.mxdxbh and c.yhm=#{yhm}
+			  )
+			  union 
+			  select  t1.xwbh from  niutal_xtgl_xwfbb t1 where 
+			    not exists(
+			      select 'x' from  niutal_xtgl_tzmxfxsdxb a,niutal_xtgl_yhjsb b,niutal_xtgl_yhb c
+			      where a.xnm is null and a.xzlb='xz' and nvl(a.jsdm,b.jsdm)=b.jsdm and nvl(a.jgh_id,b.yhm)=b.yhm and b.yhm=c.yhm
+			      and a.mxdxbh=t1.mxdxbh and c.yhm=#{yhm}
+			  )and not exists(select 'X' from niutal_xtgl_tzmxxsdxb c where c.xzlb = 'mx' and c.mxdxbh = t1.mxdxbh)
+			        )t where t.xwbh=a.xwbh) and a.sffb = 1
+				           and a.fbsj <= to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')
+	                  order by a.sfzd desc, a.fbsj desc) where  rownum <= #{num}
+	    	 ]]>
+			</if>
+	</select>
+	
+	<!-- 学生课表 -->
+	<select id="getXskbList" parameterType="com.woshidaniu.entities.webservice.ParamModel" resultType="com.woshidaniu.entities.webservice.XskbModel">
+		select t.xnmc,t.xqmc,t.kch_id,t.kcmc,t.jsxm,t.jskb
+		  from (
+		  	   		 select (select xnmc from jw_jcdm_xnb where xnm = a.xnm) xnmc,
+			                (select mc from niutal_xtgl_jcsjb where lx = '0001' and dm = a.xqm) xqmc,
+			                kch_id,kcmc,
+			                (select xm from jw_jg_jzgxxb where jgh_id = a.jgh_id) jsxm,
+			                jskb,
+			                row_number() over(order by kcmc) rn
+					  from (select xnm,xqm,kch_id,kcmc,jxb_id,jgh_id,
+					               wm_concat(xqj || jc || zcd || cdmc) jskb
+					          from (select xnm,xqm,kch_id,kcmc,jxb_id,jgh_id,
+					                       decode(xqj,1,'周一',2,'周二',3,'周三',4,'周四',5,'周五',6,'周六',7,'周日','') xqj,
+					                       '（第' || get_weeksdesc_xnxq(a.xnm,a.xqm,get_bitorsunion(wm_concat(zcd))) || '）' zcd,
+					                       '第' || get_jcbinarydesc(get_bitorsunion(wm_concat(jc)), '') || '节' jc,
+					                       (select cdmc
+					                          from jw_jcdm_cdxqxxb
+					                         where xnm = a.xnm
+					                           and xqm = a.xqm
+					                           and cd_id = a.cd_id) cdmc,
+					                       cd_id
+					                  from (select a.xnm,
+					                               a.xqm,
+					                               c.kch_id,
+					                               d.kcmc,
+					                               a.jxb_id,
+					                               a.jgh_id,
+					                               a.zcd,
+					                               a.xqj,
+					                               a.jc,
+					                               b.cd_id
+					                          from jw_pk_kbsjb    a,
+					                               jw_pk_kbcdb    b,
+					                               jw_jxrw_jxbxxb c,
+					                               jw_jh_kcdmb    d
+					                         where a.jxb_id = c.jxb_id
+					                           and c.kch_id = d.kch_id
+					                           and a.kb_id = b.kb_id(+)
+					                           and a.xnm = (select  zdz from niutal_xtgl_xtszb where zdm='DQXNM')
+					                           and a.xqm = (select  zdz from niutal_xtgl_xtszb where zdm='DQXQM')
+					                           and exists
+					                         (select 'X'
+					                                  from jw_xk_xsxkb e
+					                                 where a.jxb_id = e.jxb_id
+					                                   and e.xh_id = #{yhid})
+					                        
+					                        ) a
+					                 group by xnm, xqm, kch_id, kcmc, jxb_id, jgh_id, xqj, cd_id)
+					         group by xnm, xqm, kch_id, kcmc, jxb_id, jgh_id) a
+		   ) t
+		 <![CDATA[where rn <= #{num}]]>	
+	</select>
+	
+	<!-- 教师课表 -->
+	<select id="getJskbList" parameterType="com.woshidaniu.entities.webservice.ParamModel" resultType="com.woshidaniu.entities.webservice.JskbModel">
+		select (select xnmc from jw_jcdm_xnb where xnm = a.xnm) xnmc,
+		       (select mc from niutal_xtgl_jcsjb where lx = '0001' and dm = a.xqm) xqmc,
+		       kch_id, kcmc,
+		       (select xm from jw_jg_jzgxxb where jgh_id = a.jgh_id) jsxm,
+		       jskb
+		  from (select xnm,xqm,kch_id,kcmc,jxb_id,jgh_id,
+		               wm_concat(xqj || jc || zcd || cdmc) jskb,
+		               row_number() over(order by kcmc) rn
+		          from (select xnm,xqm,kch_id,kcmc,jxb_id,jgh_id,
+		                       decode(xqj,1,'周一',2,'周二',3,'周三',4,'周四',5,'周五',6,'周六',7,'周日','') xqj,
+		                       '（第' || get_weeksdesc_xnxq(a.xnm,a.xqm,get_bitorsunion(wm_concat(zcd))) || '）' zcd,
+		                       '第' || get_jcbinarydesc(get_bitorsunion(wm_concat(jc)), '') || '节' jc,
+		                       (select cdmc from jw_jcdm_cdxqxxb 
+		                         where xnm = a.xnm
+		                           and xqm = a.xqm
+		                           and cd_id = a.cd_id) cdmc,
+		                       cd_id
+		                  from (select a.xnm,a.xqm,c.kch_id,d.kcmc,a.jxb_id,a.jgh_id,a.zcd,a.xqj,a.jc,b.cd_id
+		                          from jw_pk_kbsjb    a,
+		                               jw_pk_kbcdb    b,
+		                               jw_jxrw_jxbxxb c,
+		                               jw_jh_kcdmb    d
+		                         where a.jxb_id = c.jxb_id
+		                           and c.kch_id = d.kch_id
+		                           and a.kb_id = b.kb_id(+)
+		                           and a.xnm = (select  zdz from niutal_xtgl_xtszb where zdm='DQXNM')
+		                           and a.xqm = (select  zdz from niutal_xtgl_xtszb where zdm='DQXQM')
+		                           and a.jgh_id = #{yhid}
+		                        ) a
+		                 group by xnm, xqm, kch_id, kcmc, jxb_id, jgh_id, xqj, cd_id)
+		         group by xnm, xqm, kch_id, kcmc, jxb_id, jgh_id) a
+		 <![CDATA[where rn <= #{num}]]>
+	</select>
+	
+	 <!-- 获取用户首页显示信息 -->
+    <select id="getYhxxIndex" parameterType="hashMap" resultType="hashMap" >
+    	<if	test="yhlx=='teacher'">
+	      select t.xm,
+	      nvl((select bm.jgmc
+	        from niutal_xtgl_jgdmb bm,jw_jg_jzgxxb jg
+	       where jg.jgh=t.yhm and bm.jg_id=jg.jg_id),(select bm.jgmc
+	        from niutal_xtgl_jgdmb bm
+	       where bm.jgdm = t.jgdm)) jgmc,
+	       (select jg.zcmc from jw_jg_jzgxxb jg where jg.jgh=t.yhm)zcmc
+	        from niutal_xtgl_yhb t
+			 where t.yhm = #{yhm}
+    	</if>
+    	<if test="yhlx=='student'">
+    		    select xs.xm,
+                 (select bm.jgmc
+                    from niutal_xtgl_jgdmb bm
+                   where bm.jg_id = xj.jg_id) jgmc,
+                 (select bj.bj
+                    from niutal_xtgl_bjdmb bj
+                   where bj.bh_id = xj.bh_id) bj,
+                 nvl((select nvl(zxjh.zdxf,0)
+                    from jw_jh_jxzxjhxxb zxjh
+                   where zxjh.njdm_id = xj.njdm_id
+                     and zxjh.zyh_id = xj.zyh_id),0) sxxf,
+                 nvl((select sum(xf)
+                     from (select a.xh_id, a.kch_id, max(a.cj) cj
+                             from jw_cj_xscjb a
+                            where a.xh_id = #{xh_id} and regexp_substr(a.cj,'[0-9]+') is not null
+                            group by a.kch_id, a.xh_id) cj,
+                          jw_jh_kcdmb kc
+                    where kc.kch_id = cj.kch_id
+                      and cj.cj >= 60),0) yhxf,
+                  round(nvl((select sum(xf)
+                     from (select a.xh_id, a.kch_id, max(a.cj) cj
+                             from jw_cj_xscjb a
+                            where a.xh_id = #{xh_id} and regexp_substr(a.cj,'[0-9]+') is not null
+                            group by a.kch_id, a.xh_id) cj,
+                          jw_jh_kcdmb kc
+                    where kc.kch_id = cj.kch_id
+                      and cj.cj >= 60)/
+                  (select zxjh.zdxf
+                     from jw_jh_jxzxjhxxb zxjh
+                    where zxjh.njdm_id = xj.njdm_id
+                      and zxjh.zyh_id = xj.zyh_id),0),2)*100 bl
+            from niutal_xtgl_yhb t, jw_xjgl_xsjbxxb xs, jw_xjgl_xsxjxxb xj
+           where t.yhm = xs.xh
+             and xs.xh_id = xj.xh_id
+             and xj.xnm =(select zdz from niutal_xtgl_xtszb where zdm = 'DQXNM')
+             and xj.xqm =(select zdz from niutal_xtgl_xtszb where zdm = 'DQXQM')
+             and xs.xh=#{yhm}	
+    	</if>
+    </select>
+    
+    <!-- 查询教职工是否有照片 -->
+    <select id="countJzgzp" parameterType="string" resultType="int">
+    	select nvl(count(*),0) from jw_jg_jzgzpb t where t.zp is not null and exists(select * from jw_jg_jzgxxb jg where jg.jgh_id=t.jgh_id and jg.jgh=#{jgh}) 
+    </select>
+    
+    <!-- 查询学生是否有入学前照片 -->
+    <select id="countXsRxqzp" parameterType="string" resultType="int">
+    	select nvl(count(*),0) from jw_xjgl_xszpb t where t.rxqzp is not null and  exists(select * from jw_xjgl_xsjbxxb xs where xs.xh_id=t.xh_id and xs.xh=#{xh})
+    </select>
+    
+    <!-- 查询学生是否有入学后照片 -->
+    <select id="countXsRxhzp" parameterType="string" resultType="int">
+    	 select nvl(count(*),0) from jw_xjgl_xszpb t where t.rxhzp is not null and  exists(select * from jw_xjgl_xsjbxxb xs where xs.xh_id=t.xh_id and xs.xh=#{xh}) 
+    </select>
+    <!-- 根据xh学号获取xh_id -->
+    <select id="getXh_id" parameterType="string" resultType="string">
+    	select xh_id from jw_xjgl_xsjbxxb where xh=#{xh}
+    </select>
+    <!-- 待办事宜 -->
+    <select id="getDbsyListByScope" parameterType="com.woshidaniu.entities.webservice.ParamModel" resultType="com.woshidaniu.entities.webservice.DbsyModel">
+    	select t.dblx,(select ywmc from sp_business_code a where a.ywdm=t.dblx) dbmc,
+    		   max(t.cdlj) url,count(id) dbs from (
+	    	select t.id,t.cdlj,t.dblx from sp_pendingaffair t 
+	    	 where t.dbzt='0' 
+	    	   and instr(','||t.glr||',' , ','||#{yhid}||',') > 0
+			union all 
+			select t.id,t.cdlj,t.dblx 
+			  from sp_pendingaffair t 
+			 where t.dbzt='0' and t.glr is null and jsdm is not null 
+			{dblx||substr(ywid,1,INSTR(ywid,'-')-1) in func('sp_sjfw';'ywdm||w_id';'jg_id,zyh_id,bh_id,njdm_id,xh_id';'jg_id,zyh_id,bh_id,njdm_id,xh_id')}
+    	) t group by t.dblx
+    </select>
+</mapper>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.search.dao.daointerface.IConfigDao">
+
+	<resultMap id="detailedSearchConfigResultMap" type="com.woshidaniu.search.dao.entities.SearchConfigModel">
+		<result property="searchSign" column="searchSign" />
+		<collection property="linkageList" 
+					javaType="java.util.ArrayList" 
+					column="{psearchSign=searchSign,plinkageName=searchName}" 
+					ofType="java.lang.String" 
+					select="getLinkageConfigV2"></collection>
+		<collection property="byLinkageList" 
+					javaType="java.util.ArrayList" 
+					column="{psearchSign=searchSign,plinkageName=searchName}" 
+					ofType="java.lang.String" 
+					select="getByLinkageConfig"></collection>	
+	</resultMap>
+
+	<select id="getConfigKeyDistinct" resultType="java.lang.String">
+		select distinct(cxbz) cxbz from zfxg_gjcx_cxpzb
+	</select>
+
+	<!-- 查询高级查询的配置 -->
+	<select id="getSearchConfigList" parameterType="java.lang.String"
+		resultMap="detailedSearchConfigResultMap">
+		select    id,
+				  cxbz searchSign,
+				  cxzd searchName,
+				  zdmc searchLabel,
+				  cxlx searchType,
+				  zdbm searchByname,
+				  sjly valueSource,
+				  zmbs useInitial,
+				  szhs maxRows,
+				  sfhh isNewLine,
+				  gdt isScroll,
+				  sfdx isOnly,
+				  sfqy onOrOff,
+				  xssx showOrder 
+		from zfxg_gjcx_cxpzb
+		<where>
+			cxbz=#{searchSign} and sfqy='1' 
+		</where>
+		order by to_number(xssx) 
+	</select>
+	
+	
+	<!-- 查询数据源配置 -->
+	<select id="getAllDataSourceConfig" resultType="com.woshidaniu.search.dao.entities.DataSourceModel">
+		select sjy dataSource , zddm columnKey, zdmc columnLabel from zfxg_gjcx_sjypzb order by sjy
+	</select>
+	<!-- 查询数据源配置 -->
+	<select id="getDataSourceConfig" resultType="com.woshidaniu.search.dao.entities.DataSourceModel">
+		select sjy dataSource , zddm columnKey, zdmc columnLabel from zfxg_gjcx_sjypzb 
+		<where>
+			sjy=#{name}
+		</where>
+	</select>
+	
+	
+	<!--<select id="getLinkageConfig" parameterType="java.util.Map"
+		resultType="com.woshidaniu.search.dao.entities.SearchLinkageModel">
+		select t1.cxbz searchSign,
+			   t1.ldzd linkageName,
+			   t1.bldzd nextName,
+			   t1.glzd relatingName,
+			   t2.sjly valueSource
+		from zfxg_gjcx_ldpzb t1 left join zfxg_gjcx_cxpzb t2 
+		on t1.bldzd=t2.cxzd and t1.cxbz=t2.cxbz
+    where t1.cxbz=#{searchSign} and t1.ldzd = #{linkageName}
+	</select>
+	
+	-->
+	<!-- <select id="getLinkageConfigV2" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select t1.bldzd nextName
+		from zfxg_gjcx_ldpzb t1 
+    where t1.cxbz=#{psearchSign} and t1.ldzd = #{plinkageName}
+	</select>
+	 -->
+	<select id="getLinkageConfigV2" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select nextName from (select t1.cxbz searchSign,
+         t3.cxzd linkageName,
+         t2.cxzd nextName,
+         t1.glzd relatingName,
+         t2.sjly valueSource
+	  from zfxg_gjcx_ldpzb t1
+	  left join (select a.cxbz,
+	                    (CASE
+	                      WHEN a.zdbm IS NOT NULL THEN
+	                       a.zdbm
+	                      ELSE
+	                       a.cxzd
+	                    END) new_cxzd,
+											a.cxzd,
+	                    a.sjly
+	               from zfxg_gjcx_cxpzb a) t2
+	    on (t1.bldzd = t2.new_cxzd or t1.bldzd = t2.cxzd) and t1.cxbz = t2.cxbz
+			left join (select b.cxbz,
+	                    (CASE
+	                      WHEN b.zdbm IS NOT NULL THEN
+	                       b.zdbm
+	                      ELSE
+	                       b.cxzd
+	                    END) new_cxzd,
+											b.cxzd
+	               from zfxg_gjcx_cxpzb b) t3
+	    on (t1.ldzd = t3.new_cxzd or t1.ldzd = t3.cxzd) and t1.cxbz = t3.cxbz) 
+	    where searchSign=#{psearchSign} and linkageName = #{plinkageName}
+	</select>
+	
+	
+	<select id="getByLinkageConfig" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select linkageName from (select t1.cxbz searchSign,
+         t3.cxzd linkageName,
+         t2.cxzd nextName,
+         t1.glzd relatingName,
+         t2.sjly valueSource
+	  from zfxg_gjcx_ldpzb t1
+	  left join (select a.cxbz,
+	                    (CASE
+	                      WHEN a.zdbm IS NOT NULL THEN
+	                       a.zdbm
+	                      ELSE
+	                       a.cxzd
+	                    END) new_cxzd,
+											a.cxzd,
+	                    a.sjly
+	               from zfxg_gjcx_cxpzb a) t2
+	    on (t1.bldzd = t2.new_cxzd or t1.bldzd = t2.cxzd) and t1.cxbz = t2.cxbz
+			left join (select b.cxbz,
+	                    (CASE
+	                      WHEN b.zdbm IS NOT NULL THEN
+	                       b.zdbm
+	                      ELSE
+	                       b.cxzd
+	                    END) new_cxzd,
+											b.cxzd
+	               from zfxg_gjcx_cxpzb b) t3
+	    on (t1.ldzd = t3.new_cxzd or t1.ldzd = t3.cxzd) and t1.cxbz = t3.cxbz) 
+    	where searchSign=#{psearchSign} and nextName = #{plinkageName}
+	</select>
+	
+	<select id="getAllLinkageConfig" 
+		resultType="com.woshidaniu.search.dao.entities.SearchLinkageModel">
+		select searchSign,
+			   linkageName,
+			   nextName,
+			   relatingName
+		from 
+		(select t1.cxbz searchSign,
+         t3.cxzd linkageName,
+         t2.cxzd nextName,
+         t1.glzd relatingName,
+         t2.sjly valueSource
+	  from zfxg_gjcx_ldpzb t1
+	  left join (select a.cxbz,
+	                    (CASE
+	                      WHEN a.zdbm IS NOT NULL THEN
+	                       a.zdbm
+	                      ELSE
+	                       a.cxzd
+	                    END) new_cxzd,
+											a.cxzd,
+	                    a.sjly
+	               from zfxg_gjcx_cxpzb a) t2
+	    on (t1.bldzd = t2.new_cxzd or t1.bldzd = t2.cxzd) and t1.cxbz = t2.cxbz
+			left join (select b.cxbz,
+	                    (CASE
+	                      WHEN b.zdbm IS NOT NULL THEN
+	                       b.zdbm
+	                      ELSE
+	                       b.cxzd
+	                    END) new_cxzd,
+											b.cxzd
+	               from zfxg_gjcx_cxpzb b) t3
+	    on (t1.ldzd = t3.new_cxzd or t1.ldzd = t3.cxzd) and t1.cxbz = t3.cxbz) 
+	    where linkageName is not null
+	</select>
+	
+	<select id="getLinkageConfig" parameterType="java.util.Map"
+		resultType="com.woshidaniu.search.dao.entities.SearchLinkageModel">
+		select searchSign,
+			   linkageName,
+			   nextName,
+			   relatingName
+		from 
+		(select t1.cxbz searchSign,
+         t3.cxzd linkageName,
+         t2.cxzd nextName,
+         t1.glzd relatingName,
+         t2.sjly valueSource
+	  from zfxg_gjcx_ldpzb t1
+	  left join (select a.cxbz,
+	                    (CASE
+	                      WHEN a.zdbm IS NOT NULL THEN
+	                       a.zdbm
+	                      ELSE
+	                       a.cxzd
+	                    END) new_cxzd,
+											a.cxzd,
+	                    a.sjly
+	               from zfxg_gjcx_cxpzb a) t2
+	    on (t1.bldzd = t2.new_cxzd or t1.bldzd = t2.cxzd) and t1.cxbz = t2.cxbz
+			left join (select b.cxbz,
+	                    (CASE
+	                      WHEN b.zdbm IS NOT NULL THEN
+	                       b.zdbm
+	                      ELSE
+	                       b.cxzd
+	                    END) new_cxzd,
+											b.cxzd
+	               from zfxg_gjcx_cxpzb b) t3
+	    on (t1.ldzd = t3.new_cxzd or t1.ldzd = t3.cxzd) and t1.cxbz = t3.cxbz) 
+    where searchSign=#{searchSign} and linkageName = #{linkageName} and nextName = #{nextName}
+	</select>
+	
+</mapper>

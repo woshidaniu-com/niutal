@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IXtszDao">
+
+	<select id="getModelList" resultType="XtszModel" parameterType="XtszModel" >
+		select t.xtsz_id,
+		       t.zdm,
+		       t.zdz,
+		       t.zdlx,
+		       t.zdly,       
+		       t.zdzyq,
+		       t.ssgnmkdm,
+		       t.ssmk,
+		       t.zs,
+		       t.bz
+		  from niutal_xtgl_xtszb t
+		<where> 1=1  
+			<if test="ssmk != null and ssmk != ''" >
+				and t.ssmk = #{ssmk}
+	   		</if>
+	   		<if test="ssmk == null or ssmk == ''">
+				and t.ssmk is null
+	   		</if>
+	   		<if test="ssgnmkdm != null and ssgnmkdm != ''">
+				and t.ssgnmkdm = #{ssgnmkdm}
+	   		</if>
+	   		<if test="zs != null and zs != ''">
+				and t.zs like '%'|| #{zs} ||'%'
+	   		</if>
+		</where>
+		order by t.ssmk,t.zdlx,t.zdm asc
+	</select>
+	
+	<select id="getZdsjList" resultType="com.woshidaniu.entities.PairModel" parameterType="string" >
+		${zdlySQL}
+	</select>
+	
+ 	<!-- 查询 系统设置值 -->
+ 	<select id="cxXtszxz" resultType="map">
+ 		select t.zdm,t.zdz from niutal_xtgl_xtszb t order by t.ssmk,t.zdm asc
+ 	</select>
+ 	
+ 	
+</mapper>

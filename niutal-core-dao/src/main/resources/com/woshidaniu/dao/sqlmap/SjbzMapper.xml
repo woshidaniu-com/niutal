@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ISjbzDao">
+	
+	<!-- 国家标准 -->
+	<select id="getBzsjList" 
+			parameterType="com.woshidaniu.dao.entities.SjbzModel"
+			resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from ${tableName} order by dm
+	</select>
+	
+	<!-- 国家标准    下拉选择需要大写的字段名，DM,MC-->
+	<select id="getBzsjListForAutoCom"
+			parameterType="com.woshidaniu.dao.entities.SjbzModel"
+			resultType="hashMap">
+		select dm,mc from ${tableName} order by dm
+	</select>
+	
+	<!-- 业务数据 -->
+	<select id="getYwsjList" 
+			parameterType="java.lang.String"
+			resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from niutal_xtgl_jcsjb where lx=#{lx} order by dm
+	</select>
+	
+	<!-- 业务数据 -->
+	<select id="getYwsjListByLxAndZt" 
+			parameterType="com.woshidaniu.dao.entities.SjbzModel"
+			resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from niutal_xtgl_jcsjb where lx=#{lx} and zt=#{zt} order by dm
+	</select>
+	
+	<!-- 根据代码查名称-->
+	<select id="getMcByDm" 
+			parameterType="com.woshidaniu.dao.entities.SjbzModel"
+			resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from ${tableName} where dm=#{dm}
+	</select>
+	
+	<!-- 业务数据 -->
+	<select id="getJcsjList" 
+			parameterType="java.lang.String"
+			resultType="java.util.Map">
+		select dm,mc from niutal_xtgl_jcsjb where lx=#{lx} order by dm
+	</select>
+	
+</mapper>

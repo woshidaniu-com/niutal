@@ -1,0 +1,121 @@
+/* 美化 radio check-box */
+@keyframes hover-color {
+	from {
+		border-color:#c0c0c0; 
+	} to {
+		border-color:#ddd;
+	}
+}
+.default-radio,.default-checkbox {
+	position:absolute;
+	display:none;
+}
+.default-radio[disabled],.default-checkbox[disabled] {
+	cursor:not-allowed;
+}
+.default-radio + label,.default-checkbox + label {
+	position:relative;
+	display:block;
+	padding-left:30px;
+	cursor:pointer;
+	vertical-align:middle;
+}
+.default-radio + label:hover:before,.default-checkbox + label:hover:before {
+	animation-duration:0.4s;
+	animation-fill-mode:both;
+	animation-name:hover-color;
+}
+.default-radio + label:before,.default-checkbox + label:before {
+	position:absolute;
+	top:0;
+	left:0;
+	display:inline-block;
+	width:16px;
+	height:16px;
+	content:'';
+	border:1px solid #c0c0c0;
+}
+.default-radio + label:after,.default-checkbox + label:after {
+	position:absolute;
+	display:none;
+	content:''; 
+	}
+.default-radio[disabled] + label,.default-checkbox[disabled] + label {
+	cursor:not-allowed;
+	color:#e4e4e4; 
+	}
+.default-radio[disabled] + label:hover, .default-radio[disabled] + label:before, .default-radio[disabled] + label:after,.default-checkbox[disabled] + label:hover,.default-checkbox[disabled] + label:before,.default-checkbox[disabled] + label:after {
+	cursor:not-allowed; 
+	}
+.default-radio[disabled] + label:hover:before,.default-checkbox[disabled] + label:hover:before {
+	border:1px solid #e4e4e4;
+	animation-name:none; 
+	}
+.default-radio[disabled] + label:before,.default-checkbox[disabled] + label:before {
+	border-color:#e4e4e4; 
+	}
+.default-radio:checked + label:before,.default-checkbox:checked + label:before {
+	animation-name:none; 
+	}
+.default-radio:checked + label:after,.default-checkbox:checked + label:after {
+	display:block; 
+	}
+.default-radio + label:before {
+	border-radius:50%; 
+	top:8px;
+}
+.default-radio + label:after {
+	top:13px;
+	left:5px;
+	width:6px;
+	height:6px;
+	border-radius:50%;
+	background:#3e97eb;
+}
+.default-radio:checked + label:before {
+	border:1px solid #3e97eb;
+}
+.default-radio:checked[disabled] + label:before {
+	border:1px solid #c9e2f9;
+}
+.default-radio:checked[disabled] + label:after {
+	background:#c9e2f9;
+}
+.default-checkbox + label:before {
+	border-radius:3px;
+}
+.default-checkbox + label:after {
+	top:0px;
+	left:6px;
+	box-sizing:border-box;
+	width:6px;
+	height:12px;
+	transform:rotate(45deg);
+	border-width:2px;
+	border-style:solid;
+	border-color:#fff;
+	border-top:0;
+	border-left:0;
+}
+.default-checkbox:checked + label:before {
+	border:#3e97eb;
+	background:#3e97eb;
+}
+.default-checkbox:checked[disabled] + label:before {
+	border:#c9e2f9;
+	background:#c9e2f9;
+}
+/*颜色选择  */
+.primary-checkbox:checked + label:before{
+	border:#4a89dc;
+	background:#4a89dc;
+}
+.primary-radio + label:after{
+	background:#4a89dc;
+}
+.primary-radio:checked + label:before {
+	border:1px solid #4a89dc;
+}
+.label_h {
+	line-height: 30px;
+}

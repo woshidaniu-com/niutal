@@ -1,0 +1,73 @@
+<web-fragment version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
+
+	<!-- 通过<name>元素来指定当前模块的名称 -->
+	<name>niutal-sso</name>	
+	
+	<context-param>
+		<description>使得在任意线程中都能通过SecurityUtils.getSecurityManager()获取SecurityManager实例</description>
+		<param-name>staticSecurityManagerEnabled</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	
+	<!--单点登录调试配置开始 -->
+	<servlet>
+		<servlet-name>ZfssoLoginServlet</servlet-name>
+		<servlet-class>com.woshidaniu.niuca.tp.cas.client.zfsso.ZfssoLogin</servlet-class>
+		<!--客户端存放session类完整路径 业务系统开发人员配置 -->
+		<init-param>
+			<param-name>setsessionclass</param-name>
+			<param-value>com.woshidaniu.shiro.cas.ZfssoShiroSession</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ZfssoLoginServlet</servlet-name>
+		<url-pattern>/zfssologin</url-pattern>
+	</servlet-mapping>
+	<listener>
+		<listener-class>com.woshidaniu.niuca.tp.cas.client.logout.SingleSignOutHttpSessionListener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>Niuca Single Sign Out Filter</filter-name>
+		<filter-class>com.woshidaniu.niuca.tp.cas.client.logout.SingleSignOutFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Niuca Single Sign Out Filter</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Niuca Single Sign Out Filter</filter-name>
+		<url-pattern>*.zf</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>zfCasSSOFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 开发人员配置参数 start配置存放用户登录信息session类名 -->
+		<init-param>
+			<param-name>setsessionclass</param-name>
+			<param-value>com.woshidaniu.shiro.cas.ZfssoShiroSession</param-value>
+		</init-param>
+		<!-- 配置无需登录即可访问的页面，以英文逗号隔开 -->
+		<init-param>
+			<param-name>notCheckURLList</param-name>
+			<param-value>/zfssologin;/xtgl/dl_loginForward.html;/xtgl/login_slogin.html;/xtgl/login_getPublicKey.html;/xtgl/dl_logout.html;/xtgl/init_cxYhxxIndex.html</param-value>
+		</init-param>
+		<!-- 开发人员配置参数 end -->
+	</filter>
+
+	<filter-mapping>
+		<filter-name>zfCasSSOFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>zfCasSSOFilter</filter-name>
+		<url-pattern>*.zf</url-pattern>
+	</filter-mapping>
+	
+</web-fragment> 

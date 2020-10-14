@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+	
+	<!-- 
+	
+		一些数据是数据库初始化进入系统；存在如果后台新增了数据，系统无法检测到缓存变化，因为数据库缓存自己更新是有一定周期，从而出现数据更新后长时间
+	前端数据无变化！
+		这里按照一定规则定时对指定key的缓存进行清理操作!
+	
+	ID定义：autoCachekey_list_最顶层功能模块代码
+	<util:list id="autoCachekey_list_N01" list-class="java.util.ArrayList" >
+		 <map>
+		 	className：使用缓存的class对象全路径
+			<entry key="className" value="com.woshidaniu.service.common.impl.CommonTimeSettingServiceImpl"/>
+			mathodName：使用缓存的方法名称
+			<entry key="mathodName" value="getTimeControlList"/>
+			prefix
+			<entry key="prefix" value=""/>
+		</map>
+	</util:list>
+	
+	ID定义：cachekey_list_最顶层功能模块代码
+	<util:list id="cachekey_list_N01" list-class="java.util.ArrayList" >
+		 <value >固定key</value>
+	</util:list>
+	 -->
+	
+  	<util:list id="autoCachekey_list_N01" list-class="java.util.ArrayList">
+		 <map>
+			<entry key="className" value="com.woshidaniu.service.common.impl.CommonTimeSettingServiceImpl"/>
+			<entry key="mathodName" value="getTimeControlList"/>
+			<entry key="prefix" value=""/>
+		</map>
+	</util:list>
+	
+	<util:list id="cachekey_list_N01" list-class="java.util.ArrayList" value-type="java.lang.String">
+  		
+	</util:list>
+	
+</beans>

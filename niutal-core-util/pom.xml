@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-core-util</artifactId>
+	<name>niutal-core-util</name>
+
+	<dependencies>
+	
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+		</dependency>
+		
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+			
+		<!-- niukit-base : 快速开发基础工具组件  -->
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-httputils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-javamail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-qrcode</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-yuicompressor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-spring</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- niukit-web : Web快速调用组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastpdf-core</artifactId>
+		</dependency>
+		<!-- The slf4j API -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>

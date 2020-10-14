@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- license 管理-->
+	<package name="/license-management" extends="configuration" namespace="/license-management">
+		<!--当前数据 -->
+		<action name="authdata_*" class="licenseManagementAction" method="{1}">
+			<result name="success">/WEB-INF/pages/licenseManagement/{1}.jsp</result>
+			<result name="dlLicense" type="stream">
+		        <param name="contentType">application/octet-stream</param>
+		        <param name="inputName">inputStream</param>
+		        <param name="contentDisposition">
+		            attachment;filename="license.auth"
+		        </param>
+		        <param name="bufferSize">2048</param>
+		    </result>
+		</action>
+		
+		<!-- 日志数据-->
+		<action name="logdata_*" class="licenseManagementAction" method="{1}">
+			<result name="success">/WEB-INF/pages/licenseManagement/log/{1}.jsp</result>
+		</action>
+	</package>
+</struts>

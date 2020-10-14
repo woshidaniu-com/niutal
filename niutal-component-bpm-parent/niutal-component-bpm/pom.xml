@@ -1,0 +1,123 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal-component-bpm-parent</artifactId>
+		<version>1.1.4-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>niutal-component-bpm</artifactId>
+	<name>niutal Component BPM Core</name>
+	<description>niutal Component BPM Core</description>
+	
+	<dependencies>
+		
+		<!-- ###################### Java Mail 组件  ###################### -->
+		 
+		<!-- The JavaBeans(TM) Activation Framework is used by the JavaMail(TM) API to manage MIME data -->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+		</dependency>
+		<!-- JavaMail API 
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>javax.mail-api</artifactId>
+		</dependency> -->
+		<!-- JavaMail API (sun)
+		注意：
+			有的jar没有包含sun的实现，只包含了api，这类jar名称通常为javax.mail-api-x.x.x.jar，在使用smtp协议发邮件过程中会报错：
+			另一种jar是包含了sun的实现的，名称通常为javax.mail-x.x.x.jar，使用smtp协议发邮件正常！
+		-->
+		<dependency>
+		    <groupId>com.sun.mail</groupId>
+		    <artifactId>javax.mail</artifactId>
+		</dependency>
+		
+		
+		<!-- BPMN model conversion -->
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-bpmn-model</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-databind</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-bpmn-converter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-bpmn-layout</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-json-converter</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-databind</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-engine</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-spring</artifactId>
+		</dependency>
+
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+			
+		<!-- niukit-base : 快速开发基础工具组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-spring</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- niukit-orm : ORM/持久层框架快速开发组件 -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-orm-mybatis</artifactId>
+		</dependency>
+		<!-- niukit seach taglib -->	
+		<dependency>
+			<groupId>com.woshidaniu</groupId>
+			<artifactId>niukit-search-taglib</artifactId>
+		</dependency>
+		
+	</dependencies>
+	
+</project>

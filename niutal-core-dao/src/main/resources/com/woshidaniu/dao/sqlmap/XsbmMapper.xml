@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IXsbmDao">
+	
+	<!-- 加载学院列表 -->	
+	<select id="getXyList" 
+			resultType="com.woshidaniu.dao.entities.XsbmModel">
+		select distinct bmdm,bmmc,bmjc from zfxg_view_njxyzybjb where bmdm is not null order by bmdm
+	</select>
+	
+	<!-- 按学院加载专业列表 -->
+	<select id="getZyList" 
+			parameterType="com.woshidaniu.dao.entities.XsbmModel"
+			resultType="com.woshidaniu.dao.entities.XsbmModel">
+			
+		select distinct bmdm,bmmc,bmjc,zydmid,zydm,zymc,zyjc,ccdm,ccmc from zfxg_view_njxyzybjb	
+		<where>
+			zydm is not null
+		    <if test="bmdm != null and bmdm != ''">
+		    	and bmdm=#{bmdm}
+		    </if>
+		    <if test="ccdm != null and ccdm != ''">
+		    	and ccdm=#{ccdm}
+		    </if>
+		</where>
+	    order by zydmid 
+	</select>
+	
+	<select id="likeQueryZyList" parameterType="hashMap" resultType="hashMap">
+		select zydm dm,zymc mc from (
+			select distinct bmdm,bmmc,bmjc,zydmid,zydm,zymc,zyjc,ccdm,ccmc from zfxg_view_njxyzybjb t
+			<where>
+				zydm is not null
+			    <if test="secondParentValue != null and secondParentValue != ''">
+			    	and t.ccdm=#{secondParentValue}
+			    </if>
+			    <if test="keyword != null and keyword !=''">
+					and t.zymc like '%'||#{keyword}||'%'
+				</if>
+				<if test="parentValue!=null and parentValue!=''">
+					and t.bmdm = #{parentValue}
+				</if>
+			</where>
+			)
+	</select>
+	
+	
+	<!-- 加载班级列表 -->
+	<select id="getBjList" 
+			parameterType="com.woshidaniu.dao.entities.XsbmModel"
+			resultType="com.woshidaniu.dao.entities.XsbmModel">
+		select bjdmID,bjdm,bjmc from zfxg_view_njxyzybjb 
+		<where>
+			bjdm is not null
+			<if test="zydmID != null and zydmID != ''">
+				and zydmid=#{zydmID}
+			</if>
+			<if test="njdm != null and njdm != ''">
+				and njdm=#{njdm}
+			</if>
+			<if test="bmdm != null and bmdm != ''">
+				and bmdm=#{bmdm}
+			</if>
+		</where>
+		 order by bjdmID  
+	</select>
+	
+	<!-- 模糊查询加载班级列表 -->
+	<select id="likeQueryBjList" parameterType="hashMap" resultType="hashMap">
+		select bjdm dm,bjmc mc from (
+			select bjdmID,bjdm,bjmc from zfxg_view_njxyzybjb
+			<where>
+				bjdm is not null
+				<if test="secondParentValue != null and secondParentValue != ''">
+					and zydmid=#{secondParentValue}
+				</if>
+				<if test="parentValue != null and parentValue != ''">
+					and bmdm=#{parentValue}
+				</if>
+			</where>
+			 order by bjdmID  
+		)
+	</select>
+	
+	<!-- 加载层次列表，用于树形结构中显示专业层次 -->
+	<select id="getCcList"  resultType="com.woshidaniu.dao.entities.XsbmModel">
+		 select 
+           distinct cydm_id_cc ccdm,
+           (select mc from dm_gb_b_xldm where dm=t1.cydm_id_cc) ccmc
+    	from niutal_xtgl_zydmb t1
+	</select>
+	
+	<!-- 加载年级列表 -->
+	<select id="getNjList" resultType="com.woshidaniu.dao.entities.XsbmModel">
+		select distinct njdm,njmc from zfxg_view_njxyzybjb where njdm is not null  order by njdm  
+	</select>
+	
+	<!-- 根据学历层次 加载学院列表-->
+	<select id="getBmListByXlcc" parameterType="com.woshidaniu.dao.entities.XsbmModel"
+			resultType="com.woshidaniu.dao.entities.XsbmModel">
+		select distinct bmdm,bmmc,bmjc from zfxg_view_njxyzybjb
+		<where>
+			bmdm is not null
+			<if test="ccdm != null and ccdm != ''">
+		    	and ccdm=#{ccdm}
+		    </if>
+		</where>
+		
+	</select>
+	<!-- 根据学历层次加载学院列表 -->
+	<select id="likeQueryBmListByXlcc" parameterType="map" resultType="hashMap">
+		select distinct bmdm dm,bmmc mc from(
+			select t.* from zfxg_view_njxyzybjb t 
+			<where>
+				bmdm is not null
+				<if test="keyword != null and keyword !=''">
+					and t.bmmc like '%'||#{keyword}||'%'
+				</if>
+				<if test="parentValue!=null and parentValue!=''">
+					and t.ccdm = #{parentValue}
+				</if>
+			</where>
+			) 
+	</select>
+</mapper>

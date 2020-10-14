@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 密码找回专用 -->
+<mapper namespace="com.woshidaniu.daointerface.IUserAccountDao" >
+
+	<!-- 根据用户ID和密码查询用户可否登录，角色数量等信息  -->
+	<select id="getAccountStatus" parameterType="java.lang.String" resultType="hashmap">
+		  select (select to_char(count('1')) from niutal_xtgl_yhb a where a.yhm = #{username} and a.yhlx = 'teacher') num_1,
+        		 (select to_char(count('1')) from niutal_xtgl_yhb b where b.yhm = #{username} and b.yhlx = 'student') num_2,
+        		 (select to_char(count('1')) from niutal_xtgl_yhb b where b.yhm = #{username} and b.yhlx = 'zsb') num_3
+   		    from dual
+    </select> 
+    
+	<select id="getUserAccount" parameterType="map" resultType="com.woshidaniu.basemodel.BaseMap">
+		<!-- 管理账号 -->
+		<if test="usertype == 1 ">
+			select a.yhm, t.*
+			  from niutal_xtgl_yhb a, jw_jg_jzgxxb t
+			 where a.yhm = t.jgh
+			   and a.yhm = #{username}
+		</if>
+		<!-- 学生账号 -->
+		<if test="usertype == 0 ">
+			select a.yhm, t.*		      
+			  from niutal_xtgl_yhb a,jw_xjgl_xsjbxxb t
+			 where a.yhm = t.xh
+	           and a.yhm = #{username}
+		</if>
+		<!-- 专升本用户账号 -->
+		<if test="usertype == 3 ">
+			select a.yhm,t.lxdh sjhm, t.*		      
+			 from niutal_xtgl_yhb a,jw_zsb_ksxxb t
+			 where a.yhm = t.zjhm
+	           and a.yhm = #{username}
+		</if>
+	</select>
+	
+	<!-- 修改用户信息 -->
+	<update id="updateAccount" parameterType="com.woshidaniu.basemodel.BaseMap" >
+		<!-- 管理账号,学生账号 -->
+		update niutal_xtgl_yhb a set a.kl = #{newpassword} where a.yhm = #{username}
+	</update>
+    
+</mapper>

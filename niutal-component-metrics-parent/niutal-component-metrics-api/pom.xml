@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal-component-metrics-parent</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-component-metrics-api</artifactId>
+
+	<properties>
+		<sigar.version>1.6.5.132-6</sigar.version><!-- 1.6.4，1.6.5.132-6 -->
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-metrics</artifactId>
+			<version>${niukit.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.hyperic/sigar -->
+		<!-- <dependency> <groupId>org.hyperic</groupId> <artifactId>sigar</artifactId> 
+			<version>${sigar.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.hyperic</groupId>
+			<artifactId>sigar-native</artifactId>
+			<version>${sigar.version}</version>
+		</dependency>
+
+		<!-- ###################### niutal核心组件 ###################### -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+
+</project>

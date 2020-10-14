@@ -1,0 +1,246 @@
+@CHARSET "UTF-8";
+
+body {
+    font-weight: normal;
+}
+
+a {
+    color: #333;
+}
+
+a:hover,
+a:focus {
+    color: #428bca;
+}
+
+.header {
+    height: 60px;
+    background-color: #0483d4;
+}
+
+.header .header-title {
+    font-size: 24px;
+    color: #fff;
+    line-height: 60px;
+}
+
+.main-body {
+
+}
+
+.main-body-con {
+    background-color: #fff;
+    min-height: 560px;
+}
+
+.main-body-con .nav {
+    background: url("../images/nav-bg.png") left top repeat;
+    padding-top: 11px;
+}
+
+.main-body-con .nav-tabs > li {
+    padding: 0 30px;
+}
+
+.main-body-con .nav-tabs > li > a {
+    border: none !important;
+    font-size: 18px;
+    color: #cde7fa;
+    /*overflow: hidden;*/
+    /*white-space: nowrap;*/
+    /*-ms-text-overflow: ellipsis;*/
+    /*-o-text-overflow: ellipsis;*/
+    /*text-overflow: ellipsis;*/
+}
+
+@media (max-width: 1023px) {
+    .main-body-con .nav-tabs.nav-justified > li {
+        padding: 0 20px;
+    }
+}
+
+.main-body-con .nav-tabs > li > a,
+.main-body-con .nav-tabs > li > a:hover,
+.main-body-con .nav-tabs > li > a:focus {
+    background: none;
+
+}
+
+.main-body-con .nav-tabs > li > a:hover,
+.main-body-con .nav-tabs > li > a:focus {
+    color: #fff;
+}
+
+.main-body-con .nav-tabs > li.active > a {
+    color: #3477bb;
+}
+
+.main-body-con .nav-tabs > li.active > a,
+.main-body-con .nav-tabs > li.active > a:hover,
+.main-body-con .nav-tabs > li.active > a:focus {
+    border-top: none !important;
+    background-color: #fff;
+}
+
+.main-body-con .nav-tabs > li.active > a:hover,
+.main-body-con .nav-tabs > li.active > a:focus {
+    color: #555;
+}
+
+.main-body-con .tab-content {
+    padding: 15px;
+}
+
+.search-box .dl-horizontal {
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.search-box .dl-horizontal + .dl-horizontal {
+    margin-top: -1px;
+}
+
+.search-box .dl-horizontal dt {
+    font-size: 16px;
+    line-height: 31px;
+    margin-top: 5px;
+}
+
+@media (min-width: 768px) {
+    .search-box .dl-horizontal dt {
+        width: 90px;
+    }
+
+    .search-box .dl-horizontal dd {
+        margin-left: 100px;
+    }
+}
+
+.search-box .dl-horizontal dd .form-inline .form-group {
+    margin: 5px 0 0 0 !important;
+}
+
+.question-box {
+
+}
+
+.question-box>ul {
+    padding: 0;
+}
+
+.question-box>ul>li{
+    border-bottom: 1px dashed #ddd;
+}
+
+.question-box .question-part{
+    position: relative;
+    line-height: 28px;
+    padding-left: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.question-box .question-part >img{
+    position: absolute;
+    left: 0;
+    top: 16px;
+}
+
+.question-box .question-part .question-part-desc {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+@media (max-width: 767px) {
+    .question-box .question-part .question-part-desc {
+        padding-left: 32px;
+    }
+}
+
+@media (min-width: 768px) {
+    .question-box .question-part {
+        padding-right: 260px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        -ms-text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+    }
+
+    .question-box .question-part .question-part-desc {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
+.question-box .question-part > a {
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.question-box .question-part.question-part-answered > a {
+    color: #057cc8;
+}
+
+.question-box .question-part.question-part-answered > a:hover,
+.question-box .question-part.question-part-answered > a:focus {
+    color: #2a6496;
+}
+
+.question-box .question-part.question-part-answered .question-part-desc .answer-number>b{
+    color: #057cc8;
+}
+
+.question-box .question-part .question-part-desc .question-date {
+    color: #b6b6b6;
+}
+
+.question-box .answer-part{
+    position: relative;
+    line-height: 20px;
+    padding-left: 30px;
+    color: #666;
+    padding-bottom: 12px;
+}
+.question-box .answer-part >img{
+    position: absolute;
+    left: 0;
+    top: 2px;
+}
+.pagination-box .pagination{
+    vertical-align: middle;
+}
+.pagination-box .pagination-desc{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.pagination-box .pagination-desc .page-no,
+.pagination-box .pagination-desc .page-count{
+    padding-left: 10px;
+}
+
+.pagination-box .pagination-desc.form-inline .form-control{
+    width: 80px;
+}
+
+.ask-modal.modal .modal-header{
+    color: #066eb4;
+    border-bottom: 3px solid #066eb4;
+}
+
+.ask-modal.modal .modal-footer{
+    border-top: 3px solid #066eb4;
+}
+
+
+
+
+
+
+
+
+
+

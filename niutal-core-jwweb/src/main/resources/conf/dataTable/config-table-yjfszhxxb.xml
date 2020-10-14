@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="niutal_xtgl_yjfszhxxb_config" map-class="java.util.HashMap">
+		<entry key="table_name" value="用户邮箱维护"/>
+		<entry key="table_sortname" value="yjfszhxx_id"/>
+		<entry key="table_sortorder" value="asc"/>
+		<entry key="width" value="550"/>
+		<entry key="height" value="350"/>
+		<entry key="querySql">
+	       <value>
+                yjfszhxx_id,
+                yjzh,
+                yjzhmm,
+                decode(fslx, 'cjmmfs', '成绩密码发送', 'tzfs', '通知发送') fslx
+	       </value>
+		</entry>
+	</util:map>
+  	<util:list id="niutal_xtgl_yjfszhxxb_list" list-class="java.util.ArrayList" >
+		 <map>
+			<entry key="column_name" value="yjfszhxx_id"/>
+			<entry key="comments" value="邮件发送账号信息id"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="primary_key" value="true"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="hidden"/>
+			<entry key="Nullable" value="false"/>
+			<!--说明：字段唯一验证必须加上表主键ID unique=true 才会验证字段唯一 -->
+			<entry key="unique" value="true"/>
+			<entry key="hidden" value="true"/>
+			<entry key="filedValidate" value="select yjfszhxx_id from niutal_xtgl_yjfszhxxb where yjfszhxx_id='${yjfszhxx_id}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="yjzh"/>
+			<entry key="comments" value="邮箱账号"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="300"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select yjzh from niutal_xtgl_yjfszhxxb where yjzh='${yjzh}' and fslx='${fslx}'"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="100"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	 <!-- 邮箱账号验证 -->
+				 	 <entry key="email2" value="true"/>
+				 	 <!-- 邮箱根域名验证 -->
+				 	 <entry key="validEmail" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="yjzhmm"/>
+			<entry key="comments" value="邮箱账号密码"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="password"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="300"/>
+			<entry key="hidden" value="true"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="100"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="confirm_password"/>
+			<entry key="comments" value="确认密码"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="password"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="300"/>
+			<entry key="hidden" value="true"/>
+			<entry key="ignore" value="true"/>
+			<entry key="targetColumn" value="yjzhmm"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	 <!-- 确认密码 -->
+				 	 <entry key="equalTo" value="'#yjzhmm'"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="fslx"/>
+			<entry key="comments" value="发送类型"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="radio"/>
+			<entry key="transform" value="fslx"/>
+			<entry key="width" value="300"/>
+			<entry key="hidden" value="true"/>
+		</map>
+	</util:list>
+</beans>

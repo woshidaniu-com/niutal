@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+	<package name="api" namespace="/api" extends="configuration">
+		
+		<!-- 票据获取校验ACTION -->
+		<action name="ticket_*" class="com.woshidaniu.api.action.TicketTokenAction" method="{1}">
+			<interceptor-ref name="MinStack" />
+		</action>
+		
+		<!-- 票据登录ACTION -->
+		<action name="login_*" class="com.woshidaniu.api.action.TicketLoginAction" method="{1}">
+			<interceptor-ref name="MinStack" />
+			<result name="success" type="redirect">/xtgl/index_initMenu.html?jsdm=${roleid}&amp;_t=${nowTime}</result>
+		</action>
+		
+		<!-- 金智单点登录对接ACTION -->
+		<action name="icelogin_*" class="com.woshidaniu.api.action.ICESsoLoginAction" method="{1}">
+			<interceptor-ref name="MinStack" />
+			<result name="success" type="redirect">/xtgl/index_initMenu.html?jsdm=${roleid}&amp;_t=${nowTime}</result>
+		</action>
+	    
+	</package>
+
+</struts>

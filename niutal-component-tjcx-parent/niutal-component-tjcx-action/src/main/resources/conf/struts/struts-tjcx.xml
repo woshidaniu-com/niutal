@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 统计分析 -->
+	<package name="zfxg/tjcx" extends="configuration" namespace="/zfxg/tjcx">
+
+		<!-- 统计项目-->
+		<action name="tjxm_*" class="tjxmAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="cxxx">/WEB-INF/pages/tjcx/export.jsp</result>
+		</action>
+
+		<!-- 统计报表 -->
+		<action name="tjbb_*" class="tjbbAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="success">/WEB-INF/pages/tjcx/{1}.jsp</result>
+			<result name="tjlbxq">/WEB-INF/pages/tjcx/tjlbxq.jsp</result>
+		</action>
+
+		<!-- 统计报表详情 -->
+		<action name="tjbbXq_*" class="tjbbXqAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="success">/WEB-INF/pages/tjcx/{1}.jsp</result>
+		</action>
+
+		<!-- 统计查询 -->
+		<action name="tjcx_*" class="tjcxAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="success">/WEB-INF/pages/tjcx/{1}.jsp</result>
+		</action>
+
+		<!-- 查询字段 -->
+		<action name="cxzd_*" class="cxzdAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="cxzd">/WEB-INF/pages/tjcx/export.jsp</result>
+		</action>
+
+		<!-- 快照设置 -->
+		<action name="kzsz_*" class="kzszAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+	    	<result name="tjcx" type="redirect">/zfxg/tjcx/tjcx_tjcxlb.html?kzszid=${kzszid}</result>
+	    	<result name="tjbb" type="redirect">/zfxg/tjcx/tjbb_tjlbxq.html?kzszid=${kzszid}</result>
+			<result name="tjcxError">/WEB-INF/pages/tjcx/tjcxError.jsp</result>
+			<result name="{1}">/WEB-INF/pages/tjcx/{1}.jsp</result>
+			<result name="kzszUpdate">/WEB-INF/pages/tjcx/kzszUpdate.jsp</result>
+		</action>
+
+		<!-- 统计图表 -->
+		<action name="tjtb_*" class="tjtbAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="success">/WEB-INF/pages/tjcx/{1}.jsp</result>
+		</action>
+	</package>
+
+
+	<package name="tjcx" extends="configuration" namespace="/tjcx">
+	  <!-- 单点登录ACTION -->
+	  <action name="out_*" class="tjcxOutAction" method="{1}">
+	  	 <interceptor-ref name="defaultStack" />
+	     <result name="success" type="redirect">/xtgl/index_initMenu.html</result>
+	     <result name="tjbb" type="redirect">/zfxg/tjcx/tjbb_tjbb.html</result>
+	     <result name="tjcx" type="redirect">/zfxg/tjcx/tjcx_tjcx.html</result>
+	     <result name="kzxq" type="redirect">/zfxg/tjcx/kzsz_kzxq.html?kzszid=${kzszid}</result>
+	  </action>	
+	  
+		<!--新框架，当前系统 接入 示例 -->
+		<!-- 统计报表，示例 -->
+		<action name="tmptjbb_*" class="tmptjbbAction" method="{1}">
+	  	 <interceptor-ref name="defaultStack" />
+	 	   <result name="success" type="redirect">/zfxg/tjcx/tjbb_tjbb.html</result>
+		</action>
+
+		<!-- 统计查询，示例 -->
+		<action name="tmptjcx_*" class="tmptjcxAction" method="{1}">
+	  	 <interceptor-ref name="defaultStack" />
+	  	   <result name="success" type="redirect">/zfxg/tjcx/tjcx_tjcx.html</result>
+		</action>	  	
+	</package>
+
+</struts>

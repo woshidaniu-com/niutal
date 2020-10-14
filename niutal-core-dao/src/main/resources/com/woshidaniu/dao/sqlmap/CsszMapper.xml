@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ICsszDao">
+	
+	<update id="update" parameterType="com.woshidaniu.dao.entities.CsszModel" flushCache="true" statementType="PREPARED" timeout="20000">
+		update niutal_xtgl_csszb t
+		   set t.zdz = #{zdz,jdbcType=VARCHAR}
+		where t.zdm = #{zdm}
+	</update>
+	
+	<select id="getModelList" resultType="com.woshidaniu.dao.entities.CsszModel" parameterType="com.woshidaniu.dao.entities.CsszModel" flushCache="true" useCache="false">
+		select t.id,
+		       t.zdm,
+		       t.zdz,
+		       t.zdlx,
+		       t.zdly,       
+		       t.zdzyq,
+		       t.ssgnmkdm,
+		       t.ssmk,
+		       t.zs,
+		       t.bz
+		  from niutal_xtgl_csszb t
+		<where> 1=1  
+			<if test="ssmk != null and ssmk != ''" >
+				and t.ssmk = #{ssmk}
+	   		</if>
+	   		<if test="ssgnmkdm != null and ssgnmkdm != ''">
+				and t.ssgnmkdm = #{ssgnmkdm}
+	   		</if>
+	   		<if test="zs != null and zs != ''">
+				and t.zs like '%'|| #{zs} ||'%'
+	   		</if>
+		</where>
+		order by t.ssmk,t.zdlx,t.zdm asc
+	</select>
+	
+	<select id="getZdsjList" resultType="com.woshidaniu.entities.PairModel" parameterType="string" >
+		${zdlySQL}
+	</select>
+	
+ 	<!-- 查询 系统设置值 -->
+ 	<select id="cxXtszxz" resultType="map">
+ 		select t.zdm,t.zdz from niutal_xtgl_csszb t order by t.ssmk,t.zdm asc
+ 	</select>
+ 	
+ 	<!-- 快速查询指定的 系统设置值 -->
+ 	<select id="getValue" parameterType="string" resultType="string">
+ 		select t.zdz from niutal_xtgl_csszb t where t.zdm=#{key}
+ 	</select>
+ 	
+</mapper>

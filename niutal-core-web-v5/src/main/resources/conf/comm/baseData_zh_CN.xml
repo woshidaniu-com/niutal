@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 基础数据XML,修改后请重新启动服务器 -->
+<root>
+
+	<!-- 系统支持语言-->
+	<data id="languageList">
+		<option key="zh_CN">中文</option>
+		<option key="en_US">English</option>
+	</data>
+
+	<!-- 新闻发布中的发布对象 -->
+	<data id="fbdx">
+		<option key="tea">全体教师</option>
+		<option key="stu">全体学生</option>
+	</data>
+	<!-- 新闻发布阅读权限 -->
+	<data id="ydqx">
+		<option key="auth">登录</option>
+		<option key="public">公开</option>
+	</data>
+	<!-- 就业服务类型 -->
+	<data id="jyfwlx">
+		<option key="1">宣讲会</option>
+		<option key="2">招聘会</option>
+		<option key="3">笔试</option>
+		<option key="4">面试</option>
+	</data>
+	
+	<!-- 状态标签 -->
+	<data id="isStart">
+		<option key="1">启用</option>
+		<option key="0">停用</option>
+	</data>
+
+	<!-- 是/否标签 -->
+	<data id="isNot">
+		<option key="1">是</option>
+		<option key="0">否</option>
+	</data>
+	
+	<!-- 非公用/公用标签 -->
+	<data id="isPublic">
+		<option key="1">公用</option>
+		<option key="0">非公用</option>
+	</data>
+	
+	<!-- 允许/不允许标签 -->
+	<data id="isAllow">
+		<option key="1">允许</option>
+		<option key="0">不允许</option>
+	</data>
+	
+	<!-- 允许/不允许标签 -->
+	<data id="isValid">
+		<option key="1">有效</option>
+		<option key="0">无效</option>
+	</data>
+	
+	<!-- 是否可录入 -->
+	<data id="isSfklr">
+		<option key="0">可录入</option>
+		<option key="1">不可录入</option>
+	</data>
+	
+	<!-- 有无分数段 -->
+	<data id="isYffsd">
+		<option key="1">有</option>
+		<option key="0">无</option>
+	</data>
+	
+	<!-- 是否参加计算绩点 -->
+	<data id="isScjjdjs">
+		<option key="1">参加</option>
+		<option key="0">不参加</option>
+	</data>
+	
+	<!-- 录入方式(1输入;2选择)-->
+	<data id="isLrfs">
+		<option key="2">下拉框选择</option>
+		<option key="1">文本框输入</option>
+	</data>
+	
+	<!-- 排课类别 -->
+	<data id="pklbList">
+	 	<option key="1">学院</option>
+	 	<option key="2">专业</option>
+	 	<option key="3">课程</option>
+	 	<option key="4">教师</option>
+	 	<option key="5">教室</option>
+	 	<option key="6">年级</option>
+	 	<option key="7">班级</option>
+	 	<option key="8">年级专业</option>
+	 	<option key="9">校区</option>
+	 	<!--<option key="10">学生</option>:此记录在其他选课规则个人选课控制中使用；请勿删除-->
+	</data>
+	<!-- 成绩导入方式(1追加 ;2覆盖)-->
+	<data id="cjDrfsList">
+		<option key="1">追加</option>
+		<option key="2">覆盖</option>
+	</data>
+	
+	<!-- Excel后缀-->
+	<data id="excelSuffixList">
+		<option key="XLS">*.xls</option>
+		<option key="XLSX">*.xlsx</option>
+	</data>
+	
+	<!-- 否视为被使用-->
+	<data id="canUsed">
+		<option key="1">视为被使用</option>
+		<option key="0">不视为被使用</option>
+	</data>
+	
+	<!-- 能否修改-->
+	<data id="canModify">
+		<option key="1">能修改</option>
+		<option key="0">不能修改</option>
+	</data>
+	
+	<!-- 排考试方式-->
+	<data id="pkMethod">
+		<option key="1">先排考后选课</option>
+		<option key="2">先选课后排考</option>
+	</data>
+	
+	<!-- 加密进度-->
+	<data id="encryptStatus">
+		<option key="1">未加密</option>
+		<option key="2">部分加密</option>
+		<option key="3">全部加密</option>
+	</data>
+	
+	<!-- 处理进度-->
+	<data id="processStatus">
+		<option key="1">未处理</option>
+		<option key="2">部分处理</option>
+		<option key="3">全部处理</option>
+	</data>
+	
+	<!-- 设置进度 -->
+	<data id="settingList">
+		<option key="-1">未设置</option>
+		<option key="0">部分设置</option>
+		<option key="1">已设置</option>
+	</data>
+	
+	<!-- 设置状态 -->
+	<data id="settingStatus">
+		<option key="0">未设置</option>
+		<option key="1">已设置</option>
+	</data>
+	
+	<!-- 修改方式-->
+	<data id="xgfsList">
+		<option key="1">替换</option>
+		<option key="2">前缀</option>
+		<option key="3">后缀</option>
+	</data>
+	
+	<!-- 照片格式 -->
+	<data id="zpgsList">
+		<option key="jpg">JGP</option>
+		<option key="jpeg">JPEG</option>
+		<option key="gif">GIF</option>
+		<option key="png">PNG</option>
+	</data>
+	
+	<!-- 选必修-->
+	<data id="xbx">
+		<option key="bx">必修</option>
+		<option key="xx">选修</option>
+	</data>	
+	
+	<!-- 评价显示分类 -->
+	<data id="pjlxList">
+		<option key="01">学评教</option>
+		<option key="02">问卷调查</option>
+	</data>	
+	
+	<!-- 评价显示分类 -->
+	<data id="pjxsflList">
+		<option key="1">按课程</option>
+		<option key="2">按学院</option>
+	</data>	
+	
+	<!-- 评分类型 -->
+	<data id="pflxList">
+		<option key="1">指标</option>
+		<option key="2">评分</option>
+	</data>	
+	
+	<!-- 答题类型 -->
+	<data id="dtlxList">
+		<option key="1">主观题</option>
+		<option key="2">客观题</option>
+	</data>	
+	
+	<!-- 自定义功能：功能类型 -->
+	<data id="functypeList">
+		<option key="1">数据展示</option>
+		<option key="2">数据维护</option>
+		<option key="3">预览打印</option>
+		<option key="4">快速打印</option>
+		<option key="5">数据导出</option>
+		<option key="6">数据删除</option>
+	</data>	
+	
+	<!-- 自定义功能：字段值来源;-->
+	<data id="sourceTypeList">
+		<option key="APP">程序内置</option>
+		<option key="SQL">数据库</option>
+		<option key="XML">XML数据</option>
+		<option key="Spring">Spring集合对象</option>
+		<option key="Fixed">固定值</option>
+		<option key="Base">基础数据</option>
+	</data>	
+	
+	<!-- 自定义功能：字段使用范围;-->
+	<data id="fieldScopeList">
+		<option key="1">全局</option>
+		<option key="2">框架</option>
+		<option key="3">局部</option>
+	</data>	
+	
+	<!-- 申请人：审核状态下拉数据;-->
+	<data id="sqrNodeList">
+		<option key="WAIT_EXECUTE">待处理</option>
+		<option key="ALREADY_EXECUTE">已处理</option>
+	</data>
+	
+	<!-- 审核人：审核状态下拉数据;-->
+	<data id="shrNodeList">
+		<option key="WAIT_AUDITING">待审核</option>
+		<option key="PASS_AUDITING">审核通过</option>
+		<option key="NO_PASS_AUDITING">审核不通过</option>	
+	</data>
+	
+	<!-- 审核人：审核状态下拉数据;-->
+	<data id="shrStatusList">
+		<option key="1">待审核</option>
+		<option key="3">审核通过</option>
+		<option key="5">审核不通过</option>	
+	</data>
+	
+	<!-- 缴费状态下拉数据;-->
+	<data id="payStatusList">
+		<option key="1">已缴费</option>
+		<option key="0">未缴费</option>
+	</data>
+	
+	<!-- 发送邮件的类型 -->
+	<data id="fslx">
+		<option key="tzfs">通知发送</option>
+		<option key="cjmmfs">成绩密码发送</option>
+	</data>
+	
+	<!-- 部门类型 -->
+	<data id="bmlxList">
+		<option key="1">教学院系</option>
+		<option key="2">科研机构</option>
+		<option key="3">公共服务 指图书馆、档案馆、分析测试中心、计算/网络/信息/电教/教育技术中心等学术支撑单位</option>
+		<option key="4">党务部门 含工会、团委、妇委会</option>
+		<option key="5">行政机构</option>
+		<option key="6">附属单位</option>
+		<option key="7">后勤部门</option>
+		<option key="8">校办产业</option>
+		<option key="9">其他</option>
+	</data>
+		
+</root>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.taglibs.dao.daointerface.IDatasetDao" >
+	
+	<!-- -->
+	<select id="getDatasetList" parameterType="string" resultType="com.woshidaniu.taglibs.dao.entities.DatasetModel">
+		 select t.field_guid,
+				t.field_id,
+				t.field_name,
+				t.field_text,
+				t.field_desc
+		     from niutal_query_fields  t 
+		    where t.field_scope = '1' or t.field_scope = #{func_code} 
+	</select>
+	     
+</mapper>

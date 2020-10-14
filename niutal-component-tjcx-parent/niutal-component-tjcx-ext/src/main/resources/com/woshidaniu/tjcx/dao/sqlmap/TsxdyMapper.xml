@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.tjcx.dao.daointerface.ITsxdyDao">
+
+	<!-- 根据项目代码查所有特殊项 -->
+	<select id="getModelList" parameterType="com.woshidaniu.tjcx.dao.entites.TsxdyModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.TsxdyModel">
+		select * from ZFXG_TJCX_TSXDYB where 1=1
+		<if test="xmdm != null">
+			and xmdm = #{xmdm}
+	    </if>
+	    order by xssx
+	</select>
+	
+	<!-- 获取已选择的项 -->
+	<select id="getListByTj" parameterType="java.util.HashMap"
+		resultType="com.woshidaniu.tjcx.dao.entites.TsxdyModel">
+		select * from ZFXG_TJCX_TSXDYB 
+		where  xmdm = #{xmdm} and tsxmc in(${tsxmcs})
+	</select>
+</mapper>
+	

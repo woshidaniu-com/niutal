@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.18-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-struts2-common</artifactId>
+	<name>业务框架-Struts2基础实现</name>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- niukit-web : Web快速调用组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-struts2</artifactId>
+		</dependency>
+		
+		<!-- ###################### niutal核心组件  ###################### -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+</project>

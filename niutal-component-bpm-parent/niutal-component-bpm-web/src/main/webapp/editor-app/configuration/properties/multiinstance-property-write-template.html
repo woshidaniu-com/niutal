@@ -1,0 +1,8 @@
+
+<div ng-controller="KisBpmMultiInstanceCtrl">
+    <select ng-model="property.value" ng-change="multiInstanceChanged()">
+    	<option value="None"> {{'PROPERTY.MULTIINSTANCE_TYPE_NONE' | translate}} </option>
+    	<option value="Parallel"> {{'PROPERTY.MULTIINSTANCE_TYPE_PARALLEL' | translate}} </option>
+    	<option value="Sequential">{{'PROPERTY.MULTIINSTANCE_TYPE_SEQUENTIAL' | translate}} </option>
+    </select>
+</div>

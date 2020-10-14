@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="niutal_xtgl_mzdmb_config" map-class="java.util.HashMap">
+		<entry key="table_name" value="民族代码"/>
+		<entry key="table_sortname" value="mzdm"/>
+		<entry key="table_sortorder" value="asc"/>
+		<entry key="width" value="550"/>
+		<entry key="height" value="350"/>
+		<!-- {0}号必须为表单中 key="primary_key"的字段
+		<entry key="update_validate_sql" value="select mzdm from niutal_xtgl_mzdmb where mzdmb_id='{0}'"/>
+		<entry key="delete_validate_sql" value="select mzdm from niutal_xtgl_mzdmb where mzdmb_id='{0}'"/>
+		-->
+	</util:map>
+  	<util:list id="niutal_xtgl_mzdmb_list" list-class="java.util.ArrayList" >
+		 <map>
+			<entry key="column_name" value="mzdmb_id"/>
+			<entry key="comments" value="民族代码表ID"/>
+			<!-- 设置字段隐藏-->
+			<entry key="hidden" value="true"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="primary_key" value="true"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="hidden"/>
+		</map>
+		<map>
+			<entry key="column_name" value="mzdm"/>
+			<entry key="comments" value="民族代码"/>
+			<entry key="maxLength" value="10"/>
+			<entry key="cssClass" value="no_ime_mode"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="50"/>
+			<entry key="unique" value="true"/>
+			<!--说明：字段唯一验证必须加上表主键ID  -->
+			<entry key="filedValidate" value="select mzdmb_id,mzdm from niutal_xtgl_mzdmb where mzdm='${mzdm}'"/>
+		</map>
+		<map>
+			<!-- 字段名 -->
+			<entry key="column_name" value="mzmc"/>
+			<!-- 字段中文名称-->
+			<entry key="comments" value="民族名称"/>
+			<!-- 对应数据库字段长度-->
+			<entry key="maxLength" value="20"/>
+			<!-- 在表格中显示位置-->
+			<entry key="align" value="left"/>
+			<!-- 在表格中显示位置-->
+			<entry key="type" value="text"/>
+			<!-- 字段是否为空-->
+			<entry key="Nullable" value="false"/>
+			<!-- 列表中显示宽度-->
+			<entry key="width" value="80"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select mzdmb_id,mzdm from niutal_xtgl_mzdmb where mzmc='${mzmc}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="tjrq"/>
+			<entry key="comments" value="添加日期"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="date"/>
+			<!-- 日期格式 -->
+			<entry key="dateFmt" value="yyyy-MM-dd"/>
+			<entry key="width" value="65"/>
+		</map>
+		<map>
+			<entry key="column_name" value="zt"/>
+			<entry key="comments" value="状态"/>
+			<entry key="align" value="left"/>
+			<entry key="transform" value="isStart"/>
+			<entry key="type" value="radio"/>
+			<entry key="width" value="50"/>
+		</map>
+		<map>
+			<entry key="column_name" value="ms"/>
+			<entry key="comments" value="描述"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="textarea"/>
+			<entry key="maxLength" value="100"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="100"/>
+		</map>
+	</util:list>
+</beans>

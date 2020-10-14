@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.woshidaniu.zxzx.dao.daointerface.IZxwtDao" >
+  
+  <resultMap id="BaseResultMap" type="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+    <id column="ZXID" property="zxid" jdbcType="VARCHAR" />
+    <result column="BKDM" property="bkdm" jdbcType="VARCHAR" />
+    <result column="kzdT" property="kzdt" jdbcType="VARCHAR" />
+    <result column="ZXNR" property="zxnr" jdbcType="VARCHAR" />
+    <result column="ZXSJ" property="zxsj" jdbcType="VARCHAR" />
+    <result column="ZXR" property="zxr" jdbcType="VARCHAR" />
+    <result column="SFGK" property="sfgk" jdbcType="VARCHAR" />
+    <result column="HFZT" property="hfzt" jdbcType="VARCHAR" />
+    <result column="DJL" property="djl" jdbcType="INTEGER" />
+    <result column="CJWT" property="cjwt" jdbcType="VARCHAR" />
+    <result column="SFNM" property="sfnm" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.woshidaniu.zxzx.dao.entities.ZxwtModel" extends="BaseResultMap" >
+    <result column="ZXNR" property="zxnr" jdbcType="CLOB" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapObject" type="com.woshidaniu.zxzx.dao.entities.ZxwtModel" extends="BaseResultMap">
+  	<association property="kzdkModel" resultMap="Inner_kzdkResultMap"></association>
+  	<association property="zxrModel"  resultMap="Innner_XsxxResultMap"></association>
+  	<association property="zxhfModel" resultMap="Inner_ZxhfResultMap"></association>
+  </resultMap>
+  
+  <resultMap id="BaseResultMapObjectWithBlobs" type="com.woshidaniu.zxzx.dao.entities.ZxwtModel" extends="ResultMapWithBLOBs">
+  	<association property="kzdkModel" resultMap="Inner_kzdkResultMap"></association>
+  	<association property="zxrModel"  resultMap="Innner_XsxxResultMap"></association>
+  	<association property="zxhfModel" resultMap="Inner_ZxhfResultMap"></association>
+  </resultMap>
+  
+  <resultMap id="Inner_kzdkResultMap" type="com.woshidaniu.zxzx.dao.entities.kzdkModel" >
+    <result column="BKDM" property="bkdm" jdbcType="VARCHAR" />
+    <result column="BKMC" property="bkmc" jdbcType="VARCHAR" />
+    <result column="SFQY" property="sfqy" jdbcType="VARCHAR" />
+    <result column="XSXS" property="xsxs" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="Innner_XsxxResultMap" type="com.woshidaniu.zxzx.dao.entities.ZxrModel">
+  	<result column="XH" property="xh" jdbcType="VARCHAR"/>
+  	<result column="XM" property="xm" jdbcType="VARCHAR"/>
+  	<result column="BMDM_ID" property="bmdm_id" jdbcType="VARCHAR"/>
+  	<result column="BMMC" property="bmmc" jdbcType="VARCHAR"/>
+  	<result column="ZYDM" property="zydm" jdbcType="VARCHAR"/>
+  	<result column="ZYMC" property="zymc" jdbcType="VARCHAR"/>
+  	<result column="BJDM" property="bjdm" jdbcType="VARCHAR"/>
+  	<result column="BJMC" property="bjmc" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <resultMap id="Inner_ZxhfResultMap" type="com.woshidaniu.zxzx.dao.entities.ZxhfModel" >
+    <id column="HFID" property="hfid" jdbcType="VARCHAR" />
+    <result column="ZXID" property="zxid" jdbcType="VARCHAR" />
+    <result column="HFR" property="hfr" jdbcType="VARCHAR" />
+    <result column="HFSJ" property="hfsj" jdbcType="VARCHAR" />
+    <result column="HFNR" property="hfnr" jdbcType="CLOB" />
+  </resultMap>
+
+  <resultMap type="map" id="Inner_ExportResultMap">
+  	<result column="ZXID" property="ZXID" jdbcType="VARCHAR" />
+    <result column="BKDM" property="BKDM" jdbcType="VARCHAR" />
+    <result column="kzdT" property="kzdT" jdbcType="VARCHAR" />
+    <result column="ZXSJ" property="ZXSJ" jdbcType="VARCHAR" />
+    <result column="ZXR" property="ZXR" jdbcType="VARCHAR" />
+    <result column="SFGK" property="SFGK" jdbcType="VARCHAR" />
+    <result column="HFZT" property="HFZT" jdbcType="VARCHAR" />
+    <result column="DJL" property="DJL" jdbcType="INTEGER" />
+    <result column="ZXNR" property="ZXNR" jdbcType="CLOB" javaType="string"/>
+    <result column="BKMC" property="BKMC" jdbcType="VARCHAR" />
+    <result column="XH" property="XH" jdbcType="VARCHAR"/>
+  	<result column="XM" property="XM" jdbcType="VARCHAR"/>
+  	<result column="BMDM_ID" property="BMDM_ID" jdbcType="VARCHAR"/>
+  	<result column="BMMC" property="BMMC" jdbcType="VARCHAR"/>
+  	<result column="ZYDM" property="ZYDM" jdbcType="VARCHAR"/>
+  	<result column="ZYMC" property="ZYMC" jdbcType="VARCHAR"/>
+  	<result column="BJDM" property="BJDM" jdbcType="VARCHAR"/>
+  	<result column="BJMC" property="BJMC" jdbcType="VARCHAR"/>
+  	<result column="HFID" property="HFID" jdbcType="VARCHAR" />
+    <result column="HFR" property="HFR" jdbcType="VARCHAR" />
+    <result column="HFSJ" property="HFSJ" jdbcType="VARCHAR" />
+    <result column="HFNR" property="HFNR" jdbcType="CLOB" javaType="string"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ZXID, kzdT, ZXSJ, ZXR, SFGK, DJL
+  </sql>
+  
+  <sql id="Blob_Column_List" >
+    ZXNR
+  </sql>
+  
+  <!-- 参数是zxwtModel的条件 -->
+  <sql id="zxwtModelExtendConditionSql">
+	<if test="conditionSql != null and conditionSql != ''">
+	  	${conditionSql}
+	</if>
+  </sql>
+
+  <select id="getPagedList" resultMap="BaseResultMapObject" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+	   	SELECT * FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.zxnr,
+       	 a.bkdm,
+       	 a.sfgk,
+       	 a.zxr,
+       	 a.zxsj,
+       	 a.cjwt,
+         b.bkmc,
+		 c.hfid,
+		 c.hfr,
+		 c.hfsj,
+		 decode(a.sfnm,'1','【匿名】','0',d.xm,d.xm) as xm,
+		 d.xh,
+		 d.bmdm_id,
+		 d.bmmc,
+		 d.zydm_id zydm,
+		 d.zymc,
+		 d.bjdm_id bjdm,
+		 d.bjmc,
+		 NVL2(c.hfid,'1','0') hfzt
+	  from niutal_ZXZX_ZXWTB a
+	  left join niutal_ZXZX_BKXXB b
+	    on a.bkdm = b.bkdm
+		left join niutal_ZXZX_ZXHFB c
+		  on a.zxid = c.zxid
+		left join VIEW_niutal_XTGL_XSXXB d 
+		  on a.zxr = d.xh order by a.zxsj desc 
+		)
+		WHERE 
+		  	(#{loginUser,jdbcType=VARCHAR} = 'admin'
+		  	OR
+		  	(
+		    bkdm in (select bkdm from niutal_zxzx_bkyhb z where z.zgh = #{loginUser,jdbcType=VARCHAR})
+		    <include refid="zxwtModelExtendConditionSql"/>
+		    ))
+		   	<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+				and ${searchModel.querySQL}
+			</if>
+  </select>
+  
+  <select id="getBatchDataList" resultMap="BaseResultMapObject">
+	  	select 
+	   	   	 a.zxid,
+	       	 a.kzdt,
+	       	 a.zxnr,
+	       	 a.bkdm,
+	       	 a.sfgk,
+	       	 a.zxr,
+	       	 a.zxsj,
+	       	 a.cjwt,
+	         b.bkmc,
+	         c.hfid,
+			 decode(a.sfnm,'1','【匿名】','0',d.xm,d.xm) as xm,
+			 d.xh,
+			 d.bmdm_id,
+			 d.bmmc,
+			 d.zydm_id zydm,
+			 d.zymc,
+			 d.bjdm_id bjdm,
+			 d.bjmc,
+			 NVL2(c.hfid,'1','0') hfzt
+		  from niutal_ZXZX_ZXWTB a
+		  left join niutal_ZXZX_BKXXB b
+		    on a.bkdm = b.bkdm
+			left join niutal_ZXZX_ZXHFB c
+			  on a.zxid = c.zxid
+			left join VIEW_niutal_XTGL_XSXXB d 
+			  on a.zxr = d.xh 
+	   where c.hfid is null and a.bkdm in  
+	   	  <foreach collection="bkdms" item="bkdm" index="index"  
+            open="(" close=")" separator=",">  
+           	#{bkdm,jdbcType=VARCHAR}
+          </foreach>
+		  <include refid="zxwtModelExtendConditionSql"/>
+	   order by b.bkdm,a.zxsj desc
+  </select>
+  
+  <!-- 只用于导出 -->
+  <select id="getMapList" resultMap="Inner_ExportResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel">
+  	SELECT * FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.bkdm,
+       	 a.zxr,
+       	 a.zxsj,
+       	 a.zxnr,
+       	 a.djl,
+       	 a.cjwt,
+         b.bkmc,
+		 c.hfid,
+		 c.hfnr,
+		 c.hfsj,
+		 NVL(d.xm,' ') xm,
+		 d.xh,
+		 d.bmdm_id,
+		 d.bmmc,
+		 d.zydm_id zydm,
+		 d.zymc,
+		 d.bjdm_id bjdm,
+		 d.bjmc,
+		 e.xm hfr,
+		 NVL2(c.hfid,'已回复','未回复') hfzt,
+		 DECODE(a.sfgk,'1','公开','不公开') sfgk
+	  from niutal_ZXZX_ZXWTB a
+	  left join niutal_ZXZX_BKXXB b
+	    on a.bkdm = b.bkdm
+		left join niutal_ZXZX_ZXHFB c
+		  on a.zxid = c.zxid
+		left join VIEW_niutal_XTGL_XSXXB d 
+		  on a.zxr = d.xh
+		left join niutal_XTGL_YHB e
+		  on c.hfr = e.zgh
+		where 1 = 1
+		<include refid="zxwtModelExtendConditionSql"/>
+		)
+<!--    	<if test="searchModel.querySQL != null and searchModel.querySQL != ''"> -->
+<!-- 		and ${searchModel.querySQL} -->
+<!-- 	</if> -->
+  </select>
+  
+  <select id="getModel" resultMap="BaseResultMapObjectWithBlobs" parameterType="java.lang.String" >
+    SELECT * FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.bkdm,
+       	 a.sfgk,
+       	 a.zxr,
+       	 a.zxsj,
+       	 a.zxnr,
+       	 a.cjwt,
+       	 a.sfnm,
+         b.bkmc,
+		 c.hfid,
+		 c.hfsj,
+		 c.hfnr,
+		 decode(a.sfnm, '1', '【匿名】', 0, d.xm, '【未知】') as xm, 
+		 d.xh,
+		 d.bmdm_id,
+		 d.bmmc,
+		 d.zydm_id zydm,
+		 d.zymc,
+		 d.bjdm_id bjdm,
+		 d.bjmc,
+		 e.mm hfr,
+		 NVL2(c.hfid,'1','0') hfzt
+	  from niutal_zxzx_zxwtb a
+	  left join niutal_zxzx_bkxxb b
+	    on a.bkdm = b.bkdm
+		left join niutal_zxzx_zxhfb c
+		  on a.zxid = c.zxid
+		left join view_niutal_xtgl_xsxxb d 
+		  on a.zxr = d.xh
+	    left join niutal_xtgl_yhb e 
+	  on c.hfr = e.zgh) where ZXID = #{zxid,jdbcType=VARCHAR}
+  </select>
+  
+  <update id="update" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+    update niutal_ZXZX_ZXWTB
+    <set >
+      <if test="kzdt != null and kzdt != ''" >
+        kzdT = #{kzdt,jdbcType=VARCHAR},
+      </if>
+      <if test="zxsj != null and zxsj != ''" >
+        ZXSJ = #{zxsj,jdbcType=VARCHAR},
+      </if>
+      <if test="zxr != null and zxr != ''" >
+        ZXR = #{zxr,jdbcType=VARCHAR},
+      </if>
+      <if test="sfgk != null and sfgk != ''" >
+        SFGK = #{sfgk,jdbcType=VARCHAR},
+      </if>
+      <if test="djl != null" >
+        DJL = #{djl,jdbcType=INTEGER},
+      </if>
+      <if test="zxnr != null and zxnr != ''" >
+        ZXNR = #{zxnr,jdbcType=CLOB},
+      </if>
+      <if test="cjwt != null and cjwt != ''" >
+        CJWT = #{cjwt,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ZXID = #{zxid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateWeb" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+    update niutal_ZXZX_ZXWTB
+    <set >
+       <if test="bkdm != null and bkdm != ''" >
+        BKDM = #{bkdm,jdbcType=VARCHAR},
+      </if>
+      <if test="zxnr != null and zxnr != ''" >
+        ZXNR = #{zxnr,jdbcType=CLOB},
+      </if>
+        SFNM = #{sfnm,jdbcType=VARCHAR},
+    </set>
+    where ZXID = #{zxid,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insert" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+    insert into niutal_ZXZX_ZXWTB (ZXID, BKDM, kzdT, ZXSJ, ZXR, SFGK, DJL, ZXNR, SFNM)
+    values (#{zxid,jdbcType=VARCHAR},
+   			#{bkdm,jdbcType=VARCHAR}, 
+    		#{kzdt,jdbcType=VARCHAR}, 
+    		#{zxsj,jdbcType=VARCHAR}, 
+      		#{zxr,jdbcType=VARCHAR}, 
+      		#{sfgk,jdbcType=VARCHAR}, 
+      		#{djl,jdbcType=INTEGER}, 
+      		#{zxnr,jdbcType=CLOB},
+      		#{sfnm,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="batchDelete" parameterType="java.util.List" >
+    delete from niutal_ZXZX_ZXWTB
+    <where>
+		<trim prefixOverrides="or" >
+         	<foreach collection="list" item="item" >
+           		or (ZXID = #{item,jdbcType=VARCHAR})
+         	</foreach>
+       	</trim>
+	</where>
+  </delete>
+
+  <sql id="Base_Web_Where_Clause">
+  	<where>
+  	  <trim prefixOverrides="and" >
+  	  	  and sfgk = '1' 
+  	  	  and hfid IS NOT NULL
+	  	  <if test="webSearchBkdmList != null" >
+	  	  	and bkdm in 
+	  	  	<trim prefix="(" suffix=")">
+		      	<foreach collection="webSearchBkdmList" item="item" separator=",">
+		        	#{item.bkdm,jdbcType=VARCHAR}
+		      	</foreach>
+	    	</trim>
+	      </if>
+	      <if test="webSearch != null and webSearch != ''" >
+	        and (bkmc like '%'||#{webSearch,jdbcType=VARCHAR}||'%' or
+	        	kzdt like '%'||#{webSearch,jdbcType=VARCHAR}||'%' or
+	        	zxnr like '%'||#{webSearch,jdbcType=VARCHAR}||'%')
+	      </if>
+      </trim>
+  	</where>
+  </sql>
+  
+  <!-- 
+  <select id="getPagedListWeb" resultMap="BaseResultMapObjectWithBlobs" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+	   	SELECT * FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.zxnr,
+       	 a.bkdm,
+       	 a.sfgk,
+       	 decode(a.sfnm, '1', '匿名', '0',a.zxr,a.zxr) as zxr,
+       	 a.zxsj,
+       	 a.djl,
+         b.bkmc,
+		 c.hfid,
+		 c.hfr,
+		 c.hfsj,
+		 c.hfnr,
+		 d.xm,
+		 d.xh
+	  from niutal_ZXZX_ZXWTB a
+	  left join niutal_ZXZX_BKXXB b
+	    on a.bkdm = b.bkdm
+		left join niutal_ZXZX_ZXHFB c
+		  on a.zxid = c.zxid
+		left join VIEW_niutal_XTGL_XSXXB d 
+		  on a.zxr = d.xh)
+	<where>
+  	  <trim prefixOverrides="and" >
+  	  	  and sfgk = '1' 
+  	  	  and hfid IS NOT NULL
+	  	  <if test="bkdms != null  &amp;&amp; bkdms.size() &gt; 0" >
+	  	  	and bkdm in 
+	  	  	 <foreach item="item" index="index" collection="bkdms"
+                      open="(" separator="," close=")">
+                 '${item}'
+              </foreach>
+	      </if>
+	     
+	      <if test="webSearch != null and webSearch != ''" >
+	        and (zxnr like '%'||#{webSearch,jdbcType=VARCHAR}||'%' or
+	        	hfnr like '%'||#{webSearch,jdbcType=VARCHAR}||'%')
+	      </if>
+      </trim>
+  	</where>
+	ORDER BY zxsj desc
+  </select>
+   -->
+  <sql id="getPagedListWeb_cjwt">
+	select 
+		a.wtid 
+		zxid,
+		wtbt kzdt,
+		wtnr zxnr,
+		a.bkdm,
+		'1' sfgk,
+		'' zxr,
+		cjsj zxsj,
+		1 djl,
+		b.bkmc bkmc,
+		a.wtid hfid,
+		'' hfr,
+		cjsj hjsj,
+		wthf hfnr,
+		'' xm,
+		'' xh
+	from niutal_ZXZX_CJWTB a
+		left join niutal_ZXZX_BKXXB b on a.bkdm = b.bkdm 
+	where sffb='1'
+  </sql>
+   
+  <select id="getPagedListWeb" resultMap="BaseResultMapObjectWithBlobs" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel">
+		select * from (
+			select
+				a.zxid,
+				a.kzdt,
+				a.zxnr,
+				a.bkdm,
+				a.sfgk,
+				decode(a.sfnm, '1', '匿名', '0',a.zxr,a.zxr) as zxr,
+				a.zxsj,
+				a.djl,
+				b.bkmc,
+				c.hfid,
+				c.hfr,
+				c.hfsj,
+				c.hfnr,
+				d.xm,
+				d.xh
+			from niutal_ZXZX_ZXWTB a
+				left join niutal_ZXZX_BKXXB b on a.bkdm = b.bkdm
+				left join niutal_ZXZX_ZXHFB c on a.zxid = c.zxid
+				left join VIEW_niutal_XTGL_XSXXB d on a.zxr = d.xh
+			<where>
+				<if test="bkdms != null and !bkdms.isEmpty()">
+					and a.bkdm in
+					<foreach item="item" index="index" collection="bkdms" open="(" separator="," close=")">
+						'${item}'
+					</foreach>
+				</if>
+			</where>
+			
+			<!-- 没有bkdm需查询常见问题栏目 -->
+			<if test="bkdms == null or bkdms.isEmpty()">
+			union all
+			<include refid="getPagedListWeb_cjwt"></include>	
+			</if>
+			
+			<!-- 存在常见问题栏目条件 -->
+			<if test="bkdms != null and bkdms.contains(&quot;cjwt&quot;)">
+			union all
+			<include refid="getPagedListWeb_cjwt"></include>	
+			</if>
+		)
+		<where>
+			<trim prefixOverrides="and" >
+			sfgk = '1'
+			and hfid IS NOT NULL
+			<if test="webSearch != null and webSearch != ''">
+				and (zxnr like '%'||#{webSearch,jdbcType=VARCHAR}||'%' or
+				hfnr like '%'||#{webSearch,jdbcType=VARCHAR}||'%' or
+				kzdt like '%'||#{webSearch,jdbcType=VARCHAR}||'%'
+				)
+			</if>
+			</trim>
+		</where>
+		ORDER BY zxsj desc
+	</select>
+  
+  <select id="getPagedListMytopicWeb" resultMap="BaseResultMapObjectWithBlobs" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel" >
+	   	SELECT * FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.zxnr,
+       	 a.bkdm,
+       	 a.sfgk,
+       	 a.zxr,
+       	 a.zxsj,
+       	 a.djl,
+         b.bkmc,
+		 c.hfid,
+		 c.hfr,
+		 c.hfsj,
+		 c.hfnr,
+		 d.xm,
+		 d.xh
+	  from niutal_ZXZX_ZXWTB a
+	  left join niutal_ZXZX_BKXXB b
+	    on a.bkdm = b.bkdm
+		left join niutal_ZXZX_ZXHFB c
+		  on a.zxid = c.zxid
+		left join VIEW_niutal_XTGL_XSXXB d 
+		  on a.zxr = d.xh)
+	<where>
+  	  	  zxr = #{zxr,jdbcType=VARCHAR} 
+  	</where>
+	ORDER BY zxsj desc
+  </select>
+  
+  
+  <select id="getTopListWeb" resultMap="BaseResultMapObjectWithBlobs">
+  	SELECT rownum, t.* FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.zxnr,
+       	 a.bkdm,
+       	 a.sfgk,
+       	 a.zxr,
+       	 a.zxsj,
+       	 a.djl,
+         b.bkmc,
+		 c.hfid,
+		 c.hfr,
+		 c.hfsj,
+		 c.hfnr,
+		 d.xm,
+		 d.xh
+	  from niutal_ZXZX_ZXWTB a
+	  left join niutal_ZXZX_BKXXB b
+	    on a.bkdm = b.bkdm
+		left join niutal_ZXZX_ZXHFB c
+		  on a.zxid = c.zxid
+		left join VIEW_niutal_XTGL_XSXXB d 
+		  on a.zxr = d.xh  where a.sfgk = '1' and c.hfid IS NOT NULL 
+		  <if test="bkdm!=null and bkdm != ''">
+		  	and a.bkdm = #{bkdm,jdbcType=VARCHAR}
+		  </if>
+		  order by a.djl desc) t
+	where rownum &lt;= #{num, jdbcType=INTEGER}
+  </select>
+  
+  <select id="getTopListWebAsActive" resultMap="BaseResultMapObjectWithBlobs">
+  	SELECT rownum, t.* FROM (select 
+   	   	 a.zxid,
+       	 a.kzdt,
+       	 a.zxnr,
+       	 a.bkdm,
+       	 a.sfgk,
+       	 a.zxr,
+       	 a.zxsj,
+       	 a.djl,
+         b.bkmc,
+		 c.hfid,
+		 c.hfr,
+		 c.hfsj,
+		 c.hfnr,
+		 d.xm,
+		 d.xh
+	  from niutal_ZXZX_ZXWTB a
+	  left join niutal_ZXZX_BKXXB b
+	    on a.bkdm = b.bkdm
+		left join niutal_ZXZX_ZXHFB c
+		  on a.zxid = c.zxid
+		left join VIEW_niutal_XTGL_XSXXB d 
+		  on a.zxr = d.xh
+		left join (select zxid,count(*) hyd
+	  					from niutal_zxzx_zxwt_event a
+			 			where a.djsj between #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR}
+	 					group by zxid) hydjs
+	 	  on a.zxid = hydjs.zxid
+      where a.sfgk = '1' and c.hfid IS NOT NULL 
+		  <if test="bkdm!=null and bkdm != ''">
+		  	and a.bkdm = #{bkdm,jdbcType=VARCHAR}
+		  </if>
+		  order by hydjs.hyd desc) t
+	where rownum &lt;= #{num, jdbcType=INTEGER}
+  </select>
+  
+  <update id="updateDjl" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtModel">
+  	UPDATE niutal_ZXZX_ZXWTB SET DJL = DJL+1 WHERE ZXID = #{zxid,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertEvent" parameterType="com.woshidaniu.zxzx.dao.entities.ZxwtEventModel">
+  	insert into niutal_zxzx_zxwt_event (zxid,bkdm,djsj) values (#{zxid,jdbcType=VARCHAR},#{bkdm,jdbcType=VARCHAR},#{djsj,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="batchDeleteWeb">
+    delete from niutal_ZXZX_ZXWTB
+    <where>
+		<trim prefixOverrides="or" >
+         	<foreach collection="list" item="item" >
+           		or (ZXID = #{item,jdbcType=VARCHAR})
+         	</foreach>
+       	</trim>
+       	and zxr = #{zxr,jdbcType=VARCHAR}
+	</where>
+  </delete>
+  
+</mapper>

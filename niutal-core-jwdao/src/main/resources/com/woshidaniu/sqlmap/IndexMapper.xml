@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IIndexDao" >
+
+    <!-- 查询角色信息列表 -->
+    <select id="cxJsxxLb" resultType="hashmap" parameterType="com.woshidaniu.common.log.User">
+    	select yhjs.yhm as yhm,yhjs.jsdm as jsdm 
+    	  from niutal_xtgl_yhjsb yhjs
+    	<where>
+    		1=1
+    	    <if test="yhm != null">
+    	     	and yhjs.yhm = #{yhm}
+    	    </if>
+    	</where>
+    </select>
+    
+    <!-- 查询用户功能 -->
+    <select id="cxYhgnList" parameterType="AncdModel" resultType="AncdModel">
+    	<if test="cdjb==2">
+    		<![CDATA[
+	    	  select gnmkdm,
+		    		 gnmkmc,
+		    		 dyym,
+		    		 xslx
+	    		from (select b.gnmkdm,
+	    					 decode(#{localeKey},'en_US',nvl(b.gnmkywmc,b.gnmkmc),b.gnmkmc) gnmkmc,
+	    					 b.dyym,
+	    					 b.xssx,
+	    					 b.xslx
+	    				from niutal_xtgl_jsgnmkdmb b 
+	    				where gnmkdm=#{gnmkdm}
+				 		union all
+				 	  select a.gnmkdm,
+				 			 decode(#{localeKey},'en_US',nvl(a.gnmkywmc,a.gnmkmc),a.gnmkmc) gnmkmc,
+				 			 a.dyym,
+				 			 a.xssx,
+				 			 a.xslx
+				 		from niutal_xtgl_jsgnmkdmb a 
+				 	   where a.fjgndm = #{gnmkdm}
+				 		and exists(select 'x' 
+				 					from  niutal_xtgl_jsgnmkczb m,niutal_xtgl_yhjsb n 
+				 					where m.jsdm=n.jsdm
+				 					  and m.jsdm=#{jsdm} 
+				 					  and n.yhm=#{yhm} 
+				 					  and m.gnmkdm=a.gnmkdm
+				 				)
+				 	) order by gnmkdm,xssx
+			  ]]>
+    	</if>
+    	<if test="cdjb==3">
+    		<![CDATA[
+	    	   select a.gnmkdm,
+	    		 	  decode(#{localeKey},'en_US',nvl(a.gnmkywmc,a.gnmkmc),a.gnmkmc) as gnmkmc,
+	    		 	  a.dyym,
+	    		 	  a.xssx 
+	    		 from niutal_xtgl_jsgnmkdmb a 
+	    		where gnmkdm=#{gnmkdm}
+				  and exists(select 'x' 
+				  		from niutal_xtgl_jsgnmkczb m,niutal_xtgl_yhjsb n 
+				  	   where m.jsdm=n.jsdm
+						 and m.jsdm=#{jsdm} 
+						 and n.yhm=#{yhm} 
+						 and m.gnmkdm=a.gnmkdm
+					 )
+			]]>
+    	</if>
+    </select>
+   
+     <!-- 查询访客功能 -->
+    <select id="cxFkgnList" resultType="AncdModel">
+   		<![CDATA[
+    	 select t.jsdm, 
+    			t.gnmkdm, 
+    			decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as gnmkmc, 
+    			t.dyym, 
+    			t.icon, 
+    			t.xssx
+			  from niutal_xtgl_fkqxb t
+			 where t.sfxs = '1'
+			 order by to_number(t.xssx)
+		]]>
+    </select>
+    
+    <!-- 获取用户首页显示信息 -->
+    <select id="getYhxxIndex" parameterType="hashMap" resultType="hashMap" >
+    	<if	test="yhlx=='teacher'">
+	      select t.xm,
+		         nvl((select bm.jgmc from niutal_xtgl_jgdmb bm where bm.jg_id = js.jg_id),
+		             (select bm.jgmc from niutal_xtgl_jgdmb bm where bm.jgdm = t.jgdm)) jgmc,  
+		         nvl(js.zcmc,'') as zcmc
+		    from niutal_xtgl_yhb t,jw_jg_jzgxxb js
+		   where t.yhm = js.jgh(+)
+		     and t.yhm = #{yhm}
+    	</if>
+    	<if test="yhlx=='student'">
+    		select nvl(xs.xm,t.xm) as xm,
+    			   nvl(xs.jgmc,'') as jgmc,
+    			   nvl(xs.bj,'') as bj,
+    			   nvl(xs.sxxf,'') as sxxf,
+    			   nvl(xs.yhxf,'') as yhxf,
+    			   nvl(xs.bl,'') as bl
+			  from niutal_xtgl_yhb t,
+			       (select x.xh_id,
+			               x.xh,
+			               x.xm,
+			               (select bm.jgmc from niutal_xtgl_jgdmb bm where bm.jg_id = xj.jg_id) jgmc,
+			               (select bj.bj from niutal_xtgl_bjdmb bj where bj.bh_id = xj.bh_id) bj,
+			               nvl((select nvl(zxjh.zdxf, 0)
+			                     from jw_jh_jxzxjhxxb zxjh
+			                    where zxjh.njdm_id = xj.njdm_id
+			                      and zxjh.zyh_id = xj.zyh_id),
+			                   0) sxxf,
+			               nvl((select sum(xf)
+			                     from (select a.xh_id, a.kch_id, max(a.cj) cj
+			                             from jw_cj_xscjb a
+			                            where regexp_substr(a.cj, '[0-9]+') is not null
+			                            group by a.kch_id, a.xh_id
+			                          ) cj,
+			                          jw_jh_kcdmb kc
+			                    where kc.kch_id = cj.kch_id
+			                      and cj.cj >= 60
+			                      and cj.xh_id = x.xh_id 
+			                  ), 0) yhxf,
+			               round(nvl((select sum(xf)
+			                            from (select a.xh_id, a.kch_id, max(a.cj) cj
+			                                    from jw_cj_xscjb a
+			                                   where regexp_substr(a.cj, '[0-9]+') is not null
+			                                   group by a.kch_id, a.xh_id
+			                                 ) cj,
+			                                 jw_jh_kcdmb kc
+			                           where kc.kch_id = cj.kch_id
+			                             and cj.cj >= 60
+			                             and cj.xh_id = x.xh_id 
+			                             ) /
+			                         nvl((select zxjh.zdxf
+			                            from jw_jh_jxzxjhxxb zxjh
+			                           where zxjh.njdm_id = xj.njdm_id
+			                             and zxjh.zyh_id = xj.zyh_id),1),
+			                         0),
+			                     2) * 100 bl            
+			          from jw_xjgl_xsjbxxb x,jw_xjgl_xsxjxxb xj
+			         where x.xh_id = xj.xh_id  
+			           and x.xh = #{yhm}
+			           and xj.xnm  = (select zdz from niutal_xtgl_xtszb where zdm = 'DQXNM')
+			           and xj.xqm  = (select zdz from niutal_xtgl_xtszb where zdm = 'DQXQM')
+			       ) xs
+			where t.yhm = xs.xh(+)
+			  and t.yhm = #{yhm} 
+    	</if>
+    </select>
+    
+    <!-- 查询教职工是否有照片 -->
+    <select id="getCountJzgzp" parameterType="string" resultType="int">
+    	select nvl(count(*),0) from jw_jg_jzgzpb t where t.zp is not null and exists(select * from jw_jg_jzgxxb jg where jg.jgh_id=t.jgh_id and jg.jgh=#{jgh}) 
+    </select>
+    
+    <!-- 查询学生是否有入学前照片 -->
+    <select id="getCountXsRxqzp" parameterType="string" resultType="int">
+    	select nvl(count(*),0) from jw_xjgl_xszpb t where t.rxqzp is not null and  exists(select * from jw_xjgl_xsjbxxb xs where xs.xh_id=t.xh_id and xs.xh=#{xh})
+    </select>
+    
+    <!-- 查询学生是否有入学后照片 -->
+    <select id="getCountXsRxhzp" parameterType="string" resultType="int">
+    	 select nvl(count(*),0) from jw_xjgl_xszpb t where t.rxhzp is not null and  exists(select * from jw_xjgl_xsjbxxb xs where xs.xh_id=t.xh_id and xs.xh=#{xh}) 
+    </select>
+    
+    <!-- 根据jsdm获取jslxdm -->
+	<select id="getJslxdm" parameterType="string" resultType="string">
+		select jslxdm from niutal_xtgl_jsxxb where jsdm = #{jsdm}
+	</select>
+	
+</mapper>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="niutal_xtgl_jgdmb_config" map-class="java.util.HashMap">
+		<entry key="table_name" value="机构信息查询"/>
+		<entry key="table_sortname" value="jg_id"/>
+		<entry key="table_sortorder" value="asc"/>
+		<entry key="table_multiselect" value="false"/>
+		<entry key="width" value="550"/>
+		<entry key="height" value="350"/>
+	</util:map>
+  	<util:list id="niutal_xtgl_jgdmb_list" list-class="java.util.ArrayList" >
+		 <map>
+			<entry key="column_name" value="jg_id"/>
+			<entry key="comments" value="机构id"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="primary_key" value="true"/>
+			<entry key="hidden" value="true"/>
+			<entry key="type" value="hidden"/>
+			<!--说明：字段不可为空  -->
+			<entry key="Nullable" value="false"/>
+			<!--说明：字段唯一验证必须加上表主键ID  -->
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select jg_id from niutal_xtgl_jgdmb where jg_id='${jg_id}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="jgdm"/>
+			<entry key="comments" value="机构代码"/>
+			<entry key="maxLength" value="10"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+			<entry key="unique" value="true"/>
+			<!--说明：字段唯一验证必须加上表主键ID  -->
+			<entry key="filedValidate" value="select jg_id from niutal_xtgl_jgdmb where jgdm='${jgdm}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="jgmc"/>
+			<entry key="comments" value="机构名称"/>
+			<entry key="maxLength" value="100"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+			<entry key="unique" value="true"/>
+			<!--说明：字段唯一验证必须加上表主键ID  -->
+			<entry key="filedValidate" value="select jg_id from niutal_xtgl_jgdmb where jgmc='${jgmc}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="jgywmc"/>
+			<entry key="comments" value="机构英文名称"/>
+			<entry key="maxLength" value="100"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+			<entry key="unique" value="true"/>
+			<!--说明：字段唯一验证必须加上表主键ID  -->
+			<entry key="filedValidate" value="select jg_id from niutal_xtgl_jgdmb where jgywmc='${jgywmc}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="jgjc"/>
+			<entry key="comments" value="机构简称"/>
+			<entry key="maxLength" value="50"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+		</map>
+		<map>
+			<entry key="column_name" value="jgjp"/>
+			<entry key="comments" value="机构简拼"/>
+			<entry key="maxLength" value="20"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+		</map>
+		<map>
+			<entry key="column_name" value="jgdz"/>
+			<entry key="comments" value="机构地址"/>
+			<entry key="maxLength" value="100"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+		</map>
+	</util:list>
+</beans>

@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+
+	<!-- description用来添加对taglib(标签库)的描述 -->
+	<description>自定义功能标签库</description>
+	<display-name>niutal Design Tags</display-name>
+	<!--taglib(标签库)的版本号 -->
+	<tlib-version>2.0.0</tlib-version>
+	<short-name>zfd</short-name>
+	<!--
+		为自定义标签库设置一个uri，uri以/开头，/后面的内容随便写，如这里的/design-tags ， 在Jsp页面中引用标签库时，需要通过uri找到标签库
+		在Jsp页面中就要这样引入标签库： <%@taglib prefix="d" uri="/design-tags" %>
+	-->
+	<uri>/design-tags</uri>
+	<!--一个taglib(标签库)中包含多个自定义标签，每一个自定义标签使用一个tag标记来描述  -->
+	<tag>
+		<!-- 为标签处理器类配一个标签名，在Jsp页面中使用标签时是通过标签名来找到要调用的标签处理器类的-->
+		<name>func-toolbar</name>
+		<!-- 定义标签对应的处理器类-->
+		<tag-class>com.woshidaniu.designer.views.tags.FuncToolbarPanelTag</tag-class>
+		<!-- 定义标签体为JSP -->
+		<body-content>JSP</body-content>
+		<description>功能按钮t区域标签</description>
+		<!-- 定义标签属性 -->
+		<attribute>
+			<!-- jsp标签使用的属性名称-->
+			<name>func_code</name>
+			<!-- 属性是否必填，默认为false非必填-->
+			<required>true</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+			<!-- 关于文本描述-->
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<!-- 以下是继承struts2标签属性 -->
+		<attribute>
+			<name>accesskey</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html accesskey attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css class to use for element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssStyle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css style definitions for element to use]]></description>
+		</attribute>
+		<attribute>
+			<name>tabindex</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html tabindex attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[HTML id attribute]]></description>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The name to set for element]]></description>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html title attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Preset the value of input element.]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>func-styles</name>
+		<tag-class>com.woshidaniu.designer.views.tags.FuncStylesTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<!-- 为标签处理器类配一个标签名，在Jsp页面中使用标签时是通过标签名来找到要调用的标签处理器类的-->
+		<name>func-report</name>
+		<!-- 定义标签对应的处理器类-->
+		<tag-class>com.woshidaniu.designer.views.tags.FuncReportPanelTag</tag-class>
+		<!-- 定义标签体为JSP -->
+		<body-content>JSP</body-content>
+		<description>自定义报表内容标签</description>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>cacheable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否使用缓存</description>
+		</attribute>
+		<!-- 以下是继承struts2标签属性 -->
+		<attribute>
+			<name>accesskey</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html accesskey attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css class to use for element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssStyle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css style definitions for element to use]]></description>
+		</attribute>
+		<attribute>
+			<name>tabindex</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html tabindex attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[HTML id attribute]]></description>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The name to set for element]]></description>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html title attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Preset the value of input element.]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<!-- 为标签处理器类配一个标签名，在Jsp页面中使用标签时是通过标签名来找到要调用的标签处理器类的-->
+		<name>func-body</name>
+		<!-- 定义标签对应的处理器类-->
+		<tag-class>com.woshidaniu.designer.views.tags.FuncBodyPanelTag</tag-class>
+		<!-- 定义标签体为JSP -->
+		<body-content>JSP</body-content>
+		<description>数据列表区域标签</description>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>widget</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>组件初始化JSON</description>
+		</attribute>
+		<attribute>
+			<name>cacheable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否使用缓存</description>
+		</attribute>
+		<!-- 以下是继承struts2标签属性 -->
+		<attribute>
+			<name>accesskey</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html accesskey attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css class to use for element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssStyle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css style definitions for element to use]]></description>
+		</attribute>
+		<attribute>
+			<name>tabindex</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html tabindex attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[HTML id attribute]]></description>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The name to set for element]]></description>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html title attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Preset the value of input element.]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>func-elements</name>
+		<tag-class>com.woshidaniu.designer.views.tags.FuncElementsPanelTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>cacheable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否使用缓存</description>
+		</attribute>
+		<!-- 以下是继承struts2标签属性 -->
+		<attribute>
+			<name>accesskey</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html accesskey attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css class to use for element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssStyle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css style definitions for element to use]]></description>
+		</attribute>
+		<attribute>
+			<name>tabindex</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html tabindex attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[HTML id attribute]]></description>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The name to set for element]]></description>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html title attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Preset the value of input element.]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>func-fields</name>
+		<tag-class>com.woshidaniu.designer.views.tags.FuncFieldsPanelTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>func_type</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能类型 1:增加;2:修改;3:查看</description>
+		</attribute>
+		<attribute>
+			<name>display_mode</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>显示模式   1：横排页签 ，2：竖排伸缩</description>
+		</attribute>
+		<attribute>
+			<name>stackKey</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>对象值栈取值key</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>cacheable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否使用缓存</description>
+		</attribute>
+		<!-- 以下是继承struts2标签属性 -->
+		<attribute>
+			<name>accesskey</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html accesskey attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css class to use for element]]></description>
+		</attribute>
+		<attribute>
+			<name>cssStyle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The css style definitions for element to use]]></description>
+		</attribute>
+		<attribute>
+			<name>tabindex</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html tabindex attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[HTML id attribute]]></description>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The name to set for element]]></description>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Set the html title attribute on rendered html element]]></description>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[Preset the value of input element.]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<!-- 为标签处理器类配一个标签名，在Jsp页面中使用标签时是通过标签名来找到要调用的标签处理器类的-->
+		<name>func-resources</name>
+		<!-- 定义标签对应的处理器类-->
+		<tag-class>com.woshidaniu.designer.views.tags.FuncResourcesTag</tag-class>
+		<!-- 定义标签体为JSP -->
+		<body-content>JSP</body-content>
+		<description>功能引入资源标签</description>
+		<!-- 定义标签属性 -->
+		<attribute>
+			<!-- jsp标签使用的属性名称-->
+			<name>func_code</name>
+			<!-- 属性是否必填，默认为false非必填-->
+			<required>true</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+			<!-- 关于文本描述-->
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>cacheable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否使用缓存</description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>func-javascript</name>
+		<tag-class>com.woshidaniu.designer.views.tags.FuncJavascriptTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>staticable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否静态化</description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>func-javascript-include</name>
+		<tag-class>com.woshidaniu.designer.views.tags.FuncJavascriptIncludeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>func_code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description><![CDATA[The theme (other than default) to use for rendering the element]]></description>
+		</attribute>
+	</tag>
+</taglib>

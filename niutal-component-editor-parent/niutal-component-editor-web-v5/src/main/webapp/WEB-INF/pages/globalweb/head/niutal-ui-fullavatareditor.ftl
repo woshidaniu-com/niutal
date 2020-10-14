@@ -1,0 +1,3 @@
+<script type="text/javascript" src="${base}/js/plugins/fullavatareditor/scripts/swfobject.js?ver=${messageUtil("niutal.jsVersion")}"></script>
+<script type="text/javascript" src="${base}/js/plugins/fullavatareditor/scripts/fullAvatarEditor.js?ver=${messageUtil("niutal.jsVersion")}"></script>
+<script type="text/javascript" src="${base}/js/plugins/fullavatareditor/jquery.fullavatareditor.js?ver=${messageUtil("niutal.jsVersion")}"></script>

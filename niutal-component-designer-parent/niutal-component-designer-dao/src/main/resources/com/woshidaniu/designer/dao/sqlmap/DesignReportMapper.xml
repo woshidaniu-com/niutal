@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignReportDao" >
+    
+    <!-- 获得功能绑定的高级报表信息-->
+    <select id="getFuncReportModel"  parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignReportModel">
+     <![CDATA[
+    	select a.func_guid,
+		       b.report_guid,
+		       b.report_name,
+		       b.report_alias,
+		       b.report_desc
+		  from niutal_designer_reports a, niutal_report_details b
+		 where a.report_guid = b.report_guid
+		   and a.func_guid   = #{func_guid}
+    ]]>
+    </select>
+    
+	
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ISjzyDao" >
+
+	<resultMap id="sjzyMap"  type="SjzyModel">  
+	    <id property="zyid" column="zyid"/>  
+	    <result property="zymc" column="zymc"/>  
+	    <collection property="zygzList"  ofType="SjzygzModel">  
+	        <id property="gzid" column="gzid"/>  
+	    	<result property="gztgz" column="gztgz"/> 
+	    	<result property="gzmc" column="gzmc"/>   
+	    	<result property="gzsm" column="gzsm"/>   
+	    </collection>  
+	</resultMap>
+
+	<select id="getModelList"  resultMap="sjzyMap">
+			select t1.zyid,t1.zymc,t2.gzid,t2.gztgz,t2.gzmc,t2.gzsm from niutal_xtgl_sjzyb t1
+			left join ztal_xtgl_sjzygz t2 on t1.zyid = t2.zyid
+	</select>
+	
+	<select id="getModel"  resultMap="sjzyMap">
+			select t1.zyid,t1.zymc,t2.gzid,t2.gztgz,t2.gzmc,t2.gzsm from niutal_xtgl_sjzyb t1
+			left join ztal_xtgl_sjzygz t2 on t1.zyid = t2.zyid
+			where t1.zyid=#{zyid}
+	</select>
+    
+</mapper>

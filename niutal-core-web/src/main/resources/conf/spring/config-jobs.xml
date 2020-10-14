@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- 定时任务服务类 -->
+	<bean id="timerServer" class="com.woshidaniu.spring.jobs.impl.TaskJobs"></bean>
+	
+	<!--=====以下配置请在自己web工程里创建配置文件统一管理=======-->
+	<!-- 测试任务 -->
+    <bean id="testJob" class="com.woshidaniu.spring.jobs.TestJob"></bean>
+   	<bean id="testTask" class="com.woshidaniu.spring.jobs.Task">
+   		<property name="runnable" ref="testJob"></property>
+   		<!-- 启动延时执行时间 1000代表一秒-->
+   		<property name="initialDelay" value="1000"></property>
+   		<!-- 执行频率 -->
+   		<property name="period" value="60000"></property>
+   	</bean>
+	
+	<!-- 初始化定时任务 -->
+	<!--<bean id="initCommonJobs" class="com.woshidaniu.spring.jobs.InitTimerTask">
+		<property name="timerServer" ref="timerServer"></property>
+		<property name="taskList">
+			<list>
+				<ref bean="testTask"/>
+			</list>
+		</property>
+	</bean>
+--></beans>

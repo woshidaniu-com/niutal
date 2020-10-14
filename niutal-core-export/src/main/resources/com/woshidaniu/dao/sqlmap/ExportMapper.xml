@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IExportDao" >
+
+	<select id="getExportPublicConfig" parameterType="string" resultType="com.woshidaniu.dao.entities.ExportConfigModel">
+		select * from niutal_gtgl_dczdpzb where dcclbh=#{dcclbh} and zgh='public'  order by to_number(xssx)
+	</select>
+	
+	<select id="getExportConfigPhList" parameterType="map" resultType="com.woshidaniu.dao.entities.ExportConfigModel">
+			select t1.*,t2.zdmc,t2.zt
+			  from niutal_gtgl_dczdpzb_ext t1
+			  left join niutal_gtgl_dczdpzb t2
+			    on t1.dcclbh = t2.dcclbh
+			   and t1.zd = t2.zd where t2.zgh = 'public'
+			<if test="id != null and id != ''">
+				and t1.id = #{id} 
+			</if>
+			<if test="zgh != null and zgh != ''">
+				and t1.zgh = #{zgh}
+			</if>
+			order by to_number(t1.xssx)
+	</select>
+
+	<select id="getExportConfigPh" parameterType="com.woshidaniu.dao.entities.ExportModel" resultType="com.woshidaniu.dao.entities.ExportConfigPhModel">
+			select t.id,t.mc from niutal_gtgl_dczdpzb_ext t  where 1=1
+			<if test="zgh != null and zgh != ''">
+				and t.zgh = #{zgh}
+			</if>
+			<if test="dcclbh != null and dcclbh != ''">
+				and t.dcclbh=#{dcclbh}
+			</if>
+			<if test="exportPHID != null and exportPHID != ''">
+				and t.id = #{exportPHID}
+			</if>
+			<if test="exportPHMC != null and exportPHMC != ''">
+				and t.mc = #{exportPHMC}
+			</if>
+			group by t.id,t.mc order by t.mc
+	</select>
+
+    <select id="getExportConfig" parameterType="com.woshidaniu.dao.entities.ExportModel" resultType="com.woshidaniu.dao.entities.ExportConfigModel">
+			select * from niutal_gtgl_dczdpzb 
+			where dcclbh=#{dcclbh}
+			<if test="zgh != null and zgh != ''">
+				and zgh=#{zgh}
+			</if>
+	</select>
+
+	<!-- 插入用户导出配置 -->
+	<insert id="insertConfig" parameterType="list">
+		insert into niutal_gtgl_dczdpzb(dcclbh,dcclmc,zd,zdmc,xssx,zgh,sfmrzd,zt)
+		<foreach collection="list" item="item" index="index"
+				separator=" from dual union select"  
+                open="select" close=" from dual">
+			#{item.dcclbh},'',#{item.zd},#{item.zdmc},#{item.xssx},#{item.zgh},'',#{item.zt} 
+		</foreach>
+	</insert>
+	
+	<!-- 插入用户导出偏好设置 -->
+	<insert id="insertConfigPh" parameterType="list">
+		insert into niutal_gtgl_dczdpzb_ext(id,mc,dcclbh,zd,zgh,xssx)
+		<foreach collection="list" item="item" index="index"
+				separator=" from dual union select"  
+                open="select" close=" from dual">
+			#{item.id},#{item.mc},#{item.dcclbh},#{item.zd},#{item.zgh},#{item.xssx}
+		</foreach>
+	</insert>
+	
+	<!-- 删除用户导出配置 -->
+	<delete id="deleteConfig" parameterType="com.woshidaniu.dao.entities.ExportModel">
+		delete from niutal_gtgl_dczdpzb where dcclbh=#{dcclbh} and zgh=#{zgh}
+	</delete>
+	
+	<!-- 根据ID删除用户偏好设置 -->
+	<delete id="deleteConfigPh" parameterType="string">
+		delete from niutal_gtgl_dczdpzb_ext where id = #{id}
+	</delete>
+</mapper>

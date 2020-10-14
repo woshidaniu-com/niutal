@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.engine.extend.persistence.entity.FormDefinitionEntity">
+  
+  <!-- FORMDEFINITION INSERT -->
+
+  <insert id="insertFormDefinition" parameterType="org.activiti.engine.extend.persistence.entity.FormDefinitionEntity">
+    insert into ${prefix}ACT_RE_FORMDEF(ID_, REV_, CATEGORY_, NAME_, KEY_, VERSION_, DEPLOYMENT_ID_, DESCRIPTION_, SUSPENSION_STATE_, TENANT_ID_)
+    values (#{id, jdbcType=VARCHAR},
+    		1,
+            #{category, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{key, jdbcType=VARCHAR}, 
+            #{version, jdbcType=INTEGER},
+            #{deploymentId, jdbcType=VARCHAR},
+            #{description, jdbcType=VARCHAR},
+            #{suspensionState, jdbcType=INTEGER},
+            #{tenantId, jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="bulkInsertFormDefinition" parameterType="java.util.List">
+    INSERT INTO ${prefix}ACT_RE_FORMDEF(ID_, REV_, CATEGORY_, NAME_, KEY_, VERSION_, DEPLOYMENT_ID_, DESCRIPTION_, SUSPENSION_STATE_, TENANT_ID_)
+    VALUES 
+      <foreach collection="list" item="formDefinition" index="index" separator=","> 
+        (#{formDefinition.id, jdbcType=VARCHAR},
+         1,
+         #{formDefinition.category, jdbcType=VARCHAR},
+         #{formDefinition.name, jdbcType=VARCHAR},
+         #{formDefinition.key, jdbcType=VARCHAR}, 
+         #{formDefinition.version, jdbcType=INTEGER},
+         #{formDefinition.deploymentId, jdbcType=VARCHAR},
+         #{formDefinition.description, jdbcType=VARCHAR},
+         #{formDefinition.suspensionState, jdbcType=INTEGER},
+         #{formDefinition.tenantId, jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <insert id="bulkInsertFormDefinition_oracle" parameterType="java.util.List">
+    INSERT ALL 
+    <foreach collection="list" item="formDefinition" index="index"> 
+      INTO ${prefix}ACT_RE_FORMDEF(ID_, REV_, CATEGORY_, NAME_, KEY_, VERSION_, DEPLOYMENT_ID_,
+      DESCRIPTION_, SUSPENSION_STATE_, TENANT_ID_) VALUES 
+        (#{formDefinition.id, jdbcType=VARCHAR},
+         1,
+         #{formDefinition.category, jdbcType=VARCHAR},
+         #{formDefinition.name, jdbcType=VARCHAR},
+         #{formDefinition.key, jdbcType=VARCHAR}, 
+         #{formDefinition.version, jdbcType=INTEGER},
+         #{formDefinition.deploymentId, jdbcType=VARCHAR},
+         #{formDefinition.description, jdbcType=VARCHAR},
+         #{formDefinition.suspensionState, jdbcType=INTEGER},
+         #{formDefinition.tenantId, jdbcType=VARCHAR})
+    </foreach>
+    SELECT * FROM dual
+  </insert>
+  
+  <!-- FORMDEFINITION UPDATE -->
+
+  <update id="updateFormDefinition" parameterType="org.activiti.engine.extend.persistence.entity.FormDefinitionEntity">
+    update ${prefix}ACT_RE_FORMDEF set
+      REV_ = #{revisionNext, jdbcType=INTEGER},    
+      SUSPENSION_STATE_ = #{suspensionState, jdbcType=INTEGER},
+      CATEGORY_ = #{category, jdbcType=VARCHAR}
+    where ID_ = #{id, jdbcType=VARCHAR}
+      and REV_ = #{revision, jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateFormDefinitionTenantIdForDeploymentId" parameterType="java.util.Map">
+    update ${prefix}ACT_RE_FORMDEF set
+      TENANT_ID_ = #{tenantId, jdbcType=VARCHAR}
+    where
+      DEPLOYMENT_ID_ = #{deploymentId, jdbcType=VARCHAR}
+  </update>
+
+  <!-- FORMDEFINITION DELETE -->
+
+  <delete id="deleteFormDefinitionsByDeploymentId" parameterType="string">
+    delete from ${prefix}ACT_RE_FORMDEF where DEPLOYMENT_ID_ = #{deploymenId} 
+  </delete>
+  
+  <!-- FORMDEFINITION RESULTMAP -->
+
+  <resultMap id="formDefinitionResultMap" type="org.activiti.engine.extend.persistence.entity.FormDefinitionEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="revision" column="REV_" />
+    <result property="category" column="CATEGORY_" />
+    <result property="name" column="NAME_" />
+    <result property="key" column="KEY_" jdbcType="VARCHAR" />
+    <result property="version" column="VERSION_" jdbcType="INTEGER"/>
+    <result property="deploymentId" column="DEPLOYMENT_ID_" jdbcType="VARCHAR"/>
+    <result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
+    <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR" />
+    <result property="suspensionState" column="SUSPENSION_STATE_" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <!-- FORMDEFINITION SELECT -->
+
+  <select id="selectFormDefinition" parameterType="string" resultMap="formDefinitionResultMap">
+    select * from ${prefix}ACT_RE_FORMDEF where ID_ = #{formDefinitionId}
+  </select>
+
+  <select id="selectFormDefinitionById" parameterType="string" resultMap="formDefinitionResultMap">
+    select * from ${prefix}ACT_RE_FORMDEF where ID_ = #{formDefinitionId}
+  </select>
+
+  <select id="selectFormDefinitionsByQueryCriteria" parameterType="org.activiti.engine.extend.impl.FormDefinitionQueryImpl" resultMap="formDefinitionResultMap">
+  	${limitBefore}
+    select RES.* ${limitBetween}
+    <include refid="selectFormDefinitionsByQueryCriteriaSql"/>
+    ${orderBy}
+    ${limitAfter}
+  </select>
+
+  <select id="selectFormDefinitionCountByQueryCriteria" parameterType="org.activiti.engine.extend.impl.FormDefinitionQueryImpl" resultType="long">
+    select count(RES.ID_)
+    <include refid="selectFormDefinitionsByQueryCriteriaSql"/>
+  </select>
+  
+  <sql id="selectFormDefinitionsByQueryCriteriaSql">  
+    from ${prefix}ACT_RE_FORMDEF RES
+    <where>
+      <if test="id != null">
+        RES.ID_ = #{id}
+      </if>
+      <if test="ids != null and ids">
+        and RES.ID_ in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="category != null">
+        and RES.CATEGORY_ = #{category}
+      </if>
+      <if test="categoryLike != null">
+        and RES.CATEGORY_ like #{categoryLike}
+      </if>
+      <if test="categoryNotEquals != null">
+        and ( RES.CATEGORY_ &lt;&gt; #{categoryNotEquals} OR RES.CATEGORY_ is null )
+      </if>
+      <if test="name != null">
+        and RES.NAME_ = #{name}
+      </if>
+      <if test="nameLike != null">
+        and RES.NAME_ like #{nameLike}
+      </if>
+      <if test="key != null">
+        and RES.KEY_ = #{key}
+      </if>
+      <if test="keyLike != null">
+        and RES.KEY_ like #{keyLike}
+      </if>
+      <if test="version != null">
+        and RES.VERSION_ = #{version}
+      </if>
+      <if test="versionGt != null">
+        and RES.VERSION_ &gt; #{versionGt}
+      </if>
+      <if test="versionGte != null">
+        and RES.VERSION_ &gt;= #{versionGte}
+      </if>
+      <if test="versionLt != null">
+        and RES.VERSION_ &lt; #{versionLt}
+      </if>
+      <if test="versionLte != null">
+        and RES.VERSION_ &lt;= #{versionLte}
+      </if>
+      <if test="deploymentId != null">
+        and RES.DEPLOYMENT_ID_ = #{deploymentId}
+      </if>
+      <if test="deploymentIds != null and !deploymentIds.isEmpty()">
+        and RES.DEPLOYMENT_ID_ in
+        <foreach item="item" index="index" collection="deploymentIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="latest">
+        and RES.VERSION_ = (select max(VERSION_) from ${prefix}ACT_RE_FORMDEF where KEY_ = RES.KEY_ 
+             <if test="tenantId != null">
+	           and TENANT_ID_ = #{tenantId}
+	         </if>
+	         <if test="tenantIdLike != null">
+	           and TENANT_ID_ like #{tenantIdLike}
+	         </if>
+	         <if test="withoutTenantId">
+	           and (TENANT_ID_ = '' or TENANT_ID_ is null)
+	         </if>
+	         <if test="tenantId == null and tenantIdLike == null and !withoutTenantId">
+	           and ( (TENANT_ID_ IS NOT NULL and TENANT_ID_ = RES.TENANT_ID_) or (TENANT_ID_ IS NULL and RES.TENANT_ID_ IS NULL) )
+	         </if>
+        )
+      </if>
+      <if test="suspensionState != null">
+        and (RES.SUSPENSION_STATE_ = #{suspensionState.stateCode})
+      </if>
+       <if test="tenantId != null">
+        and RES.TENANT_ID_ = #{tenantId}
+      </if>
+      <if test="tenantIdLike != null">
+        and RES.TENANT_ID_ like #{tenantIdLike}
+      </if>
+      <if test="withoutTenantId">
+        and (RES.TENANT_ID_ = '' or RES.TENANT_ID_ is null)
+      </if>
+    </where>
+  </sql>
+    
+  <select id="selectFormDefinitionByDeploymentAndKey" parameterType="map" resultMap="formDefinitionResultMap">
+    select * 
+    from ${prefix}ACT_RE_FORMDEF 
+    where DEPLOYMENT_ID_ = #{deploymentId}
+      and KEY_ = #{formDefinitionKey}
+      and (TENANT_ID_ = '' or TENANT_ID_ is null)
+  </select>
+  
+   <select id="selectFormDefinitionByDeploymentAndKeyAndTenantId" parameterType="map" resultMap="formDefinitionResultMap">
+    select * 
+    from ${prefix}ACT_RE_FORMDEF 
+    where DEPLOYMENT_ID_ = #{deploymentId}
+      and KEY_ = #{formDefinitionKey}
+      and TENANT_ID_ = #{tenantId}
+  </select>
+    
+  <select id="selectLatestFormDefinitionByKey" parameterType="string" resultMap="formDefinitionResultMap">
+    select *
+    from ${prefix}ACT_RE_FORMDEF 
+    where KEY_ = #{key} and
+          (TENANT_ID_ = ''  or TENANT_ID_ is null) and
+          VERSION_ = (select max(VERSION_) from ${prefix}ACT_RE_FORMDEF where KEY_ = #{formDefinitionKey} and (TENANT_ID_ = '' or TENANT_ID_ is null))
+  </select>
+  
+  <select id="selectLatestFormDefinitionByKeyAndTenantId" parameterType="map" resultMap="formDefinitionResultMap">
+    select *
+    from ${prefix}ACT_RE_FORMDEF 
+    where KEY_ = #{formDefinitionKey} and
+          TENANT_ID_ = #{tenantId} and
+          VERSION_ = (select max(VERSION_) from ${prefix}ACT_RE_FORMDEF where KEY_ = #{formDefinitionKey} and TENANT_ID_ = #{tenantId})
+  </select>
+  
+  <!-- mysql specific sql -->
+  <select id="selectFormDefinitionsByQueryCriteria_mysql" parameterType="org.activiti.engine.extend.impl.FormDefinitionQueryImpl" resultMap="formDefinitionResultMap">
+  	${limitBefore}
+    select distinct RES.* ${limitBetween}
+    <include refid="selectFormDefinitionsByQueryCriteriaSql"/>
+    ${orderBy}
+    ${limitAfter}
+  </select>
+
+  <!-- mysql specific sql -->
+  <select id="selectFormDefinitionCountByQueryCriteria_mysql" parameterType="org.activiti.engine.extend.impl.FormDefinitionQueryImpl" resultType="long">
+    select distinct count(RES.ID_)
+    <include refid="selectFormDefinitionsByQueryCriteriaSql"/>
+  </select>
+
+  <select id="selectFormDefinitionByNativeQuery" parameterType="java.util.Map" resultMap="formDefinitionResultMap">
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitBefore}
+    </if>
+    ${sql}
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitAfter}
+    </if>
+  </select>
+
+  <select id="selectFormDefinitionByNativeQuery_mssql_or_db2" parameterType="java.util.Map" resultMap="formDefinitionResultMap">
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitBeforeNativeQuery}
+    </if>
+    ${sql}
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitAfter}
+    </if>
+  </select>
+
+  <select id="selectFormDefinitionCountByNativeQuery" parameterType="java.util.Map" resultType="long">
+    ${sql}
+  </select>
+</mapper>

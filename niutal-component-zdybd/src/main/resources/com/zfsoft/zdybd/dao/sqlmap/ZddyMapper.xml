@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.zdybd.dao.daointerface.IZddyDao">
+
+	<!-- 根据功能代码获取所有分类下的字段列表 -->
+	<select id="getListByGndm" parameterType="com.woshidaniu.zdybd.dao.entities.GnszModel"
+		 resultType="com.woshidaniu.zdybd.dao.entities.ZddyModel">
+		select a.*,b.bdms,b.bdszz from zfxg_zdybd_zddyb a,zfxg_zdybd_flszb b  
+		  where a.flszid=b.flszid  and b.sfqy='1' 
+		<if test="gndm != null">
+			 and b.gndm=#{gndm}
+	    </if>
+		<if test="flszid != null">
+			 and a.flszid=#{flszid}
+	    </if>
+		 order by a.flszid,a.zbwz 
+	</select>
+</mapper>
+

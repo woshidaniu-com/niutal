@@ -1,0 +1,5 @@
+
+1.审核页面查询状态修改为：待处理和已处理，
+	代码分表为WorkNodeEStatusEnum.WAIT_EXECUTE和WorkNodeEStatusEnum.ALREADY_EXECUTE；
+
+2.查询审核列表：设置Model中的express属性，调用CommonAction.getSplQueryFragment方法；

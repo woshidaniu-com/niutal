@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.tjcx.dao.daointerface.ITjxmDao">
+
+	<!-- 根据功能编号查所有项目 -->
+	<select id="getModelList" parameterType="com.woshidaniu.tjcx.dao.entites.TjxmModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.TjxmModel">
+		select gnmk,ms,xmdm,xmmc,xtbh,ysjdm,qyfw,xmxsms from zfxg_tjcx_tjxmb where  gnmk = #{gnmk} and (qyfw is null or qyfw!='0') order by xssx
+	</select>
+	
+	<!-- 获取单条记录 -->
+	<select id="getModel" parameterType="com.woshidaniu.tjcx.dao.entites.TjxmModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.TjxmModel">
+		select * from ZFXG_TJCX_TJXMB
+		where xmdm = #{xmdm}
+	</select>
+</mapper>
+	

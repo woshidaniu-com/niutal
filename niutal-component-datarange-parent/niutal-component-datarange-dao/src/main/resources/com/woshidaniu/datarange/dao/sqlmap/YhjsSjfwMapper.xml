@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.datarange.dao.daointerface.IYhjsSjfwDao" >
+    
+   	<!-- 增加用户数据范围信息 -->
+    <insert id="zjYhsjfwxx" parameterType="YhglModel">
+    declare
+    
+    	var_sjfwz_id varchar2(32);
+    	
+	begin
+    
+    	/*增加用户信息：步骤1：增加用户信息:已在主逻辑中完成*/
+    	
+    	<if test="yhjssjfwList != null and yhjssjfwList.size() > 0 ">
+	    	
+	    	/*增加用户信息：步骤2：增加用户角色信息:已在主逻辑中完成*/
+	    	
+	    	/*增加用户信息：步骤3：增加用户数据范围组*/
+	    	<foreach collection="yhjssjfwList" item="item" index="index" >
+	    	
+	    		select sys_guid() into var_sjfwz_id from dual;
+	    		
+				insert into niutal_xtgl_sjfwzb(sjfwz_id,sjfwzmc,sjfwztj,kzdx) 
+		    	values (var_sjfwz_id,#{item.sjfwzmc,jdbcType=VARCHAR},#{item.sjfwztj,jdbcType=VARCHAR},#{item.kzdx,jdbcType=VARCHAR});
+		    	
+		    	insert into niutal_xtgl_yhsjfwb(yhm,js_id,sjfwz_id,sfqy) 
+		    	values (#{item.yhm,jdbcType=VARCHAR},#{item.js_id,jdbcType=VARCHAR},var_sjfwz_id,'1');
+			</foreach>
+    	</if>
+    end;
+    </insert>
+    
+   	<!-- 修改用户数据范围信息 -->
+    <update id="xgYhsjfwxx" parameterType="YhglModel">
+   	declare
+   		 var_sjfwz_id varchar2(32);
+	begin
+			
+		/*修改用户信息：步骤1：修改用户信息:已在主逻辑中完成*/
+		
+    	<if test="deleteList != null and deleteList.size() > 0 ">
+    	
+	    	/*修改用户信息：删除取消勾选的用户所属角色信息:已在主逻辑中完成*/
+			
+			/*修改用户信息：删除用户取消的所属角色对应的数据范围组*/
+			
+			delete from niutal_xtgl_sjfwzb a
+			where exists (
+				select b.sjfwz_id
+		          from niutal_xtgl_yhsjfwb b,niutal_xtgl_yhjsb t
+	             where t.yhm = b.yhm
+	               and t.jsdm = b.js_id
+                  	<foreach collection="deleteList" item="item" index="index" open="and t.jsdm in( " separator="," close=" ) ">
+					 #{item}
+				  	</foreach>
+		           and instr(#{yhm},b.yhm) > 0 
+			 );
+			  
+			delete from niutal_xtgl_yhsjfwb b 
+		   	 where instr(#{yhm},b.yhm) > 0
+		   	  and exists(
+	               select '1'
+				     from niutal_xtgl_yhjsb t 
+	                where t.yhm = b.yhm
+	                  and t.jsdm = b.js_id
+	                  <foreach collection="deleteList" item="item" index="index" open="and t.jsdm in( " separator="," close=" ) ">
+						#{item}
+					  </foreach>
+	          );
+          
+		</if>
+	 
+		<if test="yhjssjfwList != null and yhjssjfwList.size() > 0 ">
+    	
+    		/*修改用户信息：增加用户新勾选的所属角色对应的数据范围组*/
+    		
+	    	<foreach collection="yhjssjfwList" item="item" index="index" >
+	    		
+	    		select sys_guid() into var_sjfwz_id from dual;
+	    	
+				insert into niutal_xtgl_sjfwzb(sjfwz_id,sjfwzmc,sjfwztj,kzdx) 
+		    	values (var_sjfwz_id,#{item.sjfwzmc,jdbcType=VARCHAR},#{item.sjfwztj,jdbcType=VARCHAR},#{item.kzdx,jdbcType=VARCHAR});
+		    	
+		    	insert into niutal_xtgl_yhsjfwb(yhm,js_id,sjfwz_id,sfqy) 
+		    	values (#{item.yhm,jdbcType=VARCHAR},#{item.js_id,jdbcType=VARCHAR},var_sjfwz_id,'1');
+		    	
+			</foreach>
+			
+		</if>
+			
+	end;
+    </update>
+    
+    <!-- 删除用户数据范围信息 -->
+    <delete id="scYhsjfwxx" parameterType="YhglModel">
+    	declare
+		begin
+		
+			<if test="deleteList != null and deleteList.size() > 0 ">
+			
+				/*删除用户信息：步骤1：批量删除用户信息:已在主逻辑中完成*/
+				/*删除用户信息：步骤2：批量删除用户角色信息:已在主逻辑中完成*/
+				/*删除用户信息：步骤3：删除用户的数据范围*/
+				
+				delete from niutal_xtgl_sjfwzb a
+				where exists (
+					select b.sjfwz_id
+			          from niutal_xtgl_yhsjfwb b
+			          where a.sjfwz_id = b.sjfwz_id
+			          <foreach collection="deleteList" item="item" index="index" open=" and ( " separator=" or " close=" ) " >
+							b.yhm = #{item} 
+					  </foreach>
+				 );
+				  
+				delete from niutal_xtgl_yhsjfwb b 
+				<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) " >
+					b.yhm = #{item} 
+			    </foreach>;
+
+			</if>
+			
+		end;
+    </delete>
+    
+    <!-- 保存角色分配用户-->
+    <insert id="zjJsyhfpSjfwxx" parameterType="JsglModel">
+    declare
+    	 var_sjfwz_id varchar2(32);
+	begin
+    	
+    	/*步骤1：增加用户角色信息:已在主逻辑中完成*/
+    	<if test="jsyhsjfwList != null and jsyhsjfwList.size() > 0 ">
+    	
+			/*步骤2：增加角色用户默认数据范围*/
+	    	<foreach collection="jsyhsjfwList" item="item" index="index">
+	    		
+	    		select sys_guid() into var_sjfwz_id from dual;
+	    	
+				insert into niutal_xtgl_sjfwzb(sjfwz_id,sjfwzmc,sjfwztj,kzdx) 
+		    	values (var_sjfwz_id,#{item.sjfwzmc,jdbcType=VARCHAR},#{item.sjfwztj,jdbcType=VARCHAR},#{item.kzdx,jdbcType=VARCHAR});
+		    	
+		    	insert into niutal_xtgl_yhsjfwb(yhm,js_id,sjfwz_id,sfqy) 
+		    	values (#{item.yhm,jdbcType=VARCHAR},#{item.js_id,jdbcType=VARCHAR},var_sjfwz_id,'1');
+		    	
+			</foreach>
+		</if>
+    	
+    end;
+    </insert>
+    
+     <!-- 删除用户角色信息 -->
+    <delete id="scJsyhfpSjfwxx" parameterType="JsglModel">
+    declare
+	begin
+	
+		<if test="yhm_list != null and yhm_list.size() > 0  ">
+		
+			/*步骤1：删除用户角色信息：已在主逻辑中完成*/
+			
+			/*步骤2：删除角色用户默认数据范围*/
+			
+			delete from niutal_xtgl_sjfwzb a
+			where exists (
+				select b.sjfwz_id
+		          from niutal_xtgl_yhsjfwb b,niutal_xtgl_yhjsb t
+	             where b.yhm = t.yhm
+	               and b.js_id = t.jsdm
+	               and b.js_id = #{jsdm,jdbcType=VARCHAR}
+				  <foreach collection="yhm_list" item="item" index="index" open=" and ( " separator=" or " close=" ) ">
+					b.yhm = #{item,jdbcType=VARCHAR}
+				 </foreach>
+			 );
+			  
+			delete from niutal_xtgl_yhsjfwb b 
+		   	 where exists(
+	               select '1'
+				     from niutal_xtgl_yhjsb t 
+	                where t.yhm = b.yhm
+	                  and t.jsdm = b.js_id
+	                  and t.jsdm = #{jsdm,jdbcType=VARCHAR}
+	          )
+	         <foreach collection="yhm_list" item="item" index="index" open=" and ( " separator=" or " close=" ) ">
+				b.yhm = #{item,jdbcType=VARCHAR}
+			 </foreach>;
+	         
+         </if>
+    end;
+    </delete>
+    
+    <!-- 查询用户角色数据范围信息列表 -->
+    <select id="getPagedList" parameterType="YhJssjfwModel" resultType="YhJssjfwModel">
+		select rownum rownum_,
+		       a.yhm,
+		       a.xm,
+		       b.jg_id,
+		       b.jgdm,
+		       b.jgmc,
+		       c.jsmc
+		  from niutal_xtgl_yhb 	a, 
+		  	   niutal_xtgl_jgdmb b,
+		  	   (select b.yhm,wm_concat(b.jsdm || '#' || c.jsmc) jsmc
+			      from niutal_xtgl_yhjsb b, niutal_xtgl_jsxxb c
+			     where b.jsdm = c.jsdm
+			       and b.jsdm != 'xs'
+			       <if test="jsdm != null and jsdm != ''">
+					and b.jsdm = #{jsdm}
+					</if>
+			       group by b.yhm       
+			   ) c
+		 where a.yhm != 'admin'
+		   and a.sfqy = '1'
+		   and a.jgdm = b.jg_id(+)
+		   and a.yhm = c.yhm
+		   and exists (select '1'
+				  from niutal_xtgl_yhjsb b, 
+				  	   niutal_xtgl_jsxxb c
+				 where b.jsdm = c.jsdm
+				   and b.yhm = a.yhm
+				   and ( c.jgh = #{jgh} or c.jsgybj = '1'  ) 
+				    <if test="jsdm != null and jsdm != ''">
+					and b.jsdm = #{jsdm}
+					</if>
+	       	   ) 
+	       	   
+		<if test="jgdm != null and jgdm != ''">
+			and b.jg_id = #{jgdm}
+		</if>
+		<if test="yhm != null and yhm != ''">
+		   and ( a.yhm like '%'||#{yhm}||'%' or a.xm like '%'||#{yhm}||'%')
+		</if>	
+	</select>
+    
+    <!-- 查询用户角色数据范围信息 -->
+	<select id="getYhSjfwList" parameterType="YhJssjfwModel" resultType="YhJssjfwModel">
+		 select a.sjfwz_id, 
+		        a.sjfwztj, 
+		        a.sjfwzmc, 
+		        b.yhm, 
+		        b.js_id as jsdm, 
+		        e.jsmc
+		  from niutal_xtgl_sjfwzb 	a, 
+		  	   niutal_xtgl_yhsjfwb 	b, 
+		  	   niutal_xtgl_jsxxb 	e
+		 where a.sjfwz_id = b.sjfwz_id
+		   and b.js_id = e.jsdm
+		   and a.kzdx = #{kzdx,jdbcType=VARCHAR}
+	   		<if test="jsdm != null and jsdm != ''">
+	   			and instr(#{jsdm},b.js_id) > 0
+	   		</if> 			
+	   		<if test="queryList != null and queryList.size()  > 0 ">
+   			<foreach collection="queryList" item="item" open=" and (" close=" ) " separator=" or ">
+	           	 b.yhm = #{item,jdbcType=VARCHAR}
+	        </foreach>
+	        </if>
+	        order by b.yhm asc
+	</select>
+	
+   	<!-- 保存角色数据范围组信息 -->
+    <insert id="insertYhSjfw" parameterType="YhJssjfwModel">
+    	declare
+		begin
+		
+			insert into niutal_xtgl_sjfwzb(sjfwz_id,sjfwzmc,sjfwztj,kzdx) 
+	    	values (#{sjfwz_id,jdbcType=VARCHAR},#{sjfwzmc,jdbcType=VARCHAR},#{sjfwztj,jdbcType=VARCHAR},#{kzdx,jdbcType=VARCHAR});
+	    	
+	    	insert into niutal_xtgl_yhsjfwb(yhm,js_id,sjfwz_id,sfqy) 
+	    	values (#{yhm,jdbcType=VARCHAR},#{js_id,jdbcType=VARCHAR},#{sjfwz_id,jdbcType=VARCHAR},'1');
+	    	
+		end;
+    </insert>
+    
+    <!-- 删除用户角色此次保存的数据范围在数据库中已经存在的记录数据范围 -->
+    <delete id="deleteYhSjfw" parameterType="YhJssjfwModel">
+		declare
+		  v_sjfwz_id   varchar2(32);
+		  v_yhsjfwb_id varchar2(32);
+		  v_count      integer(2);
+		
+		begin
+		
+		  select count(1)
+		    into v_count
+		    from niutal_xtgl_sjfwzb a, niutal_xtgl_yhsjfwb b
+		   where a.sjfwz_id = b.sjfwz_id
+		     and instr(#{yhm}, b.yhm) > 0
+		     and b.js_id = #{js_id}
+		     and a.sjfwztj = #{sjfwztj,jdbcType=VARCHAR}
+			 and a.kzdx = #{kzdx,jdbcType=VARCHAR};
+			 
+		  if v_count > 0 then
+		  
+		    select a.sjfwz_id, b.yhsjfwb_id
+		      into v_sjfwz_id, v_yhsjfwb_id
+		      from niutal_xtgl_sjfwzb a, niutal_xtgl_yhsjfwb b
+		     where a.sjfwz_id = b.sjfwz_id
+		       and instr(#{yhm,jdbcType=VARCHAR}, b.yhm) > 0
+		       and b.js_id = #{js_id,jdbcType=VARCHAR}
+		       and a.sjfwztj = #{sjfwztj,jdbcType=VARCHAR}
+		       and a.kzdx = #{kzdx,jdbcType=VARCHAR};
+		       
+		    if v_sjfwz_id is not null then
+		      delete from niutal_xtgl_sjfwzb t where t.sjfwz_id = v_sjfwz_id;
+		    end if;
+		  
+		    if v_yhsjfwb_id is not null then
+		      delete from niutal_xtgl_yhsjfwb t where t.yhsjfwb_id = v_yhsjfwb_id;
+		    end if;
+		  
+		  end if;
+		end;
+    </delete>
+    
+    <!-- 删除用户角色的数据范围组,数据范围 -->
+    <delete id="deleteYhSjfwz" parameterType="YhJssjfwModel" flushCache="false" statementType="PREPARED" timeout="20000">
+    declare
+	begin
+			
+		/*第一步：删除用户指定角色，控制对象的数据范围组*/
+		delete from niutal_xtgl_sjfwzb a
+		where a.kzdx = #{kzdx,jdbcType=VARCHAR}
+		  and exists (
+			select a.sjfwz_id
+	          from niutal_xtgl_yhsjfwb b
+	          where a.sjfwz_id = b.sjfwz_id
+	           and instr(#{yhm,jdbcType=VARCHAR},b.yhm) > 0 
+	           and b.js_id = #{js_id,jdbcType=VARCHAR}
+		  );
+		  
+		/*第二步：删除用户指定角色，控制对象的数据范围*/
+		delete niutal_xtgl_yhsjfwb b 
+	   	 where instr(#{yhm,jdbcType=VARCHAR},b.yhm) > 0 
+		   and b.js_id = #{js_id,jdbcType=VARCHAR}
+		   and exists(
+	           select '1'  
+	           from niutal_xtgl_sjfwzb a
+	           where a.sjfwz_id = b.sjfwz_id
+	             and a.kzdx = #{kzdx,jdbcType=VARCHAR}
+	       );
+	 end;
+    </delete>
+    
+     <!-- 修改角色数据范围信息 -->
+    <update id="updateYhSjfw" parameterType="YhJssjfwModel">
+    	update niutal_xtgl_sjfwzb t
+    	<set>
+    		<if test="sjfwzmc != null">
+    			t.sjfwzmc = #{sjfwzmc},
+    		</if>
+    		<if test="sjfwztj != null">
+    			t.sjfwztj = #{sjfwztj}
+    		</if>
+    	</set>
+    	where t.sjfwb_id = #{sjfwb_id} 
+    </update>
+	
+    
+</mapper>

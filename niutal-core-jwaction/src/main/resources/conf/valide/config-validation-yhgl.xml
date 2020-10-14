@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+	
+	<util:map id="niutal_validation_xtgl_config" map-class="java.util.HashMap">
+		<entry key="yhgl_insert" value="yhgl_insert"/>
+		<entry key="yhgl_insert" value="yhgl_insert"/>
+		<entry key="yhgl_insert" value="yhgl_insert"/>
+		<entry key="yhgl_insert" value="yhgl_insert"/>
+	</util:map>
+	
+	<!--
+	<util:map id="niutal_validation_xtgl_config" map-class="java.util.HashMap">
+		<entry key="yhgl_insert">
+			<map>
+			 	  唯一验证 
+			 	 <entry key="unique" value="['V0102']"/>
+			 	  必填验证 
+			 	 <entry key="required" value="true"/>
+			 	  chrnum=true 只能输入数字或字母 
+			 	 <entry key="chrnum" value="true"/>
+			 </map>
+		</entry>
+		<entry key="yhgl_insert">
+			 <map>
+			 	  必填验证 
+			 	 <entry key="required" value="false"/>
+			 	   email=true 只能输入邮件格式 
+			 	 <entry key="email" value="true"/>
+			 </map>
+		</entry>
+		<entry key="yhgl_insert">
+			 <map>
+			 	  必填验证 
+			 	 <entry key="required" value="false"/>
+			 	   email=true 只能输入邮件格式 
+			 	 <entry key="mobile" value="true"/>
+			 </map>
+		</entry>
+		
+	</util:map>
+-->
+</beans>

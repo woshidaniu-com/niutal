@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	 <!-- 行政区划 -->
+    <bean id="xzqhService" name="xzqhService" class="com.woshidaniu.service.impl.XzqhServiceImpl" scope="singleton">
+   		<property name="zxsMap">
+   			<map key-type="java.lang.String" value-type="java.lang.String">
+   				<entry key="110000" value="北京市"></entry>
+   				<entry key="120000" value="天津市"></entry>
+   				<entry key="310000" value="上海市"></entry>
+   				<entry key="500000" value="重庆市"></entry>
+   			</map>
+   		</property>
+    </bean>
+    
+    <bean id="optionUtil" name="optionUtil" class="com.woshidaniu.util.OptionUtil" scope="singleton"/>
+    
+    <!-- 首字母下拉选择 -->
+    <bean id="bigComboSelectService" name="bigComboSelectService" class="com.woshidaniu.service.impl.BigComboSelectServiceImpl" scope="singleton">
+   		<property name="zxsMap">
+   			<map key-type="java.lang.String" value-type="java.lang.String">
+   				<entry key="110000" value="北京市"></entry>
+   				<entry key="120000" value="天津市"></entry>
+   				<entry key="310000" value="上海市"></entry>
+   				<entry key="500000" value="重庆市"></entry>
+   			</map>
+   		</property> 
+    </bean>
+    
+    <bean id="keyValueProvider" name="keyValueProvider" class="com.woshidaniu.common.conf.def.OracleKeyValueProvider" scope="singleton"/>
+    <bean id="keyValuesProvider" name="keyValuesProvider" class="com.woshidaniu.common.conf.def.OracleKeyValuesProvider" scope="singleton"/>
+    <bean id="csszUpdateProvider" name="csszUpdateProvider" class="com.woshidaniu.common.conf.def.OracleCsszPropsProvider" scope="singleton"/>
+    <bean id="funcNameProvider" name="funcNameProvider" class="com.woshidaniu.common.conf.def.OracleFuncNameProvider" scope="singleton"/>
+   
+</beans>

@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IYhglDao" >
+	
+	<!--List:forech中的collection属性类型是List,collection的值必须是:list,item的值可以随意,Dao接口中参数名字随意 
+    <select id="getEmployeesListParams" resultType="Employees">
+        select *
+        from EMPLOYEES e
+        where e.EMPLOYEE_ID in
+        <foreach collection="list" item="employeeId" index="index"  open="(" close=")" separator=",">
+            #{employeeId}
+        </foreach>
+    </select>-->
+
+    <!--Array:forech中的collection属性类型是array,collection的值必须是:list,item的值可以随意,Dao接口中参数名字随意
+    <select id="getEmployeesArrayParams" resultType="Employees">
+        select *
+        from EMPLOYEES e
+        where e.EMPLOYEE_ID in
+        <foreach collection="array" item="employeeId" index="index" open="(" close=")" separator=",">
+            #{employeeId}
+        </foreach>
+    </select> -->
+
+    <!--Map:不单单forech中的collection属性是map.key,其它所有属性都是map.key,比如下面的departmentId 
+    <select id="getEmployeesMapParams" resultType="YhglModel">
+        select *
+        from EMPLOYEES e
+        <where>
+            <if test="departmentId!=null and departmentId!=''">
+                e.DEPARTMENT_ID=#{departmentId}
+            </if>
+            <if test="employeeIdsArray!=null and employeeIdsArray.length!=0">
+                AND e.EMPLOYEE_ID in
+                <foreach collection="employeeIdsArray" item="employeeId"
+                    index="index" open="(" close=")" separator=",">
+                    #{employeeId}
+                </foreach>
+            </if>
+        </where>
+    </select>-->
+
+	<!-- 查询用户信息列表 -->
+	<select id="getPagedList" parameterType="YhglModel" resultType="YhglModel">
+		select t.yhm, t.xm, t.sjhm, t.dzyx, t.jgmc, t.jsmc,t.sfqy
+		  from (select a.yhm,
+		               a.xm,
+		               a.sjhm,
+		               a.dzyx,
+		               nvl(a.sfqy, '0') sfqy,
+		               a.jgdm as jg_id,
+		               b.jgmc,
+		               (select wm_concat('【'||x1.jsmc||'】') from niutal_xtgl_jsxxb x1, niutal_xtgl_yhjsb x2 where x1.jsdm = x2.jsdm and x2.yhm = a.yhm) as jsmc
+		          from niutal_xtgl_yhb a, niutal_xtgl_jgdmb b
+		         where a.yhm != 'admin'
+		           and a.jgdm = b.jg_id(+)
+		           <if test="jg_id != null and jg_id != ''">
+				   	and a.jgdm = #{jg_id}
+				   </if>
+		    ) t where 1=1 
+		    
+		 <!-- 模糊查询过滤条件SQL-->
+		 <if test="filterKey != null and filterKey != '' and filter_list != null and filter_list.size() > 0">
+			<if test=" filterKey == 'all' ">
+				<!-- 用户名 ,姓名,机构名称-->
+				<foreach collection="filter_list" item="item" index="index"  open=" and (" close=" ) " separator=" or ">
+		            t.yhm like '%'||#{item}||'%' or  t.xm like '%'||#{item}||'%' or t.jgmc like '%'||#{item}||'%' or  t.jsmc like '%'||#{item}||'%'
+		        </foreach>
+		 	</if>
+			<!-- 用户名 -->
+		 	<if test="filterKey == 'yhm'">
+				<foreach collection="filter_list" item="yhm" index="index"  open=" and (" close=" ) " separator=" or ">
+		            t.yhm like '%'||#{yhm}||'%'
+		        </foreach>
+		 	</if>
+		 	<!-- 姓名 -->
+		 	<if test="filterKey == 'xm'">
+				<foreach collection="filter_list" item="xm" index="index"  open=" and (" close=" ) " separator=" or ">
+		             t.xm like '%'||#{xm}||'%'
+		        </foreach>
+		 	</if>
+		 	<!-- 机构名称-->
+		 	<if test="filterKey == 'jgmc'">
+				<foreach collection="filter_list" item="jgmc" index="index"  open=" and (" close=" ) " separator=" or ">
+		             t.jgmc like '%'||#{jgmc}||'%'
+		        </foreach>
+		 	</if>
+		 	<!-- 角色名称-->
+		 	<if test="filterKey == 'jsmc'">
+				<foreach collection="filter_list" item="jsmc" index="index"  open=" and (" close=" ) " separator=" or ">
+		            t.jsmc like '%'||#{jsmc}||'%'
+		        </foreach>
+		 	</if>
+		 </if>
+		
+		<!-- 是否启用 -->
+		<if test="sf_list != null and sf_list.size() > 0 ">
+		   and t.sfqy in  
+			<foreach collection="sf_list" item="sfqy" index="index"  open=" (" close=" ) " separator=",">
+	            #{sfqy}
+	        </foreach>
+		</if>
+		<!-- 所属机构 -->
+		<if test="jg_id_list != null  and jg_id_list.size() > 0 ">
+		    and t.jg_id in  
+			<foreach collection="jg_id_list" item="jg_id" index="index"  open=" (" close=" ) " separator=",">
+	              #{jg_id}
+	        </foreach>
+		</if>
+	</select>
+	
+	<select id="getPagedCount" parameterType="YhglModel" resultType="int">
+		select count('1')
+		  from niutal_xtgl_yhb a,niutal_xtgl_jgdmb b
+		 where a.yhm != 'admin'
+		 and a.jgdm = b.jg_id(+)
+		
+		 <!-- 模糊查询过滤条件SQL-->
+		 <if test="filterKey != null and filterKey != '' and filter_list != null and filter_list.size() > 0">
+			<if test=" filterKey == 'all' ">
+				<!-- 用户名 ,姓名,机构名称-->
+				<foreach collection="filter_list" item="item" index="index"  open=" and (" close=" ) " separator=" or ">
+		            a.yhm like '%'||#{item}||'%' or  a.xm like '%'||#{item}||'%' or  b.jgmc like '%'||#{item}||'%'
+		        </foreach>
+		 	</if>
+			<!-- 用户名 -->
+		 	<if test="filterKey == 'yhm'">
+				<foreach collection="filter_list" item="yhm" index="index"  open=" and (" close=" ) " separator=" or ">
+		            a.yhm like '%'||#{yhm}||'%'
+		        </foreach>
+		 	</if>
+		 	<!-- 姓名 -->
+		 	<if test="filterKey == 'xm'">
+				<foreach collection="filter_list" item="xm" index="index"  open=" and (" close=" ) " separator=" or ">
+		             a.xm like '%'||#{xm}||'%'
+		        </foreach>
+		 	</if>
+		 	<!-- 机构名称-->
+		 	<if test="filterKey == 'jgmc'">
+				<foreach collection="filter_list" item="jgmc" index="index"  open=" and (" close=" ) " separator=" or ">
+		             b.jgmc like '%'||#{jgmc}||'%'
+		        </foreach>
+		 	</if>
+		 </if>
+		
+		<!-- 是否启用 -->
+		<if test="sf_list != null and sf_list.size() > 0 ">
+		   and a.sfqy in  
+			<foreach collection="sf_list" item="sfqy" index="index"  open=" (" close=" ) " separator=",">
+	            #{sfqy}
+	        </foreach>
+		</if>
+		<!-- 所属机构 -->
+		<if test="jg_id_list != null  and jg_id_list.size() > 0 ">
+		    and a.jgdm in  
+			<foreach collection="jg_id_list" item="jg_id" index="index"  open=" (" close=" ) " separator=",">
+	              #{jg_id}
+	        </foreach>
+		</if>
+		<!-- 所属角色 -->
+		<if test="js_id_list != null  and js_id_list.size() > 0 ">
+		   and a.yhm in (select yhm from niutal_xtgl_yhjsb x
+			<foreach collection="js_id_list" item="jsdm" index="index"  open=" where (" close=" ) " separator=" or ">
+	            x.jsdm = #{jsdm}
+	        </foreach>
+	        )
+		</if>
+	</select>
+	
+	<!-- 查询属于指定用户的角色列表 -->
+	<select id="cxJsdmListByYhm" parameterType="YhglModel" resultType="JsglModel">
+		select t.jgh,t.jsdm,t.jsmc
+		  from niutal_xtgl_jsxxb t
+		 where t.jsdm != 'admin'
+		  <if test="jsgybj != null and jsgybj != ''">
+			 and (t.jgh = #{yhm} or t.jsgybj = #{jsgybj}) 
+		   </if>
+		   <if test="jsgybj == null or jsgybj == ''">
+		   	and t.jgh = #{yhm}
+		   </if>
+	</select>
+	
+	<!-- 查询属于指定用户的角色列表:用于页面treeGrid -->
+	<select id="getTreeGridJsdmList" parameterType="YhglModel" resultType="JsglModel">
+	select t.jgh,
+		   t.jsdm,
+		   t.jsmc, 
+	       t.jssm,  
+	       t.gwjbdm,
+	       t.sfejsq,
+	       t.jsgybj,
+	       t.gnmkdm,
+	       t.jsjb, 
+	       decode((select count(1)
+	                from niutal_xtgl_jsxxb a
+	               where a.fjsdm = t.jsdm),
+	              0,
+	              'true',
+	              'false') leafStr, 
+	       t.fjsdm,
+	       a.jsmc as fjsmc,
+	       a.jsjb as fjsjb, 
+	       b.mc as jslxmc
+	  from niutal_xtgl_jsxxb t,
+	       niutal_xtgl_jsxxb a,
+	       (select c.lx, c.dm, c.mc from niutal_xtgl_jcsjb c where c.lx = '0025') b
+	 where t.fjsdm = a.jsdm(+)
+	   and t.jslxdm = b.dm(+)
+       and t.jsdm != 'admin' 
+       <if test="jsgybj != null and jsgybj != ''">
+		 and (t.jgh = #{yhm} or t.jsgybj = #{jsgybj}) 
+	   </if>
+	   <if test="jsgybj == null or jsgybj == ''">
+	   	and t.jgh = #{yhm}
+	   </if>
+     start with t.fjsdm is null
+	  	connect by prior t.jsdm = t.fjsdm
+	</select>
+    
+    <!-- 查询单个用户信息 -->
+    <select id="getModel" parameterType="YhglModel" resultType="YhglModel">
+    	select a.yhm,
+		       a.xm,
+		       a.kl,
+		       a.sjhm,
+		       a.dzyx,
+		       a.sfqy,
+		       a.jgdm,
+		       b.jgmc,
+		       b.jg_id,
+		       b.jglb,
+		       c.jsmc,
+		       c.jsdm
+		  from niutal_xtgl_yhb a,
+		       niutal_xtgl_jgdmb b,
+		       (select f.yhm,f.jsdm, f.jsmc
+		          from (select f.yhm,
+		                       wm_concat(f.jsdm) jsdm,
+		                       wm_concat(f.jsmc) jsmc
+		                  from (select f.yhm,
+		                               f.jsdm,
+		                               (select e.jsmc
+		                                  from niutal_xtgl_jsxxb e
+		                                 where f.jsdm = e.jsdm) jsmc
+		                          from niutal_xtgl_yhjsb f
+		                          where f.yhm = #{yhm}
+		                        ) f
+		                 group by f.yhm) f
+		       ) c
+		 where a.jgdm = b.jg_id(+)
+		   and a.yhm = c.yhm(+)
+		   and a.yhm = #{yhm}
+    </select>
+    
+    <select id="getCount" resultType="int" parameterType="YhglModel">
+	    select count(1)
+		  from niutal_xtgl_yhb t
+		 where t.yhm = #{yhm}
+		   and t.kl = #{kl}
+    </select>
+    
+    <select id="checkPrivilege" resultType="int" parameterType="YhglModel">
+	    select count(*) from niutal_xtgl_jsgnmkczb t1 
+	    where gnmkdm = #{gnmkdm} 
+	      and exists (select 'X' from niutal_xtgl_yhjsb where jsdm=t1.jsdm and yhm = #{yhm})
+    </select>
+    
+   	<!-- 增加用户信息 -->
+    <insert id="zjYhxx" parameterType="YhglModel">
+    declare
+	begin
+    
+    	/*增加用户信息：步骤1：增加用户信息*/
+    	insert into niutal_xtgl_yhb (yhm,xm,kl,sjhm,dzyx,sfqy,sjly,yhlx,jgdm) values (#{yhm,jdbcType=VARCHAR},
+    																		#{xm,jdbcType=VARCHAR},
+    																		#{kl,jdbcType=VARCHAR},
+    																		#{sjhm,jdbcType=VARCHAR},
+    																		#{dzyx,jdbcType=VARCHAR},
+    																		#{sfqy,jdbcType=VARCHAR},
+    																		#{sjly,jdbcType=VARCHAR},
+    																		#{yhlx,jdbcType=VARCHAR},
+    																		#{jg_id,jdbcType=VARCHAR});
+    	<if test="cbvjsxx != null and cbvjsxx.length > 0 ">
+	    	
+	    	/*增加用户信息：步骤2：增加用户角色信息*/
+	    	<foreach collection="cbvjsxx" item="js_id">
+				insert into niutal_xtgl_yhjsb (yhm,jsdm) values (#{yhm,jdbcType=VARCHAR},#{js_id,jdbcType=VARCHAR});
+			</foreach>
+	    	 
+    	</if>
+    end;
+    </insert>
+    
+   	<!-- 修改用户信息 -->
+    <update id="xgYhxx" parameterType="YhglModel">
+   	declare
+	begin
+			
+		/*修改用户信息：步骤1：修改用户信息*/
+		
+		update niutal_xtgl_yhb t
+    	<set>
+    		<if test="xm != null and xm != ''">
+    			t.xm = #{xm},
+    		</if>
+    		<if test="sjhm != null ">
+    			t.sjhm = #{sjhm},
+    		</if>
+    		<if test="dzyx != null ">
+    			t.dzyx = #{dzyx},
+    		</if>
+    		<if test="sfqy != null and sfqy !=''">
+    			t.sfqy = #{sfqy},
+    		</if>
+    		<if test="jg_id != null and jg_id !=''">
+    			t.jgdm = #{jg_id} 
+    		</if> 
+    	</set> 
+    	where t.yhm = #{yhm,jdbcType=VARCHAR};
+	    	
+    	<if test="deleteList != null and deleteList.size() > 0 ">
+    	
+	    	/*修改用户信息：删除取消勾选的用户所属角色信息*/
+	    	
+	    	delete niutal_xtgl_yhjsb a 
+			 where a.yhm = #{yhm,jdbcType=VARCHAR} and a.jsdm!='admin' 
+			<foreach collection="deleteList" item="item" index="index" open=" and ( " close=" ) " separator=" or ">
+				a.jsdm = #{item}
+			</foreach>;
+		</if>
+		
+		<if test="queryList != null and queryList.size() > 0 ">
+		
+			/*修改用户信息：增加新勾选的用户所属角色信息（未防止出现多个，这里先删除再增加）*/
+			delete niutal_xtgl_yhjsb a 
+			 where a.yhm = #{yhm,jdbcType=VARCHAR} and a.jsdm!='admin' 
+			<foreach collection="queryList" item="item" index="index" open=" and ( " close=" ) " separator=" or ">
+				a.jsdm = #{item,jdbcType=VARCHAR}
+			</foreach>;
+			
+	    	<foreach collection="queryList" item="item" index="index">
+				insert into niutal_xtgl_yhjsb (yhm,jsdm) values (#{yhm,jdbcType=VARCHAR},#{item,jdbcType=VARCHAR});
+			</foreach>
+			
+		</if>
+ 			
+	end;
+    </update>
+    
+    <!-- 删除用户信息 -->
+    <delete id="scYhxx" parameterType="YhglModel">
+    	declare
+		begin
+		
+			<if test="deleteList != null and deleteList.size() > 0 ">
+			
+				/*删除用户信息：步骤1：批量删除用户信息*/
+				delete from niutal_xtgl_yhb t  
+			    <foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) " >
+					t.yhm = #{item} 
+				</foreach>;
+				
+				/*删除用户信息：步骤2：批量删除用户角色信息*/
+				delete from niutal_xtgl_yhjsb t
+		    	<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) " >
+					t.yhm = #{item} 
+				</foreach>;
+
+			</if>
+			
+		end;
+    </delete>
+    
+    <!-- 设置用户所属角色 -->
+    <delete id="szSsjs" parameterType="YhglModel">
+    	declare
+		begin
+	    	
+    		
+	    	<if test="deleteList != null and deleteList.size() > 0 ">
+		    	/*设置用户所属角色 ：步骤1：删除取消勾选的用户所属角色信息*/
+		    	delete niutal_xtgl_yhjsb a 
+				 where a.yhm = #{yhm,jdbcType=VARCHAR} 
+				<foreach collection="deleteList" item="item" index="index" open=" and ( " close=" ) " separator=" or ">
+					a.jsdm = #{item}
+				</foreach>;
+			</if>
+			
+			<if test="queryList != null and queryList.size() > 0 ">
+			
+				/*设置用户所属角色 ：步骤2：增加新勾选的用户所属角色信息（未防止出现多个，这里先删除再增加）*/
+				
+				delete niutal_xtgl_yhjsb a 
+				 where a.yhm = #{yhm,jdbcType=VARCHAR} and a.jsdm!='admin' 
+				<foreach collection="queryList" item="item" index="index" open=" and ( " close=" ) " separator=" or ">
+					a.jsdm = #{item}
+				</foreach>;
+				
+		    	<foreach collection="queryList" item="item" index="index">
+					insert into niutal_xtgl_yhjsb (yhm,jsdm) values (#{yhm},#{item});
+				</foreach>
+			</if>
+		end;
+    </delete>
+    
+    
+     <!-- 用户密码初始化 -->
+    <update id="mmCsh" >
+    	update niutal_xtgl_yhb t set t.kl = #{kl}
+    	<if test="queryList != null and queryList.size() > 0 ">
+    		<where>
+		    	<foreach collection="queryList" item="item" index="index" separator=" or " >
+		    		 t.yhm =  #{item} 
+				</foreach>
+			</where>
+		</if>
+    </update>
+    
+     <!-- 修改用户密码 -->
+    <update id="xgMm" parameterType="YhglModel">
+    	update niutal_xtgl_yhb t set t.kl = #{kl} where  t.yhm =  #{yhm} 
+    </update>
+    
+    <!-- 查询角色所属用户 -->
+    <select id="cxYhByJsdm" parameterType="YhglModel" resultType="YhglModel">
+		select b.yhm, b.xm
+		  from niutal_xtgl_yhjsb a, niutal_xtgl_yhb b
+		 where a.yhm = b.yhm
+		   and a.jsdm = #{jsdm}
+    </select>
+    
+    <!-- 根据机构代码查询用户 -->
+    <select id="cxYhByJgdm" parameterType="YhglModel" resultType="YhglModel">
+		select * from niutal_xtgl_yhb a where 1=1
+		<if test="yhm != null and yhm != ''">
+			and a.yhm like '%'||#{yhm}||'%'
+		</if>
+		<if test="xm != null and xm != ''">
+			and a.xm like '%'||#{xm}||'%'
+		</if>
+		<if test="jgdm != null and jgdm != ''">
+			and a.jgdm = #{jgdm}
+		</if>	
+	</select>
+    
+    
+    
+</mapper>

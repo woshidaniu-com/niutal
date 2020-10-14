@@ -1,0 +1,2 @@
+<script type="text/javascript" src="${base}/js/dr/import.js?ver=${messageUtil("niutal.jsVersion")}"></script>
+<script type="text/javascript" src="${base}/js/dr/selectColumn.js?ver=${messageUtil("niutal.jsVersion")}"></script>

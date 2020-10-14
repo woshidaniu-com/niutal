@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.ILoginDao">
+
+	<sql id="yhxxSQL">
+		select a.xm,
+		       a.sfqy,
+		       a.sjly,
+		       a.jgdm,
+		       a.yhlx,
+		       a.yhm,
+		       (case when lower(a.sjly) = 'jw_jg_jzgxxb' then
+		          (select jg_id from jw_jg_jzgxxb where jgh = a.yhm)
+		         else
+		          a.jgdm
+		       end) jg_id,
+		       (case when lower(a.sjly) = 'jw_jg_jzgxxb' then
+		          (select jgh_id from jw_jg_jzgxxb where jgh = a.yhm)
+		         when lower(a.sjly) = 'jw_xjgl_xsjbxxb' then
+		          (select xh_id from jw_xjgl_xsjbxxb where xh = a.yhm)
+		          else
+		          ''
+		       end) yhlybid,
+		       (case when lower(a.sjly) = 'jw_xjgl_xsjbxxb' then
+		          (select (SELECT jgMC FROM niutal_XTGL_JGDMB WHERE JG_ID = B.JG_ID) || '，' ||
+		                  (SELECT ZYMC FROM niutal_XTGL_ZYDMB WHERE ZYH_ID = B.ZYH_ID) ||
+		                  '专业，学号：' || t.xh
+		             from jw_xjgl_xsjbxxb t, jw_xjgl_xsxjxxb b
+		            where t.xh_id = b.xh_id
+		              and b.xnm = (select ZDZ from niutal_xtgl_xtszb where zdm = 'DQXNM')
+		              and b.xqm =  (select ZDZ from niutal_xtgl_xtszb where zdm = 'DQXQM')
+		              and a.yhm = t.xh)
+		         else
+		          ''
+		       end) xyzyxx
+		  from niutal_xtgl_yhb a
+		 where a.yhm = #{yhm}
+	</sql>
+	
+	<!-- 根据用户ID和密码查询用户信息  -->
+	<select id="cxYhxx" parameterType="string" resultType="LoginModel">
+		<include refid="yhxxSQL"/>
+		   and a.kl = #{mm}
+    </select>
+    
+	<!-- 无密码根据用户ID用户信息  -->
+	<select id="cxYhxxWithoutPwd" parameterType="string" resultType="LoginModel">
+	   	<include refid="yhxxSQL"/>
+    </select> 
+    
+    <!-- 根据用户ID和密码查询用户可否登录，角色数量等信息  -->
+	<select id="cxYhxxStatus" parameterType="string" resultType="hashmap">
+	    select (select to_char(count('1')) from niutal_xtgl_yhb a where a.yhm = #{yhm}) num_1,
+		       (select to_char(count('1')) from niutal_xtgl_yhb b where b.yhm = #{yhm} and b.kl = #{mm,jdbcType=VARCHAR} ) num_2,
+		       (select to_char(count('1')) from niutal_xtgl_yhjsb c where c.yhm = #{yhm}) num_3,
+		       nvl((select to_char(nvl(d.sfqy,'0')) from niutal_xtgl_yhb d where d.yhm = #{yhm}),'0') num_4
+		from dual
+    </select> 
+    
+    <select id="getPermissionsInfo" parameterType="string" resultType="string">
+    	select distinct nvl(a.qxdm,a.gnmkdm || '_' || a.czdm ) as qxdm
+		  from niutal_xtgl_jsgnmkczb t, niutal_xtgl_gnmkczb a, niutal_xtgl_czdmb b
+		 where t.gnmkdm = a.gnmkdm
+		   and t.czdm = a.czdm
+		   and a.czdm = b.czdm
+		   and t.jsdm = #{jsdm,jdbcType=VARCHAR}
+		 order by t.gnmkdm, to_number(b.xssx) asc
+    </select>
+    
+</mapper>

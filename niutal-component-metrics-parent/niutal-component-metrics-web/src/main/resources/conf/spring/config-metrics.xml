@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics.xsd">
+    
+    <!-- 
+    	http://metrics.ryantenney.com/
+    -->
+    <bean id="metricsFactory" class="com.codahale.metrics.biz.MetricsFactory" scope="singleton" >
+		<!-- <property name="registry" ref="metricRegistry"></property> -->
+	</bean>
+	
+    <!-- Creates a MetricRegistry bean -->
+    <bean id="metricRegistry" class="com.codahale.metrics.biz.MetricsFactory" factory-method="getContextMetricRegistry" scope="singleton" />
+    <!-- <metrics:metric-registry id="metricRegistry" /> -->
+    
+	<!-- Creates a HealthCheckRegistry bean (Optional) -->
+	<bean id="healthCheckRegistry" class="com.codahale.metrics.biz.MetricsFactory" factory-method="getContextHealthCheckRegistry" scope="singleton" />
+   <!--  <metrics:health-check-registry id="healthCheckRegistry" /> -->
+    
+    <!-- Registers BeanPostProcessors with Spring which proxy beans and capture metrics -->
+    <!-- Include this once per context (once in the parent context and in any subcontexts) -->
+    <!-- 因为对象代理原因，作者提供的使用方式不能实现度量值变更，故自己实现同样逻辑的拦截器 -->
+    <!-- <metrics:annotation-driven metric-registry="metricRegistry" health-check-registry="healthCheckRegistry" /> -->
+    
+    <!-- Example reporter definiton. Supported reporters include jmx, slf4j, graphite, and others. -->
+    <!-- Reporters should be defined only once, preferably in the parent context -->
+    <metrics:reporter type="jmx" metric-registry="metricRegistry"/>
+    <!-- <metrics:reporter type="console" metric-registry="metricRegistry" period="1m" /> -->
+    
+    <!-- Register metric beans (Optional) -->
+    <!-- The metrics in this example require metrics-jvm 
+    <metrics:register metric-registry="metricRegistry">
+        <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
+        <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
+        <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
+        <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
+    </metrics:register>-->
+    
+    <!-- Beans and other Spring config -->
+    
+    <!-- <bean id="threadDeadlockHealthCheck" class="com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck"></bean> -->
+    
+    <!-- 通过该方式将metricRegistry注入到对应的属性值中以便各个组件使用 -->
+    <bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
+        <property name="attributes">
+            <map>
+                <entry key="com.codahale.metrics.servlet.InstrumentedFilter.registry">
+                    <ref bean="metricRegistry"/>
+                </entry>
+                <entry key="com.codahale.metrics.servlets.MetricsServlet.registry">
+                    <ref bean="metricRegistry"/>
+                </entry>
+                <entry key="com.codahale.metrics.servlets.HealthCheckServlet.registry">
+                    <ref bean="healthCheckRegistry"/>
+                </entry>
+                <!-- <entry key="com.codahale.metrics.servlets.HealthCheckServlet.executor">
+                    <ref bean="healthCheckRegistry"/>
+                </entry> -->
+            </map>
+        </property>
+    </bean>
+    
+	<bean id="instrumentedFilter" class="com.codahale.metrics.servlet.InstrumentedFilter">
+		<!-- <property name="name-prefix" ref="authentication"></property> -->
+	</bean>
+	
+	<context:component-scan base-package="com.codahale.metrics.biz.event.listener" />
+    <context:component-scan base-package="com.codahale.metrics.**" />
+    
+	<bean id="countedMethodInterceptor" class="com.codahale.metrics.spring.fix.CountedMethodInterceptor">
+		<constructor-arg index="0">
+			<ref bean="metricRegistry"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="meteredMethodInterceptor" class="com.codahale.metrics.spring.fix.MeteredMethodInterceptor">
+		<constructor-arg index="0">
+			<ref bean="metricRegistry"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="timedMethodInterceptor" class="com.codahale.metrics.spring.fix.TimedMethodInterceptor">
+		<constructor-arg index="0">
+			<ref bean="metricRegistry"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="exceptionMeteredMethodInterceptor" class="com.codahale.metrics.spring.fix.ExceptionMeteredMethodInterceptor">
+		<constructor-arg index="0">
+			<ref bean="metricRegistry"/>
+		</constructor-arg>
+	</bean> 
+	
+    <!-- Spring AOP config  -->
+	<aop:config>
+		<aop:pointcut id="countedPointcut" expression=" execution(* com.woshidaniu..controller..*.*(..)) and @annotation(com.codahale.metrics.annotation.Counted) "/>
+		<aop:pointcut id="meteredPointcut" expression=" execution(* com.woshidaniu..controller..*.*(..)) and @annotation(com.codahale.metrics.annotation.Metered) "/>
+		<aop:pointcut id="timedPointcut" expression=" execution(* com.woshidaniu..controller..*.*(..)) and @annotation(com.codahale.metrics.annotation.Timed) "/>
+		<aop:pointcut id="exceptionMeteredPointcut" expression=" execution(* com.woshidaniu..controller..*.*(..)) and @annotation(com.codahale.metrics.annotation.ExceptionMetered) "/>
+		<aop:advisor advice-ref="countedMethodInterceptor" pointcut-ref="countedPointcut" />
+		<aop:advisor advice-ref="meteredMethodInterceptor" pointcut-ref="meteredPointcut" />
+		<aop:advisor advice-ref="timedMethodInterceptor" pointcut-ref="timedPointcut" />
+        <aop:advisor advice-ref="exceptionMeteredMethodInterceptor" pointcut-ref="exceptionMeteredPointcut" />
+    </aop:config>
+    
+</beans>

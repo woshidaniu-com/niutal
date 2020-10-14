@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd" default-lazy-init="true">
+
+	<mvc:annotation-driven />
+
+	<!-- 默认访问跳转到登录页面 -->
+<!-- 	<mvc:view-controller path="/" view-name="/globalweb/login" /> -->
+
+	<context:component-scan base-package="com.woshidaniu.**.*.controller" />
+	<context:component-scan base-package="com.woshidaniu.**.*" />
+<!-- 	<mvc:resources mapping="/css/**" location="/css/" /> -->
+<!-- 	<mvc:resources mapping="/js/**" location="/js/" /> -->
+<!-- 	<mvc:resources mapping="/logo/**" location="/logo/" /> -->
+
+	<!-- 采用SpringMVC自带的JSON转换工具，支持@ResponseBody注解 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="stringHttpMessageConverter" />
+                <ref bean="jsonHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter" >
+     		<property name = "supportedMediaTypes">    
+                 <list>    
+                     <value>text/plain;charset=UTF-8</value>    
+                 </list>    
+            </property>  
+    </bean> 
+    
+    <bean id="jsonHttpMessageConverter"  
+        class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  
+        <property name="supportedMediaTypes">  
+            <list>  
+                <value>application/json</value>  
+            </list>  
+        </property>  
+    </bean>
+
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+<!-- 	<bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer"> -->
+<!-- 		<property name="resourceLoaderPath" value="pages/" /> -->
+<!-- 		<property name="velocityProperties"> -->
+<!-- 			<props> -->
+<!-- 				<prop key="directive.foreach.counter.name">loopCounter</prop> -->
+<!-- 				<prop key="directive.foreach.counter.initial.value">0</prop> -->
+<!-- 				<prop key="input.encoding">UTF-8</prop> -->
+<!-- 				<prop key="output.encoding">UTF-8</prop> -->
+<!-- 			</props> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
+	<!-- 设置视图解析工具 -->
+<!-- 	<bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver"> -->
+<!-- 		<property name="suffix" value=".vm" /> -->
+<!-- 		<property name="cache" value="true" /> -->
+<!-- 		<property name="contentType" value="text/html;charset=UTF-8" /> -->
+<!-- 		<property name="dateToolAttribute" value="dateTool" /> -->
+<!-- 		<property name="numberToolAttribute" value="numberTool" /> -->
+<!-- 		<property name="exposeRequestAttributes" value="true" /> -->
+<!-- 		<property name="exposeSessionAttributes" value="true" /> -->
+<!-- 		<property name="toolboxConfigLocation" value="WEB-INF/velocity-tools.xml" /> -->
+<!-- 		<property name="exposeSpringMacroHelpers" value="true" /> -->
+<!-- 		<property name="requestContextAttribute" value="rc" /> -->
+<!-- 		<property name="order" value="2" /> -->
+<!-- 	</bean> -->
+
+	<!-- 配置freeMarker -->
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPaths" value="/WEB-INF/pages/" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="defaultEncoding">UTF-8</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="template_update_delay">1</prop>
+				<prop key="tag_syntax">auto_detect</prop>
+				<prop key="whitespace_stripping">true</prop>
+				<prop key="classic_compatible">true</prop>
+				<prop key="object_wrapper">freemarker.ext.beans.BeansWrapper</prop>
+			</props>
+		</property>		
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="base" value="#{servletContext.contextPath}" />
+				<entry key="messageUtil" value-ref="messageMethod" />
+				<entry key="buttonsUtil" value-ref="buttonsDirective" />
+<!-- 				<entry key="layout" value-ref="freemarkerLayoutDirectives" /> -->
+			</map>
+		</property>
+	</bean>
+	<!-- freemarker视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver" id="viewResolver">
+		<property name="suffix" value=".ftl" />
+		<property name="cache" value="false" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="order" value="1" />
+	</bean>
+
+	<!-- 异常处理 -->
+	<mvc:view-controller path="/403.zf" view-name="/exception/403" />
+	<mvc:view-controller path="/404.zf" view-name="/exception/404" />
+	<mvc:view-controller path="/500.zf" view-name="/exception/500" />
+	<mvc:view-controller path="/error.zf" view-name="/exception/error" />
+
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.apache.shiro.authz.UnauthorizedException">/exception/403</prop>
+				<prop key="java.io.FileNotFoundException">/exception/404</prop>
+			</props>
+		</property>
+		<property name="defaultErrorView" value="/exception/error" />
+		<property name="defaultStatusCode" value="500" />
+	</bean>
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="maxInMemorySize" value="40960" />
+	</bean>
+	
+	
+	<bean id="businessLogAspect" class="com.woshidaniu.common.log.BusinessLogAspect">
+	</bean>
+
+	<aop:config>
+		<aop:pointcut id="logPointcut"  expression="execution(* com.woshidaniu..controller.*.*(..)) and @annotation(com.woshidaniu.common.log.BusinessLog) and @annotation(businessLog)" />
+		<aop:aspect id="logAspect" ref="businessLogAspect">
+			<aop:after-returning method="afterReturing"  pointcut-ref="logPointcut" />
+		</aop:aspect>
+	</aop:config>
+</beans>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<bean id="ffdxStudent"  class="com.woshidaniu.wjdc.dao.entites.FfdxModel">
+		<property name="dxid" value="student"/>
+		<property name="dxmc" value="学生"/>
+		<property name="dxly" value="select xh from view_niutal_xtgl_xsxxb"/>
+		<property name="fftjs">
+			<list>
+				<!-- 性别 -->
+				<bean class="com.woshidaniu.wjdc.dao.entites.FfdxtjModel">
+					<!-- 服务类别方法 -->
+					<property name="sjly" value="sjbzService#getBzsjList#dm_gb_b_rdxbdm"/>
+					<!-- 本层次相关 -->
+					<property name="id" value="xbdm"/>
+					<property name="name" value="性别"/>
+					<property name="key" value="dm"/>
+					<property name="value" value="mc"/>
+				</bean>
+				<!-- 政治面貌 -->
+				<bean class="com.woshidaniu.wjdc.dao.entites.FfdxtjModel">
+					<!-- 服务类别方法 -->
+					<property name="sjly" value="sjbzService#getBzsjList#dm_gb_b_zzmmdm"/>
+					<!-- 本层次相关 -->
+					<property name="id" value="zzmmdm"/>
+					<property name="name" value="政治面貌"/>
+					<property name="key" value="dm"/>
+					<property name="value" value="mc"/>
+				</bean>
+				<!-- 年级 -->
+				<bean class="com.woshidaniu.wjdc.dao.entites.FfdxtjModel">
+					<!-- 服务类别方法 -->
+					<property name="sjly" value="njdmService#cxNjdmList"/>
+					<!-- 本层次相关 -->
+					<property name="id" value="njdm_id"/>
+					<property name="name" value="年级"/>
+					<property name="key" value="njdm_id"/>
+					<property name="value" value="njmc"/>
+				</bean>
+			</list>
+		</property>
+		<property name="tjtjs">
+				<list >
+					<bean class="com.woshidaniu.wjdc.dao.entites.WjtjtjModel">
+						<property name="id" value="xbdm"/>
+						<property name="type" value="select"/>
+						<property name="name" value="性别"/>
+						<property name="sjly" value="sjbzService#getBzsjList#dm_gb_b_rdxbdm"/>
+						<property name="key" value="dm"/>
+						<property name="value" value="mc"/>
+					</bean>
+					<bean class="com.woshidaniu.wjdc.dao.entites.WjtjtjModel">
+						<property name="id" value="zzmmdm"/>
+						<property name="type" value="select"/>
+						<property name="name" value="政治面貌"/>
+						<property name="sjly" value="sjbzService#getBzsjList#dm_gb_b_zzmmdm"/>
+						<property name="key" value="dm"/>
+						<property name="value" value="mc"/>
+					</bean>
+				</list>
+		</property>
+	</bean>
+	
+	<bean id="ffdxTeacher"  class="com.woshidaniu.wjdc.dao.entites.FfdxModel">
+		<property name="dxid" value="teacher"/>
+		<property name="dxmc" value="教师"/>
+		<property name="dxly" value="select zgh from niutal_xtgl_yhb"/>
+		<property name="fftjs">
+			<list>
+				<bean class="com.woshidaniu.wjdc.dao.entites.FfdxtjModel">
+					<property name="id" value="jgdm"/>
+					<property name="name" value="部门"/>
+					<property name="sjly" value="bmdmService#getDataItemList"/>
+					<property name="key" value="key"/>
+					<property name="value" value="value"/>
+				</bean>
+			</list>
+		</property>
+		<property name="tjtjs">
+			<list>
+				<bean class="com.woshidaniu.wjdc.dao.entites.WjtjtjModel">
+					<property name="id" value="jgdm"/>
+					<property name="name" value="部门"/>
+					<property name="sjly" value="bmdmService#getDataItemList"/>
+					<property name="key" value="key"/>
+					<property name="value" value="value"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="wjffList" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="ffdxStudent"/>
+				<ref bean="ffdxTeacher"/>
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>

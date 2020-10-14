@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IStglDao">
+	
+	<resultMap type="com.woshidaniu.wjdc.dao.entites.StglModel" id="stglModelResultMap">
+		<id column="STID" property="stid"/>
+		<result column="WJID" property="wjid"/>
+		<result column="FLID" property="stdlid"/>
+		<result column="STMC" property="stmc"/>
+		<result column="STLX" property="stlx"/>
+		<result column="DAGS" property="dags"/>
+		<result column="SFBD" property="sfbd"/>
+		<result column="STZF" property="stzf"/>
+		<result column="XSSX" property="xssx"/>
+		<result column="XXKZDXZS" property="xxkzdxzs"/>
+		<result column="ZDZS" property="zdzs"/>
+		<result column="WBGD" property="wbgd"/>
+		<result column="MHXXGS" property="mhxxgs"/>
+		<result column="WBLX" property="wblx"/>
+		<result column="SFYXPX" property="sfyxpx"/>
+		<result column="TS" property="ts"/>
+	</resultMap>
+	
+	<select id="getModelList" parameterType="java.lang.String" resultMap="stglModelResultMap">
+		select * from niutal_WJDC_WJSTB where wjid = #{wjid}
+	</select>
+	
+	 <!-- 插入试题信息 -->
+	 <insert id="insertStxx">
+				insert into 
+				niutal_WJDC_WJSTB
+				(
+					wjid,
+					stid,
+					stmc,
+					stlx,
+					dags,
+					sfbd,
+					stzf,
+					xssx,
+					flid,
+					xxkzdxzs,
+					sfyxpx,
+					ts,
+					zdzs,
+					wbgd,
+					mhxxgs,
+					wblx
+				) 
+		 	<foreach collection="list" item="item" index="index" separator=" union all ">
+			   select 
+			   	#{item.wjid},
+			   	#{item.stid},
+			   	#{item.stmc},
+			   	#{item.stlx},
+			   	#{item.dhxxgs},
+			   	#{item.sfbd},
+			   	#{item.stzf},
+			   	#{item.xssx},
+			   	#{item.stdlid},
+			   	#{item.xxkzdxzs},
+			   	#{item.sfyxpx},
+			   	#{item.ts},
+			   	#{item.zdzs},
+			   	#{item.wbgd},
+			   	#{item.mhxxgs},
+			   	#{item.wblx} 
+			   from dual  
+			</foreach>
+	 </insert>
+	 
+	 <!-- 插入试题选项信息 -->
+	 <insert id="insertXxxx">
+				insert into niutal_WJDC_WJSTXXB(wjid,stid,xxid,xxmc,xxfz,xssx,tzstid) 
+		 	<foreach collection="list" item="item" index="index"
+					separator=" union all ">
+			   select 
+			   	#{item.wjid},
+			   	#{item.stid},
+			   	#{item.xxid},
+			   	#{item.xxmc},
+			   	#{item.xxfz},
+			   	#{item.xssx},
+    			#{item.tzstid}
+			  from dual  
+			</foreach>
+	 </insert>
+	 
+	 <delete id="deleteWjSt" parameterType="WjglModel">
+		delete from niutal_WJDC_WJSTB where wjid=#{wjid}
+	 </delete>
+	
+	<delete id="deleteWjStXx" parameterType="WjglModel">
+		delete from niutal_WJDC_WJSTXXB where wjid=#{wjid}
+	</delete>
+	
+	<delete id="deleteWjhd" parameterType="WjglModel">
+		delete from niutal_WJDC_WJHDB where wjid=#{wjid}
+	</delete>
+	
+	<delete id="deleteStfl" parameterType="WjglModel">
+		delete from niutal_WJDC_STFLB where wjid=#{wjid}
+	</delete>
+	 
+	 <!-- 获取试题和试题大类排序后的列表 -->
+	 <select id="getStxxAndStdlXxList" parameterType="com.woshidaniu.wjdc.dao.entites.WjglModel" resultType="com.woshidaniu.wjdc.dao.entites.StglModel">
+		select *
+      		from (select 
+      			   distinct
+      			   a.wjid,
+                   a.stid,
+                   a.stmc,
+                   a.stlx,
+                   a.dags dhxxgs,
+                   a.sfbd,
+                   a.stzf,
+                   a.xssx,
+                   a.xxkzdxzs,
+                   a.sfyxpx,
+                   a.ts,
+                   zdzs,
+                   wbgd,
+                   mhxxgs,
+                   '' dqfs,
+                   a.wblx
+             from niutal_wjdc_wjstb a
+             where a.wjid = #{wjid}
+            union all
+            select b.wjid,
+                   b.flid stid,
+                   b.flmc stmc,
+                   '0' stlx,
+                   '' dags,
+                   '' sfbd,
+                   '' stzf,
+                   b.xssx,
+                   '' xxkzdxzs,
+                   '' sfyxpx,
+                   '' ts,
+                   '' zdzs,
+                   '' wbgd,
+                   '' mhxxgs,
+                   dqfs,
+                   '' wblx
+              from niutal_wjdc_stflb b
+             where b.wjid = #{wjid}
+          )
+          order by
+          	to_number(REPLACE(stid,'stid_','')) asc 
+	 </select>
+	 
+	 <select id="getYhdjStxxAndStdlXxList" parameterType="com.woshidaniu.wjdc.dao.entites.WjglModel" resultType="com.woshidaniu.wjdc.dao.entites.StglModel">
+	    
+   	 	select * from (
+			   select 
+			   	   distinct
+	               a.wjid,
+	               a.stid,
+	               a.stmc,
+	               a.stlx,
+	               a.dags dhxxgs,
+	               a.sfbd,
+	               a.stzf,
+	               a.xssx,
+	               a.xxkzdxzs,
+	               a.sfyxpx,
+	               a.ts,
+	               zdzs,
+	               wbgd,
+	               mhxxgs,
+	               '' dqfs, 
+	               a.wblx,
+	               case when b.daid is null
+	               then '0'
+	                 else '1' --完成了这个试题
+	               end sfwc--是否完成了这个试题
+             from 
+               niutal_wjdc_wjstb a 
+               left join niutal_wjdc_wjhdb b on a.stid = b.stid and a.wjid = b.wjid and b.djrid = #{djrid}
+             where a.wjid= #{wjid}
+             union all
+			   select 
+	               b.wjid,
+	               b.flid stid,
+	               b.flmc stmc,
+	               '0' stlx,
+	               '' dags,
+	               '' sfbd,
+	               '' stzf,
+	               b.xssx,
+	               '' xxkzdxzs,
+	               '' sfyxpx,
+	               '' ts,
+	               '' zdzs,
+	               '' wbgd,
+	               '' mhxxgs,
+	               dqfs,
+	               '' wblx,
+	               '0' sfwc --文本说明忽略
+              from niutal_wjdc_stflb b 
+              where b.wjid=#{wjid}
+		  ) 
+      order by 
+      	    to_number(REPLACE(stid,'stid_','')) asc 
+	 </select>
+	 <!-- 获取试题选项信息列表 -->
+	 <select id="getStXxxxList" parameterType="com.woshidaniu.wjdc.dao.entites.WjglModel" resultType="com.woshidaniu.wjdc.dao.entites.XxglModel">
+	 	select 
+	 		a.wjid,
+	 		a.stid,
+	 		a.xxid,
+	 		a.xxmc,
+	 		a.xxfz,
+	 		a.xssx,
+	 		a.tzstid
+	 	from 
+	 		niutal_wjdc_wjstxxb a where a.wjid=#{wjid} 
+	 	order by 
+	 		a.wjid asc,
+	 		to_number(REPLACE(a.stid,'stid_','')) asc 
+			,to_number(substr(a.xxid,instr(a.xxid,'xxid_')+5,length(a.xxid))) asc 
+	 </select>
+	 
+	 <select id="getYhdjStXxxxList" parameterType="com.woshidaniu.wjdc.dao.entites.WjglModel" resultType="com.woshidaniu.wjdc.dao.entites.XxglModel">
+	--查询试题(单选，多选，单选组合，多选组合)的选项
+	select * from
+    (
+        select
+            distinct
+            a.wjid,
+            a.stid,
+            a.xxid,
+            a.xxmc,
+            a.xxfz,
+            a.xssx,
+            a.tzstid,
+            case when b.daid is null
+                     then '0' --未选项这个选项
+                 else '1' --选择了这个选项
+                end checked,--是否选择了这个选项
+            '' txnr
+        from
+            niutal_wjdc_wjstxxb a
+            left join  niutal_wjdc_wjhdb b on a.stid = b.stid and a.wjid = b.wjid and a.xxid = b.xxid and b.djrid = #{djrid}
+        where
+            a.wjid = #{wjid}
+        union all
+        --查询文本题的内容
+        select
+            c.wjid,
+            c.stid,
+            '',
+            '',
+            '',
+            '0',
+            '',
+            '0',
+            d.txnr
+        from
+            niutal_wjdc_wjstb c
+            left join niutal_wjdc_wjhdb d
+        on c.wjid = d.wjid and c.stid = d.stid
+        where c.stlx = '5'
+          and c.wjid = #{wjid}
+          and d.djrid = #{djrid}
+    )
+order by
+    to_number(REPLACE(stid,'stid_','')) asc
+       ,to_number(substr(xxid,instr(xxid,'xxid_')+5,length(xxid))) asc
+	 </select>
+	 
+	 <!-- 返回结果 -->
+	 <resultMap id="stTxnrMap" type="java.util.HashMap">
+    	<result property="stid" column="stid"/>
+    	<result property="txnr" column="txnr"/>
+	 </resultMap>
+	 <select id="getStLastOptionValues" parameterType="string" resultMap="stTxnrMap">
+	 	select a.stid, a.txnr
+  			from niutal_wjdc_wjhdb a, niutal_wjdc_wjstb b
+ 		where a.wjid = b.wjid
+   			and a.stid = b.stid
+  		 	and a.wjid = #{wjid}
+  		 	and a.djrid = #{djrid}
+   			and b.stlx in ('2', '4')
+   			and txnr is not null
+	 </select>
+	 
+	 <!-- 获取试题信息的列表 -->
+	 <select id="getStxxList" parameterType="string" resultType="com.woshidaniu.wjdc.dao.entites.StglModel">
+			select 
+				a.wjid,
+				a.stid,
+				a.stmc,
+				a.stlx,
+				a.dags dhxxgs,
+				a.sfbd,
+				a.stzf,
+				a.xssx,
+				a.xxkzdxzs,
+				a.mhxxgs, 
+				a.sfyxpx,
+				a.ts
+			from
+				niutal_wjdc_wjstb a where a.wjid=#{wjid} 
+			order by 
+				to_number(REPLACE(a.stid,'stid_','')) asc 
+	 </select>
+</mapper>

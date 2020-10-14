@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 自定义Struts2国际化标签国际化资源数据提供者默认实现 -->
+	<bean id="i18nProvider" class="com.woshidaniu.i18n.provider.def.DefaultI18nProvider"></bean>
+	
+	<!-- 主数据库：session工厂  -->
+	<bean id="i18nSqlSessionFactory" class="com.woshidaniu.orm.mybatis.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation">
+			<value>classpath:conf/mybatis/sqlMapConfig.xml</value>
+		</property>
+		<property name="mapperLocations">
+		  	<array>
+		   		<value>classpath*:com/woshidaniu/**/dao/**/sqlmap/i18n/*.xml</value>
+		   		<value>classpath*:com/woshidaniu/**/bpm/**/sqlmap/i18n/**/*.xml</value>
+		  	</array>
+		 </property>
+		<!-- <property name="mapperLocations" value="classpath*:com/woshidaniu/**/dao/**/sqlmap/*.xml" /> -->
+		<!-- <property name="transactionFactory">
+	        <bean class="org.mybatis.spring.transaction.SpringManagedTransactionFactory" />
+      	</property>
+      	-->
+		<!-- typeAliasesPackage包路径配置 -->
+    	<property name="typeAliasesPackage" value="com.woshidaniu.**.entities" />
+		<!-- 配置Mybatis的插件plugin
+	    <property name="plugins">
+	        <array>
+	        </array>
+	    </property>-->
+	</bean>
+	
+    <!-- 主数据库：dao支持对象 ，仅用于国际化数据查询-->
+    <bean id="i18nDataSourceDao" class="com.woshidaniu.orm.mybatis.spring.support.MybatisSqlSessionDaoSupport">
+		<property name="sqlSessionFactory" ref="i18nSqlSessionFactory"/>
+	</bean>
+	
+    
+</beans>

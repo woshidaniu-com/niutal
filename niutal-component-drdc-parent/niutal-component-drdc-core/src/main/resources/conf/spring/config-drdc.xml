@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="docExportDao" name="docExportDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.dao.daointerface.IDocExportDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="exportExcelDoc" class="com.woshidaniu.export.service.impl.ExportExcelImpl"
+		scope="singleton">
+		<property name="exportDao" ref="docExportDao" />
+	</bean>
+	<!-- 进度条 -->
+	<bean id="progressAction" name="progressAction"
+		class="com.woshidaniu.common.progress.ProgressAction" scope="prototype" />
+	<bean id="exportAction" name="exportAction"
+		class="com.woshidaniu.plugins.action.ExportAction" scope="prototype">
+		<property name="exportService" ref="exportExcelDoc" />
+	</bean>
+	
+	<!-- 导入数据 -->
+	<bean id="docImportDao" name="docImportDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.dao.daointerface.IDocImportDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 导入数据 使用非单利注意，通用导入中拥有全局遍历保存临时数据 -->
+	<bean id="importService" name="importService"
+		class="com.woshidaniu.service.impl.ImportThreadImpl" scope="prototype">
+		<property name="dao" ref="docImportDao" />
+	</bean>
+
+	<!--导入数据 -->
+	<bean id="importAction" name="importAction"
+		class="com.woshidaniu.plugins.action.ImportAction" scope="prototype">
+		<property name="importService" ref="importService" />
+	</bean>
+</beans>

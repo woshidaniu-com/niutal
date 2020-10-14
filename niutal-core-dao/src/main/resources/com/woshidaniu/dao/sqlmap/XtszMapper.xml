@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IXtszDao">
+
+	<update id="update" parameterType="XtszModel"
+		flushCache="true" statementType="PREPARED" timeout="20000">
+		update niutal_xtgl_xtszb 
+		<set>
+			<if test="xxdm != null">
+				xxdm = #{xxdm},
+    		</if>
+			<if test="xxmc != null">
+				xxmc = #{xxmc},
+    		</if>
+			<if test="dqnd != null">
+				dqnd = #{dqnd},
+    		</if>
+			<if test="dqxn != null">
+				dqxn = #{dqxn},
+    		</if>
+			<if test="dqxq != null">
+				dqxq = #{dqxq}
+    		</if>
+		</set>
+		where rownum=1
+	</update>
+	
+	<insert id="insert" parameterType="XtszModel">
+		insert into niutal_xtgl_xtszb (xxdm,xxmc,dqnd,dqxn,dqxq) values (#{xxdm},#{xxmc},#{dqnd},#{dqxn},#{dqxq})
+	</insert>
+	
+	
+	<select id="getModel" 
+		resultType="XtszModel" useCache="true"
+		resultSetType="FORWARD_ONLY" flushCache="false" statementType="PREPARED"
+		timeout="20000">
+		select * from niutal_xtgl_xtszb where rownum=1
+    </select>
+
+</mapper>

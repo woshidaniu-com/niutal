@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.i18n.dao.daointerface.II18nDao" >
+	
+	<select id="getPagedI18nByScope" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel" 
+    	resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+    	select a.res_key res_oid, a.* from niutal_xtgl_i18n a
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="res_key != null and res_key != ''">
+				a.res_key||a.zh_cn||a.en_us like '%'||#{res_key}||'%'
+			</if>
+    	</trim>
+    	order by a.res_key, a.zh_cn
+    </select>
+    
+    <select id="getI18nModel" parameterType="String" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+		select a.res_key res_oid, a.* from niutal_xtgl_i18n a 
+		where a.res_key = #{res_oid}
+    </select>
+    
+    <update id="updateI18n" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel" >
+    	update niutal_xtgl_i18n 
+    	<set>
+    		<if test="zh_cn != null"> zh_cn = #{zh_cn},</if>
+    		<if test="en_us != null"> en_us = #{en_us},</if>
+    	</set>
+    	where res_key = #{res_oid}
+    </update>
+    
+	<insert id="insertI18n" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+		insert into niutal_xtgl_i18n(res_key, zh_cn, en_us)
+		values(
+			#{res_key,jdbcType=VARCHAR},
+			#{zh_cn,jdbcType=VARCHAR},
+			#{en_us,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<delete id="deleteI18n" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel">    	 
+    	 delete from niutal_xtgl_i18n a
+    	 where not exists(select 'x' from niutal_xtgl_resource_i18n b where a.res_key = b.res_key)
+    	 	and (1=2 
+			<if test="pks != null and pks.length > 0">
+				or res_key in 
+				<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+    				#{item}
+    			</foreach>
+    		</if>
+    		)
+    </delete>
+    
+     <select id="getPagedResourceByScope" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel" 
+    	resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+    	select a.* from niutal_xtgl_resource a
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="res_code != null and res_code != ''">
+				a.res_code = #{res_code}
+			</if>
+			<if test="res_name != null and res_name != ''">
+				and a.res_code||a.res_name like '%'||#{res_name}||'%'
+			</if>
+			<if test="res_type != null and res_type != ''">
+				and a.res_type = #{res_type}
+			</if>
+    	</trim>
+    	order by a.res_code, a.res_type
+    </select>
+    
+    <select id="getAllResourceList" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel" 
+    	resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+    	select a.* from niutal_xtgl_resource a
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="res_code != null and res_code != ''">
+				a.res_code = #{res_code}
+			</if>
+			<if test="res_name != null and res_name != ''">
+				and a.res_code||a.res_name like '%'||#{res_name}||'%'
+			</if>
+			<if test="res_type != null and res_type != ''">
+				and a.res_type = #{res_type}
+			</if>
+			<if test="pks != null and pks.length > 0">
+				and a.res_oid in 
+				<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+    	</trim>
+    	order by a.res_code, a.res_type
+    </select>
+    
+    <select id="getModelResource" parameterType="String" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+		select a.* from niutal_xtgl_resource a
+		where a.res_oid = #{res_oid}
+    </select>
+    
+    <select id="getI18nResource" parameterType="String" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+		select a.* from niutal_xtgl_resource a
+		where a.res_code = #{res_code}
+		  and a.res_type = #{res_type}
+    </select>
+    
+    <update id="updateResource" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel" >
+    declare
+		v_resOID varchar2(50);
+		v_zhCN varchar2(300);
+		v_enUS varchar2(300);
+	begin
+		v_resOID := #{res_oid};
+    	update niutal_xtgl_resource 
+    	<set>
+    		<if test="res_code != null"> res_code = #{res_code},</if>
+    		<if test="res_name != null"> res_name = #{res_name},</if>
+    		<if test="res_xxdm != null"> res_xxdm = #{res_xxdm},</if>
+    		<if test="res_type != null"> res_type = #{res_type},</if>
+    		<if test="res_path != null"> res_path = #{res_path},</if>
+    		<if test="res_fbbj != null"> res_fbbj = #{res_fbbj},</if>
+    		<if test="res_fbsj != null"> res_fbsj = #{res_fbsj},</if>
+    		<if test="res_fbyh != null"> res_fbyh = #{res_fbyh},</if>
+    		<if test="res_bz != null"> res_bz = #{res_bz},</if>
+    	</set>
+    	where res_oid = #{res_oid};
+		delete from niutal_xtgl_resource_i18n a where res_oid = v_resOID;
+		<if test="i18nMaps != null">
+			<if test="i18nMaps.size() > 0">
+				<foreach collection="i18nMaps" item="i18n" open=""
+					separator="" close="">
+				v_zhCN := #{i18n.zh_cn, jdbcType=VARCHAR};
+				v_enUS := #{i18n.en_us, jdbcType=VARCHAR};
+				insert into niutal_xtgl_resource_i18n(res_oid, res_key, zh_cn, en_us)
+				values(
+					v_resOID, #{i18n.res_key, jdbcType=VARCHAR} , 
+					(select decode(zh_cn, v_zhCN, null, v_zhCN) from niutal_xtgl_i18n where res_key = #{i18n.res_key, jdbcType=VARCHAR}),
+					(select decode(en_us, v_enUS, null, v_enUS) from niutal_xtgl_i18n where res_key = #{i18n.res_key, jdbcType=VARCHAR})
+				);
+				</foreach>
+			</if>
+		</if>
+    end;
+    </update>
+    
+	<insert id="insertResource" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+	declare
+		v_resOID varchar2(50);
+		v_zhCN varchar2(300);
+		v_enUS varchar2(300);
+	begin
+		v_resOID := sys_guid();
+		insert into niutal_xtgl_resource(res_oid, res_code, res_name, res_xxdm, 
+			res_type, res_path, res_zjsj, res_zjyh, res_bz)
+		values(
+			v_resOID, #{res_code,jdbcType=VARCHAR}, #{res_name, jdbcType=VARCHAR},
+			#{res_xxdm, jdbcType=VARCHAR}, #{res_type,jdbcType=VARCHAR}, #{res_path,jdbcType=VARCHAR}, 
+			to_char(sysdate, 'YYYY-MM-DD hh24:ss:mi'), #{res_zjyh,jdbcType=VARCHAR}, #{res_bz,jdbcType=VARCHAR} 
+		);
+		<if test="i18nMaps != null and i18nMaps.size() > 0">
+			<foreach collection="i18nMaps" item="i18n" open="" separator="" close="">
+			v_zhCN := #{i18n.zh_cn, jdbcType=VARCHAR};
+			v_enUS := #{i18n.en_us, jdbcType=VARCHAR};
+			insert into niutal_xtgl_resource_i18n(res_oid, res_key, zh_cn, en_us)
+			values(
+				v_resOID, #{i18n.res_key, jdbcType=VARCHAR}, 
+				(select decode(zh_cn, v_zhCN, null, v_zhCN) from niutal_xtgl_i18n where res_key = #{i18n.res_key, jdbcType=VARCHAR}),
+				(select decode(en_us, v_enUS, null, v_enUS) from niutal_xtgl_i18n where res_key = #{i18n.res_key, jdbcType=VARCHAR})
+			);
+			</foreach>
+		</if>
+	end;
+	</insert>
+	
+	<delete id="deleteResource" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel">	
+	declare
+		v_resOID varchar2(50);
+	begin 
+		delete from niutal_xtgl_resource_i18n where 1=2
+		<if test="pks != null and pks.length > 0">
+			or res_oid in 
+			<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+ 				#{item}
+ 			</foreach>
+		</if>;
+		delete from niutal_xtgl_resource where 1=2 
+		<if test="pks != null and pks.length > 0">
+			or res_oid in 
+			<foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+ 				#{item}
+ 			</foreach>
+ 		</if>;
+    end; 		
+    </delete>
+    
+    <update id="updatePublishFlag" parameterType="String">
+    	update niutal_xtgl_resource 
+    	<set>
+    		<if test="res_path != null">
+	    		<choose>
+	    			<when test="res_path != ''">
+	    				res_fbbj = '1', 
+	    				res_fbsj = to_char(sysdate, 'YYYY-MM-DD hh24:ss:mi'),
+	    				res_path = #{res_path},
+	    			</when>
+	    			<otherwise>
+	    				res_fbbj = '0', 
+	    				res_fbsj = null,
+	    				res_path = #{res_path},
+	    			</otherwise>
+	    		</choose>    		
+    		</if>
+    	</set>
+    	where res_oid = #{res_oid}
+    </update>
+    
+    <select id="getPagedResourceI18n" parameterType="String" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+    	select b.res_key res_oid, a.res_key,  nvl(a.zh_cn, b.zh_cn) zh_cn, nvl(a.en_us, b.en_us) en_us
+    	from niutal_xtgl_resource_i18n a, niutal_xtgl_i18n b 
+    	where a.res_key = b.res_key
+    		and a.res_oid = #{res_oid}
+    	order by b.res_key, b.zh_cn
+    </select>
+    
+    <select id="getResourceI18nList" parameterType="String"  resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+    	select b.res_key res_oid, a.res_key,  nvl(a.zh_cn, b.zh_cn) zh_cn, nvl(a.en_us, b.en_us) en_us
+    	from niutal_xtgl_resource_i18n a, niutal_xtgl_i18n b 
+    	where a.res_key = b.res_key
+    		and a.res_oid = #{res_oid}
+    	order by b.res_key, b.zh_cn
+    </select>
+    
+    <select id="getResourceMapList" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+		select distinct res_code, res_name, res_code||' '||res_name res_desc 
+		from niutal_xtgl_resource order by res_code
+    </select>
+    
+    <select id="getGnmkdmMapList" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+		select distinct a.gnmkdm res_code, a.gnmkmc res_name, a.gnmkdm||' '||a.gnmkmc res_desc
+		from niutal_xtgl_jsgnmkdmb a
+    	where a.dyym is not null
+    	order by a.gnmkdm
+    </select>
+    
+    <select id="getI18nLocaleList" resultType="com.woshidaniu.i18n.dao.entities.I18nResModel">
+    	select distinct column_name locale from user_tab_columns 
+		where table_name = 'niutal_XTGL_I18N' 
+			and column_name &lt;&gt; 'RES_KEY'
+			and instr(column_name, '_') > 0
+		order by locale
+    </select>
+    
+    <select id="getI18nResCodeList" parameterType="com.woshidaniu.i18n.dao.entities.I18nResModel"
+		resultType="com.woshidaniu.common.query.BaseMap">	
+		select distinct res_code key, res_name value 
+		from (
+			select gnmkdm res_code, gnmkmc res_name from niutal_xtgl_jsgnmkdmb
+			union all
+			select res_code, nvl(res_name, res_code) res_name from niutal_xtgl_resource a 
+			       where not exists(select 'x' from niutal_xtgl_jsgnmkdmb b where a.res_code = b.gnmkdm)
+		)
+		where lower(res_code||res_name) like '%'||lower(trim(#{key,jdbcType=VARCHAR}))||'%' 
+		order by key
+	</select>
+	     
+</mapper>

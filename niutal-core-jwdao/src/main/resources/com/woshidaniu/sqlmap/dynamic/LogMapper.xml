@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 成绩数据库中的日志记录 -->
+<mapper namespace="com.woshidaniu.daointerface.ILogDao">
+
+	<insert id="insert" parameterType="com.woshidaniu.entities.RzglModel" statementType="PREPARED" timeout="20000">
+		insert into niutal_xtgl_czrzb1 (rzzh_id,czbh,yhm,czmk,ywmc,czlx,czms,ipdz,zjm)
+		values (<if test="rzzh_id != null and rzzh_id != ''">#{rzzh_id,jdbcType=VARCHAR}</if><if test="rzzh_id == null or rzzh_id == ''">sys_guid()</if>,
+				sys_guid(),#{czr,jdbcType=VARCHAR}, #{czmk,jdbcType=VARCHAR},#{ywmc,jdbcType=VARCHAR},
+       			#{czlx,jdbcType=VARCHAR},#{czms,jdbcType=VARCHAR},#{ipdz,jdbcType=VARCHAR},#{zjm,jdbcType=VARCHAR})
+    </insert>
+     
+    <select id="getModel" parameterType="com.woshidaniu.entities.RzglModel" resultType="com.woshidaniu.entities.RzglModel">
+   		select t.rzzh_id , t.czbh, t.czrq, t.yhm, t.czmk, t.ywmc, t.czlx, t.czms, t.ipdz, t.zjm
+		  from niutal_xtgl_czrzb1 t
+		where t.czbh = #{czbh}
+    </select>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!--唯一验证-需要验证字段表元素定义：定义表的别名；暴露在页面更安全-->
+	<bean id="tableMapper" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="targetMapClass" value="java.util.LinkedHashMap" />
+		<property name="sourceMap">
+			<map>
+				<!--	系统管理   N01    -->
+				<entry key="V0101" value="niutal_xtgl_jsxxb"/><!--角色管理-->
+				<entry key="V0102" value="niutal_xtgl_yhb"/><!--用户管理-->
+				<entry key="V0103" value="niutal_xtgl_jgdmb"/><!--机构代码表-->
+				<entry key="V0104" value="niutal_xtgl_xqdmb"/><!--校区代码表-->
+				
+				<entry key="V002" value="jw_jh_kcdmb"/>
+				<entry key="V003" value="jw_jh_kcdmbbb"/>
+				<entry key="V004" value="jw_jcdm_cdjbxxb"/>
+				<entry key="V005" value="jw_jcdm_cdxqxxb"/>
+				<entry key="V006" value="jw_jh_pyfaxfyqxxb"/>
+				<entry key="V007" value="jw_cj_dzb"/>
+				<entry key="V008" value="jw_pk_xypksjdkzb"/>
+				<entry key="V009" value="jw_cj_xmjdxbldmb"/>
+		        <entry key="V010" value="jw_cj_xmbldmb"/>
+		        <entry key="V011" value="jw_cj_jddzb"/>
+		        <entry key="V012" value="jw_jh_jxzxjhxfyqxxb"/>
+		        <entry key="V013" value="jw_jh_pyfambxfyqxxb"/>
+		        <entry key="V014" value="niutal_xtgl_xxzydmb"/>
+		        
+		        <!--	学籍管理   N10    -->
+		        <entry key="V1001" value="jw_xjgl_xsjlxmsbb"/>  <!--学生交流项目申报表-->
+		        <entry key="V1002" value="jw_xjgl_mstjxmkzb"/>  <!--免试推荐项目控制表-->
+		        <entry key="V1003" value="jw_xjgl_mstjxmdmb"/>  <!--免试推荐项目代码表-->
+		        <entry key="V1004" value="niutal_xtgl_bjdmb"/>   <!--班级代码表-->
+		        <entry key="V1005" value="jw_xjgl_xsjbxxb"/>   <!--学生基本信息表-->
+		        		        
+		        <!--	教学计划管理   N15    -->
+		        <entry key="V1501" value="jw_jxrw_bklxb"/> <!-- 板块类型表  -->
+		        <entry key="V1502" value="jw_jxrw_bklxkzdzb"/> <!-- 板块类型课程组表  -->
+		        <entry key="V1503" value="jw_jxrw_bklxdjb"/> <!-- 板块类型课程组表  -->
+		        <entry key="V1504" value="jw_jxrw_bklxdjkzdzb"/> <!-- 板块类型等级课程组表  -->
+		        <entry key="V1505" value="jw_jh_kzjbxxb"/> <!-- 课程组级别信息表  -->
+		        <entry key="V1506" value="jw_jh_dlzydzb"/> <!-- 大类专业对照表  -->
+		        <entry key="V1507" value="niutal_xtgl_zydmb"/> <!-- 专业代码表  -->
+		        <entry key="V1508" value="jw_jg_jzgjbxxb"/> <!-- 教职工信息表  -->
+		        <entry key="V1509" value="niutal_xtgl_zyfxdmb"/> <!-- 专业方向代码表  -->
+		        <entry key="V1510" value="jw_jh_pyfambxxb"/> <!-- 培养方案模板信息表  -->
+		        
+		        <!-- 成绩管理 -->
+		        <entry key="V3001" value="jw_cj_xyyjtjszb"/> <!-- 学业预警条件设置表  -->
+		        
+		        <!-- 考试管理 -->
+		        <entry key="V3501" value="jw_kw_ksmcdmb"/> <!-- 考试名称代码设置表  -->
+		        <entry key="V3502" value="jw_kw_kcjkjssgzszb"/> <!-- 考场监考教师数规则设置表 -->
+		        <entry key="V3504" value="jw_kw_ksccb"/> <!-- 考试场次表-->
+		        <entry key="V3505" value="jw_kw_ksrsdszb"/> <!-- 考试日时段设置表-->
+		        <entry key="V3506" value="jw_kw_jkjsxxb"/> <!-- 监考教师信息表-->
+		        
+		        <!-- 自定义功能 -->
+		        <entry key="V0305" value="niutal_xtgl_jsgnmkdmb"/> <!-- 功能模块代码表-->
+		        <entry key="V0310" value="niutal_xtgl_gnmkczb"/> <!-- 功能模块操作表-->
+		        <entry key="V0315" value="niutal_xtgl_czdmb"/> <!--操作代码表-->
+		        
+			</map>
+		</property>
+	</bean>
+
+</beans>

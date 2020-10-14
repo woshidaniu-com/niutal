@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-core-jwweb</artifactId>
+	<packaging>war</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<!-- 
+						通过<packagingIncludes>或<packagingExcludes>参数对最终打包文件实现过滤、包含操作。
+						并且支持正则表达式实现过滤规则，多个过滤条件之间使用逗号","分隔，支持"*"通配符。 
+						此处为了减小war包体积，排除所有的jar依赖。
+					-->
+					<packagingExcludes>WEB-INF/lib/*</packagingExcludes>
+					<!-- empty groupId/artifactId is detected as the current build -->
+			       	<!-- 代表当前WAR项目，默认情况下当前WAR项目是先被拷贝的，如果要控制其顺序，则使用空的overlay -->
+			       	<!-- any other overlay will be applied after the current build since 
+			       	they have not been configured in the overlays element -->
+			      	<overlay>
+			      		<excludes>
+			                <exclude>WEB-INF/lib/*</exclude>
+			                <exclude>**/migration/*.sql</exclude>
+			            </excludes>
+			      	</overlay>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>

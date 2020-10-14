@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IJsglDao" >
+
+	<sql id="queryJsxxSql">
+		select t.jsdm,
+		       t.jsmc,
+		       t.jssm,
+		       t.sfksc,
+		       t.gwjbdm,
+		       t.sfejsq,
+		       t.jsgybj,
+		       t.gnmkdm,
+		       t.gnmkdm jsgnmkdm,
+		       t.jgh as yhm,
+		       decode((select count(1)
+		                from niutal_xtgl_jsxxb a
+		               where a.fjsdm = t.jsdm),
+		              0,
+		              'true',
+		              'false') leafStr,
+		       (select count('1') from niutal_xtgl_yhjsb b where b.jsdm = t.jsdm) yhnum,
+		       t.fjsdm,
+		       a.jsmc as fjsmc,
+		       t.jslxdm,
+		       b.mc as jslxmc,
+		       t.jsdlyxj 
+		  from niutal_xtgl_jsxxb t,
+		       niutal_xtgl_jsxxb a,
+		       (select c.lx, c.dm, c.mc from niutal_xtgl_jcsjb c where c.lx = '0025') b
+		 where t.fjsdm = a.jsdm(+)
+		   and t.jslxdm = b.dm(+)
+	</sql>
+	
+    <!-- 增加角色信息 -->
+    <insert id="zjJsxx" parameterType="JsglModel">
+    	insert into niutal_xtgl_jsxxb (jsmc, jssm, sfejsq,jsgybj, gnmkdm,fjsdm,jgh,jslxdm,sfksc,jsdlyxj)
+		values (#{jsmc,jdbcType=VARCHAR}, #{jssm,jdbcType=VARCHAR}, #{sfejsq,jdbcType=VARCHAR}, 
+				#{jsgybj,jdbcType=VARCHAR},#{jsgnmkdm,jdbcType=VARCHAR},#{fjsdm,jdbcType=VARCHAR},
+				#{yhm,jdbcType=VARCHAR},#{jslxdm,jdbcType=VARCHAR},'1',#{jsdlyxj,jdbcType=VARCHAR})
+    </insert>
+    
+    <!-- 修改角色信息 -->
+    <update id="xgJsxx" parameterType="JsglModel">
+    	update niutal_xtgl_jsxxb t
+    	set t.jsmc = #{jsmc,jdbcType=VARCHAR},
+    		t.gwjbdm = #{gwjbdm,jdbcType=VARCHAR},
+    		t.jssm = #{jssm,jdbcType=VARCHAR},
+    		t.sfejsq = #{sfejsq,jdbcType=VARCHAR},
+    		t.jsgybj = #{jsgybj,jdbcType=VARCHAR},
+    		t.gnmkdm = #{jsgnmkdm,jdbcType=VARCHAR},
+    		t.jslxdm = #{jslxdm,jdbcType=VARCHAR},
+    		t.jsdlyxj = #{jsdlyxj,jdbcType=VARCHAR}
+    	where t.jsdm = #{jsdm} 
+    </update>
+    
+    <!-- 删除角色信息 -->
+    <delete id="scJsxx" parameterType="JsglModel">
+    declare
+	begin
+		
+		<if test="deleteList != null and deleteList.size() > 0 ">
+		
+	   	 	delete niutal_xtgl_jsxxb t  
+	    	<foreach collection="deleteList" item="item" open=" where " index="index" separator=" or ">
+				t.jsdm = #{item.jsdm} 
+			</foreach>;
+			
+			delete niutal_xtgl_jsgnmkczb t
+	    	 <foreach collection="deleteList" item="item" open=" where " index="index" separator=" or ">
+			   t.jsdm = #{item.jsdm} 
+			</foreach>;
+			
+		</if>
+			
+	end;
+    </delete>
+    
+    <!-- 保存角色分配用户-->
+    <insert id="zjJsyhfpxx" parameterType="JsglModel">
+    declare
+    	 var_sjfwz_id varchar2(32);
+	begin
+    	
+    	/*步骤1：增加用户角色信息*/
+    	<if test="yhm_list != null and yhm_list.size() > 0  ">
+    		<foreach collection="yhm_list" item="item" index="index" >
+				insert into niutal_xtgl_yhjsb(yhm,jsdm) values (#{item,jdbcType=VARCHAR},#{jsdm,jdbcType=VARCHAR});
+			</foreach>
+		</if>
+    	
+    end;
+    </insert>
+    
+     <!-- 删除用户角色信息 -->
+    <delete id="scJsyhfpxx" parameterType="JsglModel">
+    declare
+	begin
+	
+		<if test="yhm_list != null and yhm_list.size() > 0  ">
+		
+			/*步骤1：删除用户角色信息*/
+			
+	    	delete from niutal_xtgl_yhjsb t
+	    	 where t.jsdm = #{jsdm,jdbcType=VARCHAR}
+	    	 <foreach collection="yhm_list" item="item" index="index" open=" and ( " separator=" or " close=" ) ">
+				t.yhm = #{item,jdbcType=VARCHAR}
+			 </foreach>;
+	         
+         </if>
+    end;
+    </delete>
+    
+	<!-- 查询管理员角色信息列表（不分页） -->
+    <select id="getAdminTreeGridModelList" parameterType="JsglModel" resultType="JsglModel">
+    select t.jsdm,
+	       t.jsmc,
+	       t.jssm,
+	       t.sfksc,
+	       t.gwjbdm,
+	       t.sfejsq,
+	       t.jsgybj,
+	       t.gnmkdm,
+	       t.gnmkdm jsgnmkdm,
+	       t.yhm,
+	       t.leafStr,
+	       t.yhnum,
+	       t.fjsdm,
+	       t.fjsmc,
+	       t.jslxdm,
+	       t.jslxmc,
+	       t.jsdlyxj,
+	       level as jsjb
+	  from (<include refid="queryJsxxSql"/>) t
+	  where t.jsdm != 'admin'
+	    and (t.yhm = #{yhm} or t.jsgybj = 1 )
+   		<if test="jsmc != null and jsmc !=''">
+   			and t.jsmc like '%'||#{jsmc}||'%'
+   		</if>
+   		<if test="sffpyh == 0 and sffpyh !=''">
+   			 and (t.yhnum &lt; 0 or t.yhnum = 0)
+   		</if>
+   		<if test="sffpyh == 1 and sffpyh !=''">
+   			 and t.yhnum &gt; 0
+   		</if>
+   	  start with t.fjsdm is null
+	  connect by prior t.jsdm = t.fjsdm
+    </select>
+    
+    <!-- 查询角色信息列表（不分页） -->
+    <select id="getTreeGridModelList" parameterType="JsglModel" resultType="JsglModel">
+    select t.jsdm,
+	       t.jsmc,
+	       t.jssm,
+	       t.sfksc,
+	       t.gwjbdm,
+	       t.sfejsq,
+	       t.jsgybj,
+	       t.gnmkdm,
+	       t.gnmkdm jsgnmkdm,
+	       t.yhm,
+	       t.leafStr,
+	       t.yhnum,
+	       t.fjsdm,
+	       t.fjsmc,
+	       t.jslxdm,
+	       t.jslxmc,
+	       t.jsdlyxj,
+	       level as jsjb
+	  from (<include refid="queryJsxxSql"/>) t
+	  where t.jsdm != 'admin'
+	   and (t.yhm = #{yhm} or  t.jsgybj = 1 )
+   		<if test="jsmc != null and jsmc !=''">
+   			and t.jsmc like '%'||#{jsmc}||'%'
+   		</if>
+   		<if test="sffpyh == 0 and sffpyh !=''">
+   			 and (t.yhnum &lt; 0 or t.yhnum = 0)
+   		</if>
+   		<if test="sffpyh == 1 and sffpyh !=''">
+   			 and t.yhnum &gt; 0
+   		</if>
+   	  start with t.fjsdm = #{jsdm}
+	  connect by prior t.jsdm = t.fjsdm
+    </select>
+    
+    <!-- 查询单条角色信息 -->
+    <select id="getModel" parameterType="JsglModel" resultType="JsglModel">
+    	select t.jsdm,
+		       t.jsmc,
+		       t.jssm,
+		       t.sfksc,
+		       t.gwjbdm,
+		       t.sfejsq,
+		       t.jsgybj,
+		       t.gnmkdm,
+		       t.gnmkdm jsgnmkdm,
+		       t.yhm,
+		       t.leafStr,
+		       t.yhnum,
+		       (select count('1') from niutal_xtgl_jsxxb b where b.fjsdm = t.jsdm) zjsnum,
+		       t.fjsdm,
+		       t.fjsmc,
+		       t.jslxdm,
+		       t.jslxmc,
+		       t.jsdlyxj 
+		  from (<include refid="queryJsxxSql"/>) t
+    	 where t.jsdm = #{jsdm}
+    </select>
+    
+    <!-- 查询角色名称 -->
+    <select id="cxJsmcByJsdm" parameterType="JsglModel" resultType="JsglModel">
+		select a.jsmc from niutal_xtgl_jsxxb a where a.jsdm = #{jsdm} 
+    </select>
+    
+    <!-- 根据用户名查询该用户角色信息-->
+    <select id="cxJsxxListByYhm" parameterType="string" resultType="JsglModel">
+		select t.yhm, t.jsdm, a.jsmc,t.sfmrjs,a.jsdlyxj 
+		  from niutal_xtgl_yhjsb t, niutal_xtgl_jsxxb a
+		 where t.jsdm = a.jsdm
+		   and t.yhm = #{yhm}
+	     order by  case when t.jsdm = 'js' then 0 else 1 end ,t.jsdm 
+    </select> 
+    
+    <!-- 根据操作人ID,用户代码查询当前用户可操作该用户的角色信息-->
+    <select id="cxKczjsxxList" parameterType="YhglModel" resultType="JsglModel">
+		select t.yhm, t.jsdm, a.jsmc,a.jsdlyxj 
+		  from niutal_xtgl_yhjsb t, niutal_xtgl_jsxxb a
+		 where t.jsdm = a.jsdm
+		  and exists(select '1' from niutal_xtgl_yhjsb b, niutal_xtgl_jsxxb c where b.jsdm =  c.jsdm and b.yhm = #{xgr} or c.jsgybj = '1')
+		  and t.yhm = #{yhm}
+	     order by t.jsdm 
+    </select>   
+    
+    <!-- 查询指定角色的子角色信息列表 -->
+    <select id="cxSubJsxxList" parameterType="JsglModel" resultType="JsglModel">
+    select t.jsdm,
+	       t.jsmc,
+	       t.jssm,
+	       t.sfksc,
+	       t.gwjbdm,
+	       t.sfejsq,
+	       t.gnmkdm,
+	       t.gnmkdm jsgnmkdm,
+	       t.yhm,
+	       t.leafStr,
+	       t.yhnum,
+	       t.fjsdm,
+	       t.fjsmc,
+	       t.jslxdm,
+	       t.jslxmc,
+	       t.jsdlyxj 
+	  from (<include refid="queryJsxxSql"/>) t
+	  where t.jsdm != 'admin'
+	    and t.yhm = #{yhm} 
+	    and t.fjsdm = #{jsdm}
+	  order by t.jsdm
+    </select>
+    
+    
+    <!-- 查询单个角色功能权限 -->
+    <select id="cxJsGnqxList" parameterType="JsglModel" resultType="JsglModel">
+    	select * from (select gnmkdm,czdm,jsdm,(select xssx from niutal_xtgl_czdmb b where a.czdm=b.czdm) xssx from niutal_xtgl_jsgnmkczb a 
+    	<where>
+    		<if test="jsdm != null and jsdm != ''">
+    			jsdm = #{jsdm}
+    		</if>
+    	</where>
+    	) order by gnmkdm,to_number(xssx)
+    </select>
+    
+    <!-- 查询未分配用户信息列表 -->
+	<select id="getPagedListWfpYhByScope" parameterType="JsglModel" resultType="YhglModel">
+		select a.yhm, 
+			   a.xm,  
+			   a.dzyx,
+			   decode(a.yhlx,'teacher','老师','student','学生') lxmc,
+			   (select jg.jgmc from niutal_xtgl_jgdmb jg where jg.jg_id=a.jgdm) jgmc
+		  from niutal_xtgl_yhb a 
+		 where a.yhm != 'admin'
+		    and a.yhm != 'xs'
+		    and not exists (select b.yhm
+		          from niutal_xtgl_yhjsb b
+		         where b.jsdm = #{jsdm}
+		           and b.yhm = a.yhm
+		    )
+		 <if test="yhm != null and yhm != ''">
+			and (a.yhm like '%'||#{yhm}||'%' or a.xm like '%'||#{yhm}||'%')
+		</if>
+		<if test="jg_id != null and jg_id != ''">
+			and a.jgdm = #{jg_id}
+		</if>
+	</select>
+    
+	<!-- 查询已分配用户信息列表 -->
+	<select id="getPagedListYfpYhByScope" parameterType="JsglModel" resultType="YhglModel">
+		 select a.yhm, 
+				a.xm, 
+				a.dzyx,
+				decode(a.yhlx,'teacher','老师','student','学生') lxmc,
+				(select jg.jgmc from niutal_xtgl_jgdmb jg where jg.jg_id=a.jgdm) jgmc
+		  from niutal_xtgl_yhb a, niutal_xtgl_yhjsb b
+		 where a.yhm = b.yhm      
+		   and b.jsdm = #{jsdm}
+		   and a.yhm != 'admin'
+		   and a.yhm != 'xs'
+		<if test="yhm != null and yhm != ''">
+			and (a.yhm like '%'||#{yhm}||'%' or a.xm like '%'||#{yhm}||'%')
+		</if>
+		<if test="jg_id != null and jg_id != ''">
+			and a.jgdm=#{jg_id}
+		</if>
+	</select>
+	
+	<!-- 查询所有一级功能模块列表 -->
+	<select id="getGnmkYj" parameterType="JsglModel" resultType="JsglModel">
+ 		select t.gnmkdm,t.gnmkdm jsgnmkdm, 
+ 			   decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as gnmkmc  
+ 		  from niutal_xtgl_jsgnmkdmb t where t.cdjb = '1'
+		<if test="list != null and list != ''">
+			 <foreach collection="list" item="item" index="index" open=" and (" separator="or" close=")">
+				t.gnmkdm = #{item} 
+			</foreach>
+		</if>
+ 		 order by t.xssx
+	</select>
+	
+	<!-- 根据角色代码查询角色是否具有二级授权功能 -->
+	<select id="getYhEjsq" parameterType="java.lang.String" resultType="java.lang.String">
+		select b.sfejsq from niutal_xtgl_jsxxb b where b.jsdm = #{jsdm}
+	</select>
+	
+</mapper>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+   	 
+     <!-- 重写getLocale，实现优先从session中获取国际化语音
+     <bean type="com.opensymphony.xwork2.LocaleProvider" name="zfstruts" class="com.woshidaniu.common.action.i81n.DefaultLocaleProvider" scope="singleton" />
+     -->
+	 <!-- 重写请求URL -->
+	 <bean type="org.apache.struts2.dispatcher.mapper.ActionMapper" name="zfrestful2" class="com.woshidaniu.common.action.mapper.niutalAssembleKitActionMapper" />
+	  
+	 <!-- package提供了将多个Action组织为一个模块的方式 ,
+        package的名字必须是唯一的 package可以扩展 当一个package扩展自;另一个package时该package会在本身配置的基础上加入扩展的package的配置 父package必须在子package前配置 
+        name：package名称
+        extends:继承的父package名称
+        abstract:设置package的属性为抽象的 抽象的package不能定义action 值true:false
+        namespace:定义package命名空间 该命名空间影响到url的地址，例如此命名空间为/test那么访问是的地址为http://localhost:8080/struts2/test/XX.action
+        
+        The content of element type "package" must match "(
+        result-types?,
+        interceptors?,
+        default-interceptor-ref?,
+        default-action-ref?,
+        default-class-ref?,
+        global-results?,
+        global-exception-mappings?,
+        action*)".
+     -->
+	 <package name="configuration" extends="niukit-default">
+	 	<!-- 自定义返回结果类型 -->
+		<result-types>
+    		<result-type name="poi_workbook" class="com.woshidaniu.fastxls.struts2.result.POIWorkbookResult"/>
+        </result-types>
+		<!-- 向Struts2框架中注册拦截器或者拦截器栈，一般多用于自定义拦截器或拦截器栈的注册 -->
+		<interceptors>
+			
+			<!-- 请求对象检查拦截器 -->
+			<interceptor name="methodCheckInterceptor" class="com.woshidaniu.globalweb.interceptor.RequestMethodCheckInterceptor"></interceptor>
+			<!-- 异常处理拦截器 -->
+			<interceptor name="exceptionInterceptor" class="com.woshidaniu.struts2.interceptor.BaseExceptionHandleInterceptor"></interceptor>
+			<!-- 防盗链拦截器 -->
+			<interceptor name="refererLimitInterceptor" class="com.woshidaniu.globalweb.interceptor.RequestRefererLimitInterceptor"></interceptor>
+			<!-- 登录用户会话状态校验拦截器 -->
+<!-- 			<interceptor name="loginInterceptor" class="com.woshidaniu.globalweb.interceptor.LoginSessionStatusInterceptor"></interceptor> -->
+			<!-- 防恶意刷新拦截器 -->
+			<interceptor name="refreshInterceptor" class="com.woshidaniu.globalweb.interceptor.RequestRefreshLimitInterceptor"></interceptor>
+			<!-- 会话用户与指定参数值一致性校验拦截器 -->
+			<interceptor name="funcSessionIdenticalInterceptor" class="com.woshidaniu.globalweb.interceptor.FunctionalSessionIdenticalInterceptor"></interceptor>
+			<!-- 会话中登录用户改变检测拦截器 -->
+<!-- 			<interceptor name="userChangedInterceptor" class="com.woshidaniu.globalweb.interceptor.LoginUserChangedInterceptor"></interceptor> -->
+			<!-- 会话中登录角色改变检测拦截器 -->
+<!-- 			<interceptor name="roleChangedInterceptor" class="com.woshidaniu.globalweb.interceptor.LoginRoleChangedInterceptor"></interceptor> -->
+			<!-- 功能开发时间控制拦截器 -->
+			<interceptor name="timeSettingInterceptor" class="com.woshidaniu.globalweb.interceptor.FunctionalTimeSettingInterceptor"></interceptor>
+			<!-- 功能前置说明控制拦截器 -->
+			<interceptor name="funcDetailsInterceptor" class="com.woshidaniu.globalweb.interceptor.FunctionalDetailsInterceptor"></interceptor>
+			<!-- 功能方法权限校验拦截器 -->
+			<interceptor name="czQxInterceptor" class="com.woshidaniu.globalweb.interceptor.FunctionalAuthorizatedInterceptor"></interceptor>
+			<!-- 功能执行完成后续处理拦截器 -->
+			<interceptor name="pageInterceptor" class="com.woshidaniu.globalweb.interceptor.RequestPageForwardInterceptor"></interceptor>
+			<!-- javamelody内存监控和struts2集成时配置
+			<interceptor name ="monitoring" class ="net.bull.javamelody.StrutsInterceptor" />-->
+			
+			<interceptor-stack name="MinStack">
+				<!--如果启用监控：解开monitoring的注释
+				<interceptor-ref name="monitoring" /> -->
+				<interceptor-ref name="methodCheckInterceptor" />
+				<interceptor-ref name="exceptionInterceptor" />
+				<interceptor-ref name="defaultFixedStack">  
+				    <param name="exception.logEnabled">true</param>  
+				    <param name="exception.logLevel">error</param>  
+				</interceptor-ref> 
+				<interceptor-ref name="pageInterceptor" />
+			</interceptor-stack>
+			
+			<interceptor-stack name="RequiredStack">
+				<!--如果启用监控：解开monitoring的注释
+				<interceptor-ref name="monitoring" /> -->
+				<interceptor-ref name="methodCheckInterceptor" />
+				<interceptor-ref name="exceptionInterceptor" />
+<!-- 				<interceptor-ref name="loginInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 					<param name="excludeMethods">cxZjdxGnPage</param> -->
+<!-- 				</interceptor-ref> -->
+				<interceptor-ref name="defaultFixedStack">  
+				    <param name="exception.logEnabled">true</param>  
+				    <param name="exception.logLevel">error</param>  
+				</interceptor-ref>
+				<interceptor-ref name="pageInterceptor" />
+			</interceptor-stack>
+			
+			<interceptor-stack name="SimpleStack">
+				<!--如果启用监控：解开monitoring的注释
+				<interceptor-ref name="monitoring" /> -->
+				<interceptor-ref name="methodCheckInterceptor" />
+				<interceptor-ref name="exceptionInterceptor" />
+<!-- 				<interceptor-ref name="loginInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 				</interceptor-ref> -->
+				<interceptor-ref name="funcSessionIdenticalInterceptor" />
+<!-- 				<interceptor-ref name="roleChangedInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param> -->
+<!-- 				</interceptor-ref> -->
+				<!-- <interceptor-ref name="userChangedInterceptor" >
+					<param name="includeMethods">*</param>
+					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param>
+				</interceptor-ref> -->
+				<interceptor-ref name="defaultFixedStack">  
+				    <param name="exception.logEnabled">true</param>  
+				    <param name="exception.logLevel">error</param>  
+				</interceptor-ref>
+				<interceptor-ref name="pageInterceptor" />
+			</interceptor-stack>
+			
+			<!-- 将自定义拦截器加载到拦截器栈 -->
+			<interceptor-stack name="BaseStack">
+				<!--如果启用监控：解开monitoring的注释 
+				<interceptor-ref name="monitoring" />-->
+				<interceptor-ref name="methodCheckInterceptor" />
+				<interceptor-ref name="exceptionInterceptor" />
+				<interceptor-ref name="refererLimitInterceptor" >
+					<param name="excludeMethods">cxYhxxIndex</param>
+				</interceptor-ref>
+<!-- 				<interceptor-ref name="loginInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 				</interceptor-ref> -->
+				<interceptor-ref name="funcSessionIdenticalInterceptor" />
+<!-- 				<interceptor-ref name="roleChangedInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param> -->
+<!-- 				</interceptor-ref> -->
+				<!-- <interceptor-ref name="userChangedInterceptor" >
+					<param name="includeMethods">*</param>
+					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param>
+				</interceptor-ref> -->
+				<interceptor-ref name="czQxInterceptor" />
+				<interceptor-ref name="defaultFixedStack">  
+				    <param name="exception.logEnabled">true</param>  
+				    <param name="exception.logLevel">error</param>  
+				</interceptor-ref>
+				<interceptor-ref name="pageInterceptor" />
+			</interceptor-stack>
+			
+			<!-- 包含 防恶意刷新控制、功能开放时间控制，功能详细拦截器的拦截器栈 -->
+			<interceptor-stack name="AccessStack">
+				<!--如果启用监控：解开monitoring的注释 
+				<interceptor-ref name="monitoring" />-->
+				<interceptor-ref name="methodCheckInterceptor" />
+				<interceptor-ref name="exceptionInterceptor" />
+				<interceptor-ref name="refererLimitInterceptor" >
+					<param name="excludeMethods">cxYhxxIndex</param>
+				</interceptor-ref>
+<!-- 				<interceptor-ref name="loginInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 				</interceptor-ref> -->
+<!-- 				<interceptor-ref name="roleChangedInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param> -->
+<!-- 				</interceptor-ref> -->
+				<!-- <interceptor-ref name="userChangedInterceptor" >
+					<param name="includeMethods">*</param>
+					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param>
+				</interceptor-ref> -->
+				<interceptor-ref name="refreshInterceptor" />
+				<interceptor-ref name="funcSessionIdenticalInterceptor" />
+				<interceptor-ref name="timeSettingInterceptor" >
+					<param name="excludeMethods">cxYhxxIndex</param>
+				</interceptor-ref>
+				<interceptor-ref name="funcDetailsInterceptor" >
+					<param name="excludeMethods">cxYhxxIndex</param>
+				</interceptor-ref>
+				<interceptor-ref name="czQxInterceptor" />
+				<interceptor-ref name="defaultFixedStack">  
+				    <param name="exception.logEnabled">true</param>  
+				    <param name="exception.logLevel">error</param>  
+				</interceptor-ref>
+				<interceptor-ref name="pageInterceptor" />
+			</interceptor-stack>
+			
+			<!-- 只拦截登陆，不拦截action方法权限-->
+			<interceptor-stack name="LoginStack">
+				<!--如果启用监控：解开monitoring的注释
+				<interceptor-ref name="monitoring" /> -->
+				<interceptor-ref name="methodCheckInterceptor" />
+				<interceptor-ref name="exceptionInterceptor" />
+				<interceptor-ref name="refererLimitInterceptor" >
+					<param name="excludeMethods">cxYhxxIndex</param>
+				</interceptor-ref>
+<!-- 				<interceptor-ref name="loginInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 				</interceptor-ref> -->
+<!-- 				<interceptor-ref name="roleChangedInterceptor" > -->
+<!-- 					<param name="includeMethods">*</param> -->
+<!-- 					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param> -->
+<!-- 				</interceptor-ref> -->
+				<!-- <interceptor-ref name="userChangedInterceptor" >
+					<param name="includeMethods">*</param>
+					<param name="excludeMethods">initMenu,cxNews,cxJzgzp,cxXszp,cxYhxxIndex</param>
+				</interceptor-ref> -->
+				<interceptor-ref name="defaultFixedStack">  
+				    <param name="exception.logEnabled">true</param>  
+				    <param name="exception.logLevel">error</param>  
+				</interceptor-ref>
+				<interceptor-ref name="pageInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+		<!-- 将自定义拦截器栈设置为默认拦截器 -->
+		<default-interceptor-ref name="BaseStack" />
+		<global-results>
+			<result name="data" type="json">
+				<!-- excludeNullProperties 参数：表示是否去掉空值， 默认值是false，如果设置为true会自动将为空的值过滤，只输出不为空的值。-->
+				<param name="excludeNullProperties">true</param>
+				<!-- 表示是否忽略等级，也就是继承关系，比如：ProuctsAction继承于 BaseAction，那么
+					ProuctsAction中返回的 json 字符串默认是不会包含父类 BaseAction 的属性值，ignoreHierarchy 值默认为 true，
+					设置为 false 后会将父类和子类的属性一起返回-->
+				<param name="ignoreHierarchy" >false</param>
+				<param name="enableGZIP" >true</param> 
+                <param name="root">data</param>  
+         	</result>
+         	<result name="data-iefix" type="json">
+				<!-- 解决IE浏览器JSON结果数据提示异常: 用这种形式可以兼容低版本的ie 的submit提交表单并返回对应提示信息，用data的话，低版本ie会提示下载文件 -->
+				<param name="contentType">text/plain</param>    
+				<!-- excludeNullProperties 参数：表示是否去掉空值， 默认值是false，如果设置为true会自动将为空的值过滤，只输出不为空的值。-->
+				<param name="excludeNullProperties">true</param>
+				<!-- 表示是否忽略等级，也就是继承关系，比如：ProuctsAction继承于 BaseAction，那么
+					ProuctsAction中返回的 json 字符串默认是不会包含父类 BaseAction 的属性值，ignoreHierarchy 值默认为 true，
+					设置为 false 后会将父类和子类的属性一起返回-->
+				<param name="ignoreHierarchy" >false</param>
+				<param name="enableGZIP" >true</param> 
+                <param name="root">data</param>  
+         	</result> 
+         	<result name="docx-attachment" type="stream">
+         		<param name="contentType">application/vnd.openxmlformats-officedocument.wordprocessingml.document</param>
+         		<param name="inputName">inputStream</param>
+         		<param name="contentDisposition">attachment;filename="${fileName}"</param>
+         		<param name="bufferSize">2048</param>
+         	</result>
+			<!-- Excel 文档生成 重定向 --> 
+         	<result name="exportTemplate" type="poi_workbook">
+				 <param name="contentDisposition">attachment;filename="${fileName}"</param>
+         	</result>
+         	<result name="exportWorkbook" type="poi_workbook">
+         		 <param name="contentDisposition">attachment;filename="${fileName}"</param>
+         	</result>
+         	
+         	<result name="toExportConfig" type="redirect">
+         		/niutal/drdc/export_exportConfig.html?dcclbh=${dcclbh}
+         	</result>
+         	
+         	<!-- 全局跳转页面 -->
+         	
+         	<!-- <result name="login">/WEB-INF/pages/globalweb/login/loginForward.jsp</result> -->
+         	<result name="loginout" type="redirect">/xtgl/login_slogin.html</result>
+            <result name="browser">/WEB-INF/pages/globalweb/browser.jsp</result>
+         	<result name="indexPage">/WEB-INF/pages/globalweb/comp/xtgl/yhgl/xgMmQz${xxdm}.jsp</result>
+            <result name="index_details">/WEB-INF/pages/globalweb/comm/xtczms/index_xtczms.jsp</result>
+            <result name="details">/WEB-INF/pages/globalweb/comm/xtczms/ckXtczms.jsp</result>
+            
+            <!-- 异常跳转页面 -->
+         	
+            <result name="sessionOut">/WEB-INF/pages/exception/sessionOut.jsp</result>
+			<result name="browserException">/WEB-INF/pages/exception/browserException.jsp</result>
+            <result name="spitefulException">/WEB-INF/pages/exception/spitefulException.jsp</result>
+            
+            <result name="nonAccess">/WEB-INF/pages/exception/nonAccess.jsp</result>
+            <result name="nonOpen">/WEB-INF/pages/exception/nonOpen.jsp</result>
+            
+         	<result name="warn">/WEB-INF/pages/exception/warn.jsp</result>
+         	<result name="error">/WEB-INF/pages/exception/error.jsp</result>
+			<result name="unknowException">/WEB-INF/pages/exception/error.jsp</result>
+			<result name="businessException">/WEB-INF/pages/exception/error.jsp</result>
+			<result name="serviceException">/WEB-INF/pages/exception/error.jsp</result>
+			<result name="dataIntegrityViolationException">/WEB-INF/pages/exception/voilationException.jsp</result>         	
+		</global-results>
+		<!-- 利用strus2的异常框架 -->       
+		<global-exception-mappings>   
+			<exception-mapping result="error" exception="java.lang.Exception"/>
+			<exception-mapping result="unknowException" exception="java.lang.Exception"></exception-mapping>
+			<exception-mapping result="businessException" exception="com.woshidaniu.common.exception.BusinessException"></exception-mapping>
+			<exception-mapping result="serviceException" exception="com.woshidaniu.common.exception.ServiceException"></exception-mapping>
+			<exception-mapping result="dataIntegrityViolationException" exception="org.springframework.dao.DataIntegrityViolationException"></exception-mapping>			 
+		</global-exception-mappings>  
+		
+		<!-- http://blog.csdn.net/fred_lzy/article/details/18952363
+		<action name="/exception/*.jsp">
+			<interceptor-ref name="MinStack" />
+			<result>/{1}.jsp</result>
+		</action> -->
+		
+	 </package>
+
+	<!-- 引入子工程的公共配置文件  -->
+	<include file="conf/struts/struts-*.xml"/>
+
+</struts>

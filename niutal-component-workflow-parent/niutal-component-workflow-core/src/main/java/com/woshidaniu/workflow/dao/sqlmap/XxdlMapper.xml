@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.workflow.dao.IXxdlDao">
+
+	<insert id="insert" keyProperty="id">
+		{call spl_xxdl(#{lx},#{jsdm},#{sjfwztj},#{sjfwztj_qz},#{xxnr},#{pId},#{wId},#{nodeId})}		
+	</insert>
+	
+	<select id="selectXxdlxxByxxzH" parameterType="com.woshidaniu.workflow.model.XxdlModel" resultType="com.woshidaniu.workflow.model.XxdlModel">
+		select id,xxbt,xxnr,jsdm,yhm,sfyx,xxzh,ljdz,cjsj,clzt,clsj,sjhm,dzyx,p_id,w_id,node_id,send_sms,xxnr_sms,send_mail,xxnr_mail 
+		 from niutal_xtgl_xxdlb t1 where 1=1 and sfyx='1' and clzt='0'
+		<if test="wId != null and wId != ''">
+		   and t1.w_id=#{wId}
+		</if>
+		<!-- 如果是发送到申请人，则node_id为空 -->
+		<if test="lx == 2">
+		   and t1.node_id is null 
+		</if>
+		<if test="lx == 1">
+		   <if test="nodeId != null and nodeId != ''">
+			   and t1.node_id=#{nodeId}
+			</if>
+		</if>
+	</select>
+	
+	<!-- 逻辑删除消息队列信息(主要针对撤销消息队列信息:中间节点的撤销，撤销发送到下一环节的消息) -->
+	<select id="deleteXxdl" parameterType="com.woshidaniu.workflow.model.XxdlModel">
+		update niutal_xtgl_xxdlb set sfyx='0' where w_id=#{wId} and node_id=#{nodeId} 
+	</select>
+	
+	<!-- 逻辑删除申请人消息队列信息(主要针对撤销消息队列信息:末端节点的撤销，撤销已经发送到申请人的消息) -->
+	<select id="deleteSqrXxdl" parameterType="com.woshidaniu.workflow.model.XxdlModel">
+		update niutal_xtgl_xxdlb set sfyx='0' where w_id=#{wId} and node_id is null 
+	</select>
+	
+	<!-- 逻辑删除申请人消息队列信息(主要针对撤销消息队列信息:申请人发起的撤销) -->
+	<select id="deleteXxdlBySqr" parameterType="com.woshidaniu.workflow.model.XxdlModel">
+		update niutal_xtgl_xxdlb set sfyx='0' where w_id=#{wId}
+	</select>
+	
+	<!-- 更新消息队列信息 -->
+	<update id="updateXxdlclzt"  parameterType="com.woshidaniu.workflow.model.XxdlModel">
+		update niutal_xtgl_xxdlb set clzt='2' where node_id = #{nodeId} and w_id = #{wId}  
+	</update>
+	
+</mapper>

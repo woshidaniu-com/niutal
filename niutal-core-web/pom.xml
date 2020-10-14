@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-web</artifactId>
+	<name>业务框架-Web工程</name>
+	<packaging>war</packaging>
+	
+	<build>
+		<plugins>
+			<!-- 编译插件：编译主代码至主输出目录 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<!-- 资源插件：复制主资源文件至主输出目录 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<!-- 单元测试插件 ：执行测试用例 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<!-- war 包生成插件  -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<overlays>  
+						<!-- empty groupId/artifactId is detected as the current build -->
+				       	<!-- 代表当前WAR项目，默认情况下当前WAR项目是先被拷贝的，如果要控制其顺序，则使用空的overlay -->
+				       	<!-- any other overlay will be applied after the current build since 
+				       	they have not been configured in the overlays element -->
+				      	<overlay />
+				      	<!-- 在线咨询子模块  
+						<overlay>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>niutal-component-zxzx-web</artifactId>
+						</overlay>-->
+	                </overlays>
+				</configuration>
+			</plugin>
+			<!-- 源码插件:发布时自动将源码同时发布 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<!-- 文档插件:发布时自动生成文档 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<!-- 安装插件：将项目输出构件安装到本地仓库 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+			</plugin>
+			<!-- 发布插件 ：将项目输出构件部署到远程仓库 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+			<!-- Web容器插件 ：使用Jetty作为运行插件 -->
+			<!-- <plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>8.0.0.M3</version>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<war>${basedir}/target/niutal-core-web-dev-${project.version}.war</war>
+					<webAppConfig>
+						<contextPath>/niutal-web</contextPath>
+					</webAppConfig>
+				</configuration>
+			</plugin> -->
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-action</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-component-zxzx-web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency> -->
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-component-monitor</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+	</dependencies>
+	
+
+</project>

@@ -1,0 +1,23 @@
+
+<div class="modal" ng-controller="SaveModelCtrl">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'MODEL.SAVE.TITLE' | translate}}</h2>
+        </div>
+        <div class="modal-body">
+        		
+        </div>
+        <div class="modal-footer">
+        
+        	<div class="pull-right">
+            	<button type="button" class="btn" ng-click="close()" ng-disabled="status.loading" translate>ACTION.CANCEL</button>
+            	<button class="btn btn-primary" ng-click="save()" ng-disabled="status.loading" ng-show="!error" translate>ACTION.SAVE</button>
+            </div>
+        
+            <div class="pull-right popup-error" ng-if="error && !error.isConflict">
+                <span>{{'MODEL.SAVE.ERROR' | translate}}</span>
+            </div>
+        </div>
+    </div>
+</div>

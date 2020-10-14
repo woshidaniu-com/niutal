@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IXzqhDao">
+	<!-- 省 -->
+	<select id="getShengList" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like '__0000' and zt='1' order by dm
+	</select>
+	
+	<!-- 省 -->
+	<select id="getChildrens" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm not like '__0000' and zt='1' order by dm
+	</select>
+	
+	<!-- 省 -->
+	<select id="likeQueryShengList" resultType="hashMap" parameterType="hashMap">
+		select dm,mc from (
+			select t.* from DM_GB_B_ZHRMGHGXZQHDM t
+			<where>
+				t.dm like '__0000' and t.zt='1'
+				<if test="keyword!=null and keyword!=''">
+					and t.mc like '%'||#{keyword}||'%'
+				</if>
+			</where>
+			order by dm
+		)
+	</select>
+	<!-- 市 -->
+	<select id="getShiList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like substr(#{sheng},0,2)||'__00' and dm &lt;&gt; #{sheng} and zt='1' order by dm
+	</select>
+	<!-- 市 -->
+	<select id="likeQueryShiList" resultType="hashMap" parameterType="hashMap">
+		select dm,mc from (select t.* from DM_GB_B_ZHRMGHGXZQHDM t
+		<where> 
+			dm like substr(#{parentValue},0,2)||'__00' and zt='1'
+			<if test="keyword!=null and keyword!=''">
+				and t.mc like '%'||#{keyword}||'%'
+			</if>
+			and dm &lt;&gt; #{parentValue}
+		</where>
+		 order by dm
+		)
+	</select>
+	
+	<!-- 直辖市下区 -->
+	<select id="getZxsqList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like substr(#{sheng},0,2)||'____' and dm not like '____00' and zt='1' order by dm
+	</select>
+	
+	<!-- 县 -->
+	<select id="getXianList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like substr(#{shi},0,4)||'__' and dm &lt;&gt; #{shi} and zt='1' order by dm
+	</select>
+	
+	<!-- 省 -->
+	<select id="getSheng" parameterType="java.lang.String" resultType="hashMap">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm = substr(#{xzqhdm},0,2)||'0000' and zt='1'
+	</select>
+	
+	<!-- 市 -->
+	<select id="getShi" parameterType="java.lang.String" resultType="hashMap">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm = substr(#{xzqhdm},0,4)||'00' and zt='1'
+	</select>
+	
+	<!-- 县或市辖区 -->
+	<select id="getXian" parameterType="java.lang.String" resultType="hashMap">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm = #{xzqhdm} and zt='1'
+	</select>
+	
+	<!-- 获取行政区号名称合并列表 -->
+	<select id="getXzqhMcHbList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select dm,mc from DM_VIEW_GB_XZQHDMHBB
+	</select>
+	
+	<!-- 模糊查询行政区号名称列表 -->
+	<select id="likeQueryXzqhMcHbList" parameterType="hashMap" resultType="hashMap">
+		select dm,mc from (select t.* from DM_VIEW_GB_XZQHDMHBB t where t.mc like '%'||#{keyword}||'%' and zt='1')  where rownum &lt; #{showsize} order by dm
+	</select>
+	
+	<!-- 模糊查询国家名称列表 -->
+	<select id="likeQueryGuoJiaList" resultType="hashMap" parameterType="hashMap">
+		select dm,mc from (select t.* from niutal_XTGL_JCSJB t where lx='51' and t.mc like '%'||#{keyword}||'%') where rownum &lt; #{showsize}
+	</select>
+</mapper>

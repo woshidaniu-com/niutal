@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IYwsjPxxxDao" >
+    	
+    
+    <!-- 新增功能代码+用户ID+数据主键ID 对应的排序信息 -->
+    <insert id="insert" parameterType="com.woshidaniu.entities.YwsjPxxxModel">
+    	insert into niutal_xtgl_ywsjpxxxb (gnmkdm, ywsj_id, yh_id, yxj, zdmc, zdms, pxfs)
+	    select #{gnmkdm,jdbcType=VARCHAR},
+	           #{ywsj_id,jdbcType=VARCHAR},
+	           #{yh_id,jdbcType=VARCHAR},
+	           #{yxj,jdbcType=VARCHAR},
+	           #{zdmc,jdbcType=VARCHAR},
+	           t.zdms,
+	           #{pxfs,jdbcType=VARCHAR}
+	      from niutal_xtgl_gnpxxxb t
+	     where t.gnmkdm = #{gnmkdm,jdbcType=VARCHAR} and t.zdmc=#{zdmc,jdbcType=VARCHAR}
+    </insert>
+    
+    <!-- 修改功能代码+用户ID+数据主键ID 对应的排序信息 -->
+    <update id="update" parameterType="com.woshidaniu.entities.YwsjPxxxModel">
+	   	update niutal_xtgl_ywsjpxxxb t
+		   set t.yxj   = #{yxj,jdbcType=VARCHAR},
+		       t.pxfs  = #{pxfs,jdbcType=VARCHAR}
+		 where t.zdmc  = #{zdmc,jdbcType=VARCHAR}
+		   and t.yh_id = #{yh_id,jdbcType=VARCHAR}
+		   and t.ywsj_id = #{ywsj_id,jdbcType=VARCHAR}
+		   and t.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+    </update>
+    
+    <!-- 根据功能代码+用户ID+数据主键ID 查询排序信息 -->
+    <select id="getModelList" parameterType="com.woshidaniu.entities.YwsjPxxxModel" resultType="com.woshidaniu.entities.YwsjPxxxModel">
+    	select a.gnmkdm,
+    		   c.ywsj_id,
+    		   c.yh_id,
+		       nvl(c.yxj, a.yxj) yxj,
+		       nvl(c.zdmc, a.zdmc) zdmc,
+		       nvl(c.zdms, a.zdms) zdms,
+		       nvl(c.pxfs, a.pxfs) pxfs
+		  from niutal_xtgl_gnpxxxb a,
+		       (select b.ywsj_id,b.yh_id,b.gnmkdm, b.yxj, b.zdmc, b.zdms, b.pxfs
+		          from niutal_xtgl_ywsjpxxxb b
+		         where b.yh_id = #{yh_id,jdbcType=VARCHAR}
+		           and b.ywsj_id = #{ywsj_id,jdbcType=VARCHAR}
+		   		   and b.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+		       ) c
+		 where a.gnmkdm = c.gnmkdm(+)
+		   and a.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+		   and a.zdmc   = c.zdmc(+)
+		 order by to_number(nvl(c.yxj, a.yxj)) asc
+    </select>
+    
+     <!-- 根据功能代码+用户ID+数据主键ID 查询排序总数 -->
+    <select id="getCount" parameterType="com.woshidaniu.entities.YwsjPxxxModel" resultType="int">
+    	select count(1)
+          from niutal_xtgl_ywsjpxxxb b
+         where b.yh_id = #{yh_id,jdbcType=VARCHAR}
+           and b.ywsj_id = #{ywsj_id,jdbcType=VARCHAR}
+   		   and b.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+    </select>
+     
+</mapper>

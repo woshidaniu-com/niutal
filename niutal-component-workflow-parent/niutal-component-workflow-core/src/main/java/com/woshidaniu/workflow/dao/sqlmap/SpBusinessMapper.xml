@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="com.woshidaniu.workflow.dao.ISpBusinessDao">
+
+	<resultMap id="spBusinessMap" type="com.woshidaniu.workflow.model.SpBusiness">
+		<result property="bid" column="B_ID" />
+		<result property="bname" column="B_NAME" />
+		<result property="btype" column="B_TYPE" />
+		<result property="bstatus" column="B_STATUS" />
+		<result property="bcode" column="B_CODE" />
+		<result property="belongToSys" column="BELONG_TO_SYS" />
+		<result property="belongToSysName" column="BELONG_TO_SYS_NAME" />
+		<result property="pid" column="P_ID" />
+		<result property="relDetail" column="REL_DETAIL" />
+		<association property="procedure" column="P_ID" select="com.woshidaniu.workflow.dao.ISpProcedureDao.findSpProcedureById"/>
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="bid">
+		<![CDATA[
+			INSERT INTO SP_BUSINESS
+			  (B_ID,
+			   B_NAME,
+			   B_TYPE,
+			   B_STATUS,
+			   B_CODE,
+			   BELONG_TO_SYS,
+			   P_ID,
+			   REL_DETAIL)
+			VALUES
+			  (#{bid},
+			   #{bname,jdbcType=VARCHAR},
+			   #{btype,jdbcType=VARCHAR},
+			   #{bstatus,jdbcType=VARCHAR},
+			   #{bcode,jdbcType=VARCHAR},
+			   #{belongToSys,jdbcType=VARCHAR},
+			   #{pid,jdbcType=VARCHAR},
+			   #{relDetail,jdbcType=VARCHAR})
+		]]>
+		
+		<selectKey resultType="java.lang.String" order="BEFORE" keyProperty="bid">
+			<![CDATA[
+			SELECT SYS_GUID() KHLC_ID FROM DUAL
+			]]>
+		</selectKey>
+	</insert>
+	
+	<delete id="delete">
+		<![CDATA[
+			DELETE FROM SP_BUSINESS WHERE B_ID = #{bid}
+		]]>
+	</delete>
+	
+	<delete id="deleteByPid">
+		<![CDATA[
+			DELETE FROM SP_BUSINESS WHERE P_ID = #{pid}
+		]]>
+	</delete>
+	
+	<delete id="deleteByRelDetail">
+		<![CDATA[
+			DELETE FROM SP_BUSINESS WHERE REL_DETAIL = #{relDetail}
+		]]>
+	</delete>
+
+	<update id="update">
+		<![CDATA[
+			UPDATE SP_BUSINESS
+			   SET B_NAME        = #{bname,jdbcType=VARCHAR},
+			       B_TYPE        = #{btype,jdbcType=VARCHAR},
+			       B_STATUS      = #{bstatus,jdbcType=VARCHAR},
+			       B_CODE        = #{bcode,jdbcType=VARCHAR},
+			       BELONG_TO_SYS = #{belongToSys,jdbcType=VARCHAR},
+			       P_ID          = #{pid,jdbcType=VARCHAR}
+			 WHERE B_ID = #{bid}
+		]]>
+	</update>
+	
+	<!-- 业务名称和业务类型的是否存在记录 -->
+	<select id="getCountByNameAndType"  resultType="int">
+        <![CDATA[ SELECT count(B_ID) from  SP_BUSINESS where B_NAME=#{bname} and B_TYPE=#{btype} ]]>
+    </select> 
+    
+    <!-- 是否存在业务关联流程记录 -->
+    <select id="getCountOfRelevance"  resultType="int">
+        <![CDATA[ SELECT count(B_ID) from  SP_BUSINESS_PROCEDURE where B_ID=#{bid} ]]>
+    </select> 
+	
+	<!-- 根据对象中的条件查询记录（结果一个或多个） -->
+	<select id="findSpBusiness" resultMap="spBusinessMap">
+		SELECT B.B_ID,
+		       B.B_NAME,
+		       B.B_TYPE,
+		       B.B_STATUS,
+		       B.B_CODE,
+		       B.BELONG_TO_SYS,
+		       B.P_ID,
+		       B.REL_DETAIL,
+		       C.gnmkmc as BELONG_TO_SYS_NAME
+		  FROM SP_BUSINESS B
+		  LEFT JOIN niutal_XTGL_JSGNMKDMB C 
+		    ON B.BELONG_TO_SYS = C.gnmkdm
+		<where>
+			<if test="bid != null and bid != ''">
+				<![CDATA[ B.B_ID = #{bid} ]]>
+	        </if>
+	        <if test="bname != null and bname != ''">
+				<![CDATA[ AND B.B_NAME = #{bname} ]]>
+	        </if>
+			<if test="btype != null and btype != ''">
+				<![CDATA[ AND B.B_TYPE = #{btype} ]]>
+	        </if>
+	        <if test="bstatus != null and bstatus != ''">
+				<![CDATA[ AND B.B_STATUS = #{bstatus} ]]>
+	        </if>
+	        <if test="belongToSys != null and belongToSys != ''">
+				<![CDATA[ AND B.BELONG_TO_SYS = #{belongToSys} ]]>
+	        </if>
+	        <if test="btype != null and btype != ''">
+				<![CDATA[ AND B.B_TYPE = #{btype} ]]>
+	        </if>
+	        <if test="bcode != null and bcode != ''">
+				<![CDATA[ AND B.B_CODE = #{bcode} ]]>
+	        </if>
+        </where> 
+	</select>
+
+	<select id="findSpBusinessById" resultMap="spBusinessMap">
+		SELECT B.B_ID,
+		       B.B_NAME,
+		       B.B_TYPE,
+		       B.B_STATUS,
+		       B.B_CODE,
+		       B.BELONG_TO_SYS,
+		       B.P_ID,
+		       B.REL_DETAIL
+		  FROM SP_BUSINESS B
+		 WHERE B.B_ID = #{0}
+	</select>
+	
+	<select id="findSpBusinessByRelDetail" resultMap="spBusinessMap">
+		SELECT B.B_ID,
+		       B.B_NAME,
+		       B.B_TYPE,
+		       B.B_STATUS,
+		       B.B_CODE,
+		       B.BELONG_TO_SYS,
+		       B.P_ID,
+		       B.REL_DETAIL
+		  FROM SP_BUSINESS B
+		 WHERE B.REL_DETAIL = #{0}
+	</select>
+	
+	<select id="findSpBusinessCodeByRelDetail" resultType="java.lang.String">
+		SELECT B_CODE
+		  FROM SP_BUSINESS where REL_DETAIL like '%#'||#{0}||'#%'
+	</select>
+	
+	<select id="getBusinessType" resultType="hashmap">
+		select code.ywdm, code.ywmc, code.ywdl, dl.ywdlmc
+	      from sp_business_code code, sp_ywdl dl
+	     where code.ywdl = dl.ywdl(+)
+	</select>
+	
+	<select id="getPagedBusinessType" parameterType="com.woshidaniu.workflow.model.SpProcedure" resultType="hashmap">
+		select code.ywdm, code.ywmc, code.ywdl, dl.ywdlmc
+	      from sp_business_code code, sp_ywdl dl
+	     where code.ywdl = dl.ywdl(+)
+	     <if test="ywdl != null and ywdl != ''" >
+				AND code.ywdl = #{ywdl}
+	     </if>   
+	     <if test="businessName != null and businessName != ''" >
+				AND code.ywmc like '%'|| #{businessName} ||'%'
+	     </if>
+		 <if test="cxAll == null or cxAll == ''" >
+				AND exists (select 1 from sp_business p where p.b_code = code.ywdm)
+	     </if>	
+	</select>
+	
+	<select id="getYwdl" resultType="hashmap">
+		select ywdl, ywdlmc from sp_ywdl
+	</select>
+	
+	<select id="getTxyw" resultType="java.lang.String">
+		SELECT ','||WM_CONCAT(DISTINCT YWDM)||',' FROM SP_NODE_BJ
+	</select>
+	
+</mapper>

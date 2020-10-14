@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-core-jwdao</artifactId>
+
+	<dependencies>
+
+		<!-- ###################### 连接池组包 ###################### -->
+		<!--
+			Druid是阿里巴巴开源平台上的一个项目，整个项目由数据库连接池、插件框架和SQL解析器组成。
+			该项目主要是为了扩展JDBC的一些限制，可以让程序 员实现一些特殊的需求，比如向密钥服务请求凭证、
+			统计SQL信息、SQL性能收集、SQL注入检查、SQL翻译等，程序员可以通过定制来实现自己需要的功 能
+		-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+		</dependency>
+		
+		<!-- ###################### 数据库驱动  ###################### -->
+		
+		<!-- 
+			Oracle JDBC Driver. 
+			ojdbc14	: Classes for use with JDK 1.4 and 1.5
+			ojdbc5	: Classes for use with JDK 1.5.
+			ojdbc6	: Classes for use with JDK 1.6.
+			ojdbc7	: Certified with JDK7 and JDK 8; 
+			It contains the JDBC driver classes except classes for NLS support in Oracle Object and Collection types.
+			特别注意：因为Oracle数据库版本或JDK版本不同，此处需要根据实际情况调整不同的数据库驱动
+		-->
+		<!-- <dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<scope>runtime</scope>
+			<version>${oracle-10g-driver.version}</version>
+		</dependency> -->
+		<!-- <dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc5</artifactId>
+			<scope>runtime</scope>
+			<version>${oracle-11g-driver.version}</version>
+		</dependency> -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<scope>runtime</scope>
+			<!-- <version>${oracle-11g-driver.version}</version> -->
+			<!-- <version>${oracle-12c-driver.version}</version> -->
+		</dependency>
+		<!-- <dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<scope>runtime</scope>
+			<version>${oracle-12c-driver.version}</version>
+		</dependency> -->
+		
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		 
+	</dependencies>
+
+</project>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IDjrffDao">
+
+	<insert id="insertBatch" parameterType="com.woshidaniu.wjdc.dao.entites.DjrffModel">
+		insert into 
+		niutal_WJDC_DJRFFB(
+			WJID,
+			LXID,
+			ZJZ,
+			DJZT
+		)
+		<foreach collection="models" item="item" index="index" separator="union all">
+            select 
+            	#{item.wjid},
+				#{item.lxid},
+				#{item.zjz},
+				#{item.djzt} 
+			from dual
+        </foreach>
+	</insert>
+
+	<insert id="insert" parameterType="com.woshidaniu.wjdc.dao.entites.DjrffModel">
+		insert into 
+		niutal_WJDC_DJRFFB(
+			WJID,
+			LXID,
+			ZJZ,
+			DJZT
+		)
+		values(
+			#{wjid},
+			#{lxid},
+			#{zjz},
+			#{djzt}
+		)
+	</insert>
+	
+	<!-- 安全的插入数据，防止出现异常 -->
+	<insert id="insertSafe" parameterType="com.woshidaniu.wjdc.dao.entites.DjrffModel">
+		insert into 
+		niutal_WJDC_DJRFFB(
+			WJID,
+			LXID,
+			ZJZ,
+			DJZT
+		)
+		select 
+           	#{wjid},
+			#{lxid},
+			#{zjz},
+			#{djzt} 
+		from dual
+		where not exists (
+			select * from niutal_WJDC_DJRFFB
+			 x where 
+			 x.wjid = #{wjid} 
+			 and x.lxid = #{lxid} 
+			 and x.zjz = #{zjz}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.woshidaniu.wjdc.dao.entites.DjrffModel">
+		update niutal_WJDC_DJRFFB
+		set djzt = #{djzt}
+		where zjz = #{zjz} and wjid = #{wjid}
+	</update>
+	
+	<!-- 更新答卷人分发信息为已经答卷 -->
+	<update id="updateFinishZt">
+		update niutal_WJDC_DJRFFB
+		set djzt = '完成'
+		where zjz = #{zjz} and wjid = #{wjid} and lxid = #{lxid} and djzt != '完成'
+	</update>
+	
+	<!-- 更新答卷人分发信息为答卷中 -->
+	<update id="updateDoingZt">
+		update niutal_WJDC_DJRFFB
+		set djzt = '答卷中'
+		where zjz = #{zjz} and wjid = #{wjid} and lxid = #{lxid} and djzt = '未开始'
+	</update>
+	
+	<delete id="deleteAll">
+		delete from niutal_WJDC_DJRFFB where wjid = #{wjid}
+	</delete>
+	
+	<select id="queryZjzList" parameterType="com.woshidaniu.wjdc.dao.entites.DjrffModel" resultType="java.lang.String">
+		select 
+			zjz
+		from niutal_WJDC_DJRFFB
+		<where>
+			<if test="wjid != null and wjid != ''">
+				and wjid = #{wjid}
+			</if>
+			<if test="lxid != null and lxid != ''">
+				and lxid = #{lxid}
+			</if>
+			<if test="zjz != null and zjz != ''">
+				and zjz = #{zjz}
+			</if>
+			<if test="djzt != null and djzt != ''">
+				and djzt = #{djzt}
+			</if>
+		</where>
+	</select>
+	
+	<select id="query" parameterType="com.woshidaniu.wjdc.dao.entites.DjrffModel" resultType="com.woshidaniu.wjdc.dao.entites.DjrffModel">
+		select 
+			wjid,
+			lxid,
+			zjz,
+			djzt 
+		from niutal_WJDC_DJRFFB
+		<where>
+			<if test="wjid != null and wjid != ''">
+				and wjid = #{wjid}
+			</if>
+			<if test="lxid != null and lxid != ''">
+				and lxid = #{lxid}
+			</if>
+			<if test="zjz != null and zjz != ''">
+				and zjz = #{zjz}
+			</if>
+			<if test="djzt != null and djzt != ''">
+				and djzt = #{djzt}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryFinisedhWjidList" resultType="string">
+		select 
+			a.wjid
+		from 
+			niutal_WJDC_DJRFFB a,
+			niutal_WJDC_WJXXB b 
+		where 
+			a.wjid = b.wjid 
+			and a.zjz = #{userid} 
+			and a.djzt = '完成' 
+		order by to_number(b.wjyxj) asc
+	</select>
+	
+	<select id="queryUnfinishWjidList" resultType="string">
+		select 
+			a.wjid 
+		from 
+			niutal_WJDC_DJRFFB a,
+			niutal_WJDC_WJXXB b 
+		where 
+			a.wjid = b.wjid 
+			and a.zjz = #{userid} 
+			and b.wjzt = 'RUN' 
+			and a.djzt in('未开始','答卷中')
+		order by to_number(b.wjyxj) asc
+	</select>
+</mapper>

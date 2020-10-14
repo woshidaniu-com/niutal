@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IJsgnmkDao" >
+
+	<!-- 根据角色代码查询角色的所以父级才是是否任意一个具有二级授权功能-->
+	<select id="getParentSfejsq" parameterType="com.woshidaniu.entities.JsgnmkModel" resultType="java.lang.Integer">
+	<![CDATA[
+		select nvl(sum(nvl(b.sfejsq, 0)),0) from (
+		  select a.ll, max(a.cll) over(PARTITION BY 1) cll, a.sfejsq 
+		  	from (        
+		        select level as ll,
+		               (case when t.jsdm = #{fjsdm} then
+		                   level
+		                else
+		                   0
+		                end) cll,
+		                t.sfejsq
+		          from niutal_xtgl_jsxxb t
+		         where t.jsdm != 'admin'
+		           and t.jsdm != #{jsdm}
+		         start with t.jsdm = #{jsdm}
+		        connect by prior t.fjsdm = t.jsdm      
+		      ) a 
+		) b where b.ll < b.cll
+		]]>
+	</select>
+	
+	<!-- 查询所有功能模块的级别列表 -->
+    <select id="getGnmkdmJbList" resultType="com.woshidaniu.entities.JsgnmkModel">
+    	select distinct t.cdjb from niutal_xtgl_jsgnmkdmb t  where t.cdjb is not null order by t.cdjb asc
+    </select>
+    
+   	<!-- 根据用户名，角色代码 查询该 用户此角色 所有 指定级别的功能模块列表  -->
+    <select id="getGnmkdmList" parameterType="com.woshidaniu.entities.JsgnmkModel" resultType="com.woshidaniu.entities.JsgnmkModel">
+	    select t.gnmkdm, t.gnmkmc, t.fjgndm, t.cdjb, t.gnsydx, t.xssx, t.dyym
+		  from (select t.gnmkdm,
+		               decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as gnmkmc,
+		               t.fjgndm,
+		               t.cdjb,
+		               t.gnsydx,
+		               t.xssx,
+		               t.dyym
+		          from niutal_xtgl_jsgnmkdmb t
+		         start with t.fjgndm = 'N'
+		        connect by prior t.gnmkdm = t.fjgndm
+		       ) t
+		 where exists (select 'x'
+		          from niutal_xtgl_jsgnmkczb m
+		         where m.jsdm = #{sqrJsdm,jdbcType=VARCHAR}
+		           and m.gnmkdm like t.gnmkdm || '%'
+		        ) 
+		     <if test="cdjb != null and cdjb != ''">
+		      and t.cdjb = #{cdjb,jdbcType=VARCHAR}
+		     </if>
+			 <if test="gnmkdm != null and gnmkdm != ''">
+	  		  and t.fjgndm = #{gnmkdm,jdbcType=VARCHAR}
+	  		 </if>
+	  		 <if test="jsdm == 'xs' ">
+	  		  and (t.gnsydx = 'xs' or t.gnsydx is null )
+	  		 </if>
+	  		 <if test="jsdm == 'js' ">
+	  		  and (t.gnsydx = 'js' or t.gnsydx is null )
+	  		 </if>
+	  		 <if test="jsdm != 'xs' and jsdm != 'js'  and jsdm != '' ">
+	  		  and (t.gnsydx = 'gl' or t.gnsydx is null )
+	  		 </if>
+		order by t.fjgndm,to_number(t.xssx) asc
+    </select>
+    
+    <!-- 获取指定功能代码对应的功能菜单信息 -->
+    <select id="getGnmkdmModel" parameterType="com.woshidaniu.entities.JsgnmkModel" resultType="com.woshidaniu.entities.JsgnmkModel">
+       select t.gnmkdm,
+              decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as gnmkmc,
+              t.fjgndm,
+              t.cdjb,
+              t.gnsydx,
+              t.xssx,
+              t.dyym
+         from niutal_xtgl_jsgnmkdmb t
+   		where t.gnmkdm = #{gnmkdm}
+    </select>
+    
+    <!-- 根据角色代码查询该角色所有功能模块按钮操作权限   -->
+    <select id="getGnmkczList" parameterType="com.woshidaniu.entities.JsgnmkModel" resultType="com.woshidaniu.entities.JsgnmkModel">
+    	select t.jsdm,
+		       a.gnmkdm,
+		       a.czdm,
+		       decode(#{localeKey},'en_US',nvl(nvl(a.ywmc, b.ywmc),nvl(a.czmc, b.czmc)),nvl(a.czmc,b.czmc)) czmc,
+		       b.xssx,
+		       (case when (select count(1)
+		                 from niutal_xtgl_jsgnmkczb t1
+		                where t1.jsdm = #{jsdm,jdbcType=VARCHAR}
+		                  and t1.czdm = t.czdm
+                  		  and t1.gnmkdm = t.gnmkdm
+		               ) > 0 then
+		          1
+		         else
+		          0
+		       end) ischecked
+		  from niutal_xtgl_jsgnmkczb t, niutal_xtgl_gnmkczb a, niutal_xtgl_czdmb b
+		 where t.gnmkdm = a.gnmkdm
+		   and t.czdm = a.czdm
+		   and a.czdm = b.czdm
+		   <if test="gnmkdm != null and gnmkdm != ''">
+   		   and t.gnmkdm  = #{gnmkdm}
+   		   </if>
+		   and t.jsdm   = #{sqrJsdm,jdbcType=VARCHAR}
+		 order by t.gnmkdm, to_number(b.xssx) asc
+    </select>
+    
+    <!-- 获得一级功能模块代码集合  -->
+    <select id="getYjXtGnmkdmList" resultType="string">
+    	select distinct t.gnmkdm
+		  from niutal_xtgl_jsgnmkdmb t
+		 where t.fjgndm = 'N'
+		 order by t.gnmkdm asc
+    </select>
+    
+    <!-- 获取系统 指定级别的功能模块列表 :针对于admin -->
+    <select id="getXtGnmkdmList" parameterType="com.woshidaniu.entities.JsgnmkModel" resultType="com.woshidaniu.entities.JsgnmkModel">
+    	select t.gnmkdm, t.gnmkmc, t.fjgndm, t.cdjb, t.gnsydx, t.xssx, t.dyym
+		  from (select t.gnmkdm,
+		               decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as gnmkmc,
+		               t.fjgndm,
+		               t.cdjb,
+		               t.gnsydx,
+		               t.xssx,
+		               t.dyym
+		          from niutal_xtgl_jsgnmkdmb t
+		         start with t.fjgndm = 'N'
+		        connect by prior t.gnmkdm = t.fjgndm
+		      ) t
+		 where 1 = 1
+		 <if test="cdjb != null and cdjb != ''">
+  		  and t.cdjb = #{cdjb,jdbcType=VARCHAR}
+  		 </if>
+  		  <if test="gnmkdm != null and gnmkdm != ''">
+  		  and t.fjgndm = #{gnmkdm,jdbcType=VARCHAR}
+  		 </if>
+  		 <if test="jsdm == 'xs' ">
+  		  and (t.gnsydx = 'xs' or t.gnsydx is null )
+  		 </if>
+  		 <if test="jsdm == 'js' ">
+  		  and (t.gnsydx = 'js' or t.gnsydx is null )
+  		 </if>
+  		 <if test="jsdm != 'xs' and jsdm != 'js'  and jsdm != '' ">
+  		  and (t.gnsydx = 'gl' or t.gnsydx is null )
+  		 </if>
+		order by t.fjgndm,to_number(t.xssx) asc
+    </select>
+    
+    <!-- 获取系统 所有功能模块按钮操作权限  :针对于admin -->
+    <select id="getXtGnmkczList" parameterType="com.woshidaniu.entities.JsgnmkModel" resultType="com.woshidaniu.entities.JsgnmkModel">
+    	select a.gnmkdm,
+		       a.czdm,
+		       decode(#{localeKey},'en_US',nvl(nvl(a.ywmc,b.ywmc),nvl(a.czmc,b.czmc)),nvl(a.czmc,b.czmc)) czmc,
+		       b.xssx,
+		       (case when (select count(1)
+		                 from niutal_xtgl_jsgnmkczb t1
+		                where t1.jsdm = #{jsdm,jdbcType=VARCHAR}
+		                  and t1.czdm = a.czdm
+                  		  and t1.gnmkdm = a.gnmkdm
+		               ) > 0 then
+		          1
+		         else
+		          0
+		       end) ischecked
+		  from niutal_xtgl_gnmkczb a, niutal_xtgl_czdmb b
+		 where a.czdm = b.czdm
+		   <if test="gnmkdm != null and gnmkdm != ''">
+   		   and a.gnmkdm  = #{gnmkdm}
+   		   </if>
+		 order by a.gnmkdm, to_number(b.xssx) asc
+    </select>
+    
+   
+    
+    <!-- 更新角色功能授权信息
+    	如历史：01,02,03 新：02,04,05  
+    	则删除：01,03
+    	剩下：02
+    	新增：
+     -->
+    <update id="updateJsgnsqxx" parameterType="com.woshidaniu.entities.JsgnmkModel">
+    declare
+	begin
+		
+		/*步骤1：删除角色原有功能权限*/
+    	delete from niutal_xtgl_jsgnmkczb t
+		 where t.jsdm = #{jsdm,jdbcType=VARCHAR};
+   	
+   		<if test="childList != null and childList.size() > 0  ">
+			
+			/*步骤2：保存新的角色功能权限*/
+			
+			<if test="sqrJsdm == 'admin' ">
+				insert into niutal_xtgl_jsgnmkczb(jsdm,gnmkdm,czdm,dyym)
+				select #{jsdm,jdbcType=VARCHAR}, t.gnmkdm, a.czdm, t.dyym
+		          from niutal_xtgl_jsgnmkdmb t,
+		               niutal_xtgl_gnmkczb   a,
+		               niutal_xtgl_czdmb     b
+		         where t.gnmkdm = a.gnmkdm
+		           and a.czdm = b.czdm
+		           <if test="jsdm == 'xs' ">
+		  		   and (t.gnsydx = 'xs' or t.gnsydx is null )
+		  		   </if>
+		  		   <if test="jsdm == 'js' ">
+		  		   and (t.gnsydx = 'js' or t.gnsydx is null )
+		  		   </if>
+		  		   <if test="jsdm != 'xs' and jsdm != 'js'  and jsdm != '' ">
+		  		   and (t.gnsydx = 'gl' or t.gnsydx is null )
+		  		   </if>
+				   <foreach collection="childList" item="childItem" index="index" open=" and ( " separator=" or " close=") ">
+					  <if test="childItem.gnmkdm_list != null and childItem.gnmkdm_list.size() > 0  ">
+						(t.gnmkdm = #{childItem.gnmkdm,jdbcType=VARCHAR}
+						<foreach collection="childItem.gnmkdm_list" item="item" index="index" open=" and a.czdm in ( " separator="," close=") ">
+							#{item,jdbcType=VARCHAR}
+						</foreach>
+						)
+					  </if>
+				   </foreach>;
+			</if>
+			<if test="sqrJsdm != 'admin'">
+				insert into niutal_xtgl_jsgnmkczb(jsdm,gnmkdm,czdm,dyym)
+				select #{jsdm,jdbcType=VARCHAR},t.gnmkdm,t.czdm,t.dyym
+				 from niutal_xtgl_jsgnmkczb t
+				where t.jsdm = #{sqrJsdm,jdbcType=VARCHAR}
+				<foreach collection="childList" item="childItem" index="index" open=" and ( " separator=" or " close=") ">
+					<if test="childItem.gnmkdm_list != null and childItem.gnmkdm_list.size() > 0  ">
+						(t.gnmkdm = #{childItem.gnmkdm,jdbcType=VARCHAR}
+						<foreach collection="childItem.gnmkdm_list" item="item" index="index" open=" and t.czdm in ( " separator="," close=") ">
+							#{item,jdbcType=VARCHAR}
+						</foreach>
+						)
+					</if>
+				</foreach>;
+			</if>
+		</if>
+   		
+    end;
+    </update>
+    
+    <!-- 获取指定角色 所有功能模块 【菜单功能】-->
+    <select id="getJsGnmkdmList" parameterType="string" resultType="string">
+	    select distinct t.gnmkdm
+		  from niutal_xtgl_jsgnmkdmb t
+		 where t.gnmkdm is not null
+		 start with t.gnmkdm in (select distinct m.gnmkdm
+		                           from niutal_xtgl_jsgnmkczb m
+		                          where m.jsdm = #{jsdm,jdbcType=VARCHAR})
+		connect by prior t.fjgndm = t.gnmkdm
+		 order by t.gnmkdm
+    </select>
+    
+   <!-- 查询学生和教师菜单 -->
+   <select id="getJsgnList" parameterType="string" resultType="hashMap">
+   	select a.jstopmkmcb_id,
+	       decode(#{localeKey},'en_US',nvl(a.ywmkmc,a.mkmc),a.mkmc) mkmc,
+	       b.gnmkdm,
+	       (select decode(#{localeKey},'en_US',nvl(gnmkywmc,gnmkmc),gnmkmc) from niutal_xtgl_jsgnmkdmb where gnmkdm = b.gnmkdm) gnmkmc,
+	       (select dyym from niutal_xtgl_jsgnmkdmb where gnmkdm = b.gnmkdm) dyym,
+	       c.czdm,
+	       decode(#{localeKey},'en_US',nvl(nvl(c.ywmc,d.ywmc),nvl(c.czmc,d.czmc)),nvl(c.czmc,d.czmc)) czmc,
+	       (select 'checked'
+	          from niutal_xtgl_jsgnmkczb
+	         where jsdm = #{jsdm}
+	           and gnmkdm = b.gnmkdm
+	           and czdm = d.czdm) sfxz
+	  from niutal_xtgl_jstopmkmcb a,
+	       niutal_xtgl_jsgnmkgxb  b,
+	       niutal_xtgl_gnmkczb    c,
+	       niutal_xtgl_czdmb      d
+	 where a.jstopmkmcb_id = b.jstopmkmcb_id
+	   and b.gnmkdm = c.gnmkdm
+	   and c.czdm = d.czdm
+	   and a.jsdm = #{jsdm}
+		<if test="type=='cxcd'">
+			<!-- 查询菜单 -->
+			and exists(select 'x' from niutal_xtgl_jsgnmkczb where gnmkdm=b.gnmkdm and jsdm=#{jsdm})
+		</if>
+		order by a.xsxh,b.xsxh,b.gnmkdm,d.xssx
+   </select>
+
+	<!-- 通过功能代码查询功能代码名称-->
+ 	<select id="getValue" parameterType="string" resultType="string">
+ 		select (select a.gnmkmc
+		          from niutal_xtgl_jsgnmkdmb a
+		         where a.gnmkdm = t.fjgndm) || ' - ' || t.gnmkmc as gnmkmc
+		  from niutal_xtgl_jsgnmkdmb t
+		 where t.gnmkdm = #{key}
+ 	</select>
+ 	
+</mapper>

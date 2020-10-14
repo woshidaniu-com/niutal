@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="design" namespace="/design" extends="configuration">
+
+		<!-- 基础自动完成字段操作action -->
+		<action name="baseAuto_*" class="com.woshidaniu.designer.action.BaseAutoCompleteFieldAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/auto/{1}.jsp</result>
+		</action>
+		
+		<!-- 基础查询字段action -->
+		<action name="baseField_*" class="com.woshidaniu.designer.action.BaseQueryFieldAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/field/{1}.jsp</result>
+		</action>
+		
+		<!-- 基础 功能js组件描述信息action -->
+		<action name="baseWidget_*" class="com.woshidaniu.designer.action.BaseWidgetDetailAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/widget/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面:自动完成字段编辑action -->
+		<action name="designAuto_*" class="com.woshidaniu.designer.action.DesignAutoCompleteFieldAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/auto/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面:功能设计操作action：为指定功能代码+操作代码维护操作功能数据 -->
+		<action name="designFunc_*" class="com.woshidaniu.designer.action.DesignFuncAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<action name="viewFunc_*" class="com.woshidaniu.designer.action.DesignFuncAction" method="{1}">
+			<result name="success">/WEB-INF/pages/dynamic/${func_code}-${opt_code}.jsp</result>
+		</action>
+		
+		<action name="viewReport_*" class="com.woshidaniu.designer.action.DesignFuncReportAction" method="{1}">
+			<interceptor-ref name="RequiredStack" />
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/report/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能数据查询action：根据SQL查询功能数据  -->
+		<action name="funcData_*" class="com.woshidaniu.designer.action.DesignFuncDataAction" method="{1}">
+		</action>
+		
+		<!-- 功能页面:自定义元素信息action -->
+		<action name="designElement_*" class="com.woshidaniu.designer.action.DesignFuncElementAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面:自定义元素关联字段信息action -->
+		<action name="designField_*" class="com.woshidaniu.designer.action.DesignFuncElementFieldAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面：组件初始化参数信息action -->
+		<action name="designWidget_*" class="com.woshidaniu.designer.action.DesignFuncElementWidgetAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面:对应自定义字段设计操作action-->
+		<action name="designQuery_*" class="com.woshidaniu.designer.action.DesignFuncElementQueryAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面:对应自定义操作按钮设置action-->
+		<action name="designToolbar_*" class="com.woshidaniu.designer.action.DesignToolbarButtonAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<!-- 功能页面:功能组件脚本样式资源信息action-->
+		<action name="designResource_*" class="com.woshidaniu.designer.action.DesignWidgetResourceAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/func/{1}.jsp</result>
+		</action>
+		
+		<!-- 查询SQL解析action -->
+		<action name="sqlParser_*" class="com.woshidaniu.designer.action.QuerySQLParserAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/design/sql/{1}.jsp</result>
+		</action>
+
+	</package>
+</struts>

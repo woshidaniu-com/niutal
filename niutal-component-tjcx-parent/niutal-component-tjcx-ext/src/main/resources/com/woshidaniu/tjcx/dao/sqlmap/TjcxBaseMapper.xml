@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.tjcx.dao.daointerface.ITjcxBaseDao">
+
+	
+	<!-- 通过sql语句返回数据 -->
+	<select id="getDataCount" resultType="java.lang.Integer">
+		${sql}
+	</select>
+	
+	<!-- 通过sql语句返回数据 -->
+	<select id="getListBySql" resultType="java.util.HashMap">
+		${sql}
+	</select>
+	
+	<!-- 通过sql语句返回数据 ，自动分页-->
+	<select id="getPagedListBySql" resultType="java.util.HashMap">
+		${sql}
+	</select>
+	
+	<!-- 通过sql语句返回数据，过滤数据范围 -->
+	<select id="getListBySqlByScope" resultType="java.util.HashMap">
+		${sql}
+	</select>
+
+	<!-- 通过sql语句返回数据 -->
+	<select id="getMapBySql" resultType="java.util.HashMap">
+		${sql}
+	</select>
+
+	<!-- 通过sql语句返回数据，过滤数据范围 -->
+	<select id="getMapBySqlByScope" resultType="java.util.HashMap">
+		${sql}
+	</select>
+	
+	<select id="getCount" resultType="int">
+		${sql}
+	</select>
+</mapper>
+	

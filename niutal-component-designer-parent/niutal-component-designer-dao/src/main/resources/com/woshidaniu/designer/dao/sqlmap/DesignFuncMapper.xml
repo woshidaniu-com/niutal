@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignFuncDao" >
+
+	<!-- 分页查询【功能设计】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncModel">
+		 select t.func_guid,
+		        t.func_code,
+		        t.opt_code,
+		        t.func_name,
+		        t.func_desc,
+		        trim(t.func_type) as func_type,
+		        t.func_editable,
+		        t.func_release,
+		        t.release_time,
+		        t.func_width,
+		        t.require_type,
+		        t.query_type
+		   from niutal_designer_func  t 
+	     <where>
+	     	<if test=" func_name != null and func_name != '' ">
+	     		and t.func_name like '%'||#{func_name}||'%' 
+	     	</if>
+	     </where>
+	</select> 
+	
+	<!-- 查询【功能设计】信息-->
+	<select id="getModelList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncModel">
+	 select t.func_guid,
+	        t.func_code,
+	        t.opt_code,
+	        t.func_name,
+	        t.func_desc,
+	        trim(t.func_type) as func_type,
+	        t.func_editable,
+	        t.func_release,
+	        t.release_time,
+	        t.func_width,
+	        t.require_type,
+	        t.query_type
+	   from niutal_designer_func  t 
+	   where 1 = 1
+	   <if test=" func_code != null and func_code != '' ">
+	   and t.func_code = #{func_code}
+	   </if>
+      order by t.func_code asc, t.opt_code asc
+	</select>
+	
+	<!-- 查询【功能设计】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncModel">
+	 select t.func_guid,
+	        t.func_code,
+	        t.opt_code,
+	        t.func_name,
+	        t.func_desc,
+	        trim(t.func_type) as func_type,
+	        t.func_editable,
+	        t.func_release,
+	        t.release_time,
+	        t.func_width,
+	        t.require_type,
+	        t.query_type
+	   from niutal_designer_func  t 
+	  where t.func_guid = #{func_guid}
+	</select>
+	
+	<!-- 查询【功能设计】信息-->
+	<select id="getFuncModel" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncModel">
+	 select t.func_guid,
+	        t.func_code,
+	        t.opt_code,
+	        t.func_name,
+	        t.func_desc,
+	        trim(t.func_type) as func_type,
+	        t.func_editable,
+	        t.func_release,
+	        t.release_time,
+	        t.func_width,
+	        t.require_type,
+	        t.query_type
+	   from niutal_designer_func  t 
+	  where t.func_code = #{func_code}
+	    and t.opt_code = #{opt_code}
+	</select>
+	
+	<!-- 获取最顶级功能模块列表集合 -->
+    <select id="getTopFuncList" resultType="com.woshidaniu.entities.PairModel">
+    	select t.gnmkdm as key, t.gnmkmc as value
+		  from (select t.gnmkdm,
+		               t.gnmkmc,
+		               t.fjgndm,
+		               t.cdjb,
+		               t.gnsydx,
+		               t.xssx,
+		               t.dyym
+		          from niutal_xtgl_jsgnmkdmb t
+		         start with t.fjgndm = 'N'
+		        connect by prior t.gnmkdm = t.fjgndm
+		      ) t
+		 where t.cdjb = '1'
+		order by to_number(t.xssx) asc
+    </select>
+    
+    <!-- 获取系统 所有功能模块列表 :针对于admin -->
+    <select id="getSystemFuncList"  parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel">
+     <![CDATA[
+    	select t.fjgndm as parent_func_code,
+    		   t.gnmkdm as func_code,
+		       t.gnmkmc as func_name,
+		       nvl(t.gnsydx,'all') as func_target,
+		       nvl(t.cdjb, '1') as func_level,
+		       t.dyym as func_url,
+		       nvl(t.sfxs,'0') as func_displayed,
+		       t.xssx as func_ordinal,
+		       nvl(t.sfzdymk,'0') as func_user_defined,
+		       (select a.func_guid
+		          from niutal_designer_func a
+		         where a.func_code = t.gnmkdm
+		           and a.opt_code = 'cx') as func_guid,
+		       (case
+		         when (select count('1')
+		                 from niutal_designer_func a
+		                where a.func_code = t.gnmkdm
+		                  and a.opt_code = 'cx') > 0 then
+		          '1'
+		         else
+		          '0'
+		       end) func_designed,
+		       (case when t.dyym is null then  
+	               decode((select count('1') from niutal_xtgl_gnmkczb z where z.gnmkdm = t.gnmkdm and z.czdm <> 'cx' ),0,'1','0')
+	            else 
+	               case when (select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm ) > 0 then  
+	                   '1'
+	               else 
+	                   decode((select count('1') from niutal_xtgl_gnmkczb z where z.gnmkdm = t.gnmkdm and z.czdm <> 'cx' ),0,'1','0')
+	               end
+		          end) func_readonly,
+		       (case when t.dyym is not null then  
+	                 decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm ),0,'1','0')
+	            else
+	              '0'
+		        end) func_leaf
+		  from (select t.gnmkdm,
+		               t.gnmkmc,
+		               t.fjgndm,
+		               t.cdjb,
+		               t.gnsydx,
+		               t.xssx,
+		               t.sfxs,
+		               t.sfzdymk,
+		               t.dyym
+		          from niutal_xtgl_jsgnmkdmb t
+		         start with t.fjgndm = #{func_code}
+		        connect by prior t.gnmkdm = t.fjgndm) t
+		 where (t.gnsydx = 'gl' or t.gnsydx is null)
+		 order by t.fjgndm, to_number(t.xssx) asc
+	  ]]>
+    </select>
+    
+     <!-- 根据功能模块代码得到功能模块信息-->
+    <select id="getSystemFuncModel"  parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel">
+     <![CDATA[
+    	select t.fjgndm as parent_func_code,
+		       a.gnmkmc as parent_func_name,
+    		   t.gnmkdm as func_code,
+		       t.gnmkmc as func_name,
+		       nvl(t.gnsydx,'all') as func_target,
+		       nvl(t.cdjb,'1')   as func_level,
+		       t.dyym   as func_url,
+		       nvl(t.sfxs,'0') as func_displayed,
+		       t.xssx   as func_ordinal,
+		       nvl(t.sfzdymk,'0') as func_user_defined,
+		       b.func_guid,
+		       (case when b.func_guid is not null then
+		          '1'
+		         else
+		          '0'
+		       end) func_designed,
+		       (case when t.dyym is null then  
+	               decode((select count('1') from niutal_xtgl_gnmkczb z where z.gnmkdm = t.gnmkdm and z.czdm <> 'cx' ),0,'1','0')
+	            else 
+	               case when (select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm ) > 0 then  
+	                   '1'
+	               else 
+	                   decode((select count('1') from niutal_xtgl_gnmkczb z where z.gnmkdm = t.gnmkdm and z.czdm <> 'cx' ),0,'1','0')
+	               end
+		          end) func_readonly,
+		       (case when t.dyym is not null then  
+	                 decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm ),0,'1','0')
+	            else
+	              '0'
+		        end) func_leaf
+		  from niutal_xtgl_jsgnmkdmb t,
+		  	   niutal_xtgl_jsgnmkdmb a,
+		  	   (select a.func_guid,a.func_code,a.func_name 
+		  	   	  from niutal_designer_func a 
+		  	   	  where a.func_code = #{func_code}
+		  	   	    and a.opt_code = 'cx'
+		  	   ) b
+		 where t.fjgndm = a.gnmkdm(+)
+		   and t.gnmkdm = b.func_code(+)
+		   and (t.gnsydx = 'gl' or t.gnsydx is null)
+		   and t.gnmkdm = #{func_code}
+	    ]]>
+    </select>
+    
+    <!-- 查询功能菜单上绑定的 自定义功能信息 -->
+	<select id="getFuncMenuModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel"> 
+		select t.func_guid,
+		       t.func_desc,
+		       t.func_editable,
+		       t.func_release,
+		       t.release_time,
+		       t.func_type,
+		       t.query_type,
+		       t.func_width,
+		       t.require_type,
+		       nvl(t.func_code, a.gnmkdm) as func_code,
+		       nvl(t.func_name, a.gnmkmc) as func_name,
+		       t.opt_code,
+		       nvl(a.gnsydx,'all') as func_target,
+		       nvl(a.sfxs,'0') as func_displayed,
+		       nvl(a.cdjb, '1') as func_level,
+		       a.dyym as func_url,
+		       nvl(a.sfzdymk,'0') as func_user_defined,
+		       a.xssx as func_ordinal,
+		       b.gnmkdm as parent_func_code,
+		       b.gnmkmc as parent_func_name
+		  from niutal_designer_func  t,
+		       niutal_xtgl_jsgnmkdmb a,
+		       niutal_xtgl_jsgnmkdmb b
+		 where t.func_code = a.gnmkdm
+		   and a.fjgndm = b.gnmkdm(+)
+		   and (a.gnsydx = 'gl' or a.gnsydx is null)
+		   and t.func_guid = #{func_guid}
+	</select>
+	
+    <!-- 添加【功能菜单】信息 -->
+	<insert id="insertMenu" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel" >
+	declare
+	begin
+		insert into niutal_xtgl_jsgnmkdmb (
+					gnmkdm, 
+					gnmkmc, 
+					fjgndm, 
+					dyym, 
+					xssx, 
+					cdjb, 
+					gnsydx,
+					sfzdymk,
+					sfxs)
+		values (	#{func_code}, 
+					#{func_name},
+					#{parent_func_code},
+					'',
+					#{func_ordinal},
+					#{func_level},
+					#{func_target,jdbcType=VARCHAR},
+					'1',
+					#{func_displayed,jdbcType=VARCHAR});
+					
+		insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz)values(#{func_code},'cx','0','1'); 
+		insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},'cx',''); 
+					
+	end;
+	</insert>
+	
+	<!-- 添加【自定义菜单及自定义功能】信息 -->
+	<insert id="insertFuncMenu" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel" >
+	declare
+	begin
+		insert into niutal_xtgl_jsgnmkdmb (
+					gnmkdm, 
+					gnmkmc, 
+					fjgndm, 
+					dyym, 
+					xssx, 
+					cdjb, 
+					gnsydx,
+					sfzdymk,
+					sfxs)
+		values (	#{func_code}, 
+					#{func_name},
+					#{parent_func_code},
+					#{func_url,jdbcType=VARCHAR},
+					#{func_ordinal},
+					#{func_level},
+					#{func_target,jdbcType=VARCHAR},
+					'1',
+					#{func_displayed,jdbcType=VARCHAR});
+					
+		insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz)values(#{func_code},'cx','0','1'); 
+		insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},'cx',''); 
+					
+		insert into niutal_designer_func(
+					func_guid,
+					func_code,
+					opt_code,
+					func_name,
+					func_desc,
+					func_type,
+					func_editable,
+					func_release,
+					query_type,
+		       		require_type)
+		values(		#{func_guid},
+					#{func_code},
+					'cx',
+					#{func_name,jdbcType=VARCHAR},
+					#{func_desc,jdbcType=VARCHAR},
+					trim(#{func_type,jdbcType=VARCHAR}),
+					#{func_editable,jdbcType=VARCHAR},
+					#{func_release,jdbcType=VARCHAR},
+					#{query_type,jdbcType=VARCHAR},
+					'0');
+					
+		<if test=" func_type != null and ( func_type == 3 or func_type == 41 or func_type == 42 or func_type == 43 )">
+		
+		delete from niutal_xtgl_gnmkczb a where a.gnmkdm = #{func_code} and instr(a.czdm, 'report_') > 0;
+		delete from niutal_xtgl_jsgnmkczb a where a.gnmkdm = #{func_code} and instr(a.czdm, 'report_') > 0;
+		
+		insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz) values(#{func_code},'report_dy','0','0'); 
+		insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},'report_dy',''); 
+		insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz)values(#{func_code},'report_sc','0','0'); 
+		insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},'report_sc',''); 
+	
+		insert into niutal_designer_reports(func_guid,report_guid) values(#{func_guid},#{report_guid});
+		</if>
+		
+		<if test="query_type != null and query_type != 0">
+		insert into niutal_designer_func_elements(func_guid,<if test="func_jqgridable != null and func_jqgridable == 1">element_related_guid,</if>element_guid,element_id,element_type,element_desc,element_width,element_ordinal)
+		values(#{func_guid},<if test="func_jqgridable != null and func_jqgridable == 1">#{func_element_guid2},</if>#{func_element_guid},'query_form','1',#{func_name,jdbcType=VARCHAR}||'-查询条件','12',0);
+		</if>
+		<if test="func_jqgridable != null and func_jqgridable == 1">
+		insert into niutal_designer_func_elements(func_guid,<if test="query_type != null and query_type != 0">element_related_guid,</if>element_guid,element_id,element_type,element_desc,element_width,element_ordinal)
+		values(#{func_guid},<if test="query_type != null and query_type != 0">#{func_element_guid},</if>#{func_element_guid2},'tabGrid','2',#{func_name,jdbcType=VARCHAR}||'-JQGrid数据列表','12',1);
+		</if>
+	end;
+	</insert>
+	
+	<!-- 删除【自定义菜单及自定义功能】信息-->
+	<delete id="deleteFuncMenu" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel">
+	declare
+		 v_count      integer(2);
+	begin
+	
+		select count(1)
+		    into v_count
+		    from niutal_xtgl_jsgnmkdmb t
+		   where t.gnmkdm = #{func_code} and t.sfzdymk = '1';
+			 
+		if v_count > 0 then
+		  
+		  	delete niutal_xtgl_jsgnmkdmb t 
+		  	 where t.gnmkdm in(select a.gnmkdm
+			  from niutal_xtgl_jsgnmkdmb a 
+			 start with a.gnmkdm = #{func_code}
+			connect by prior a.gnmkdm = a.fjgndm);
+
+			delete niutal_xtgl_gnmkczb t
+			 where t.gnmkdm in(select a.gnmkdm
+			  from niutal_xtgl_jsgnmkdmb a 
+			 start with a.gnmkdm = #{func_code}
+			connect by prior a.gnmkdm = a.fjgndm);
+			
+			delete niutal_xtgl_jsgnmkczb t
+			 where t.gnmkdm in(select a.gnmkdm
+			  from niutal_xtgl_jsgnmkdmb a 
+			 start with a.gnmkdm = #{func_code}
+			connect by prior a.gnmkdm = a.fjgndm);
+			
+			 select count(1)
+			    into v_count
+			    from niutal_designer_func t
+			   where t.func_code = #{func_code};
+                 
+             if v_count > 0 then
+				
+				/*删除自定义功能引用的资源信息*/
+				delete niutal_designer_func_resources a 
+				where exists(select 'x' from niutal_designer_func t 
+       				   where t.func_guid = a.func_guid
+       				     and t.func_code in(select a.gnmkdm
+					    from niutal_xtgl_jsgnmkdmb a 
+					   start with a.gnmkdm = #{func_code}
+					 connect by prior a.gnmkdm = a.fjgndm)
+				);
+				/*删除元素关联查询条件字段数据*/
+				delete niutal_designer_query_fields a
+				 where exists (select 'x' from niutal_designer_func_querys b 
+				         where a.query_guid = b.query_guid 
+				           and exists (select 'x' from niutal_designer_func_elements c
+				                 where b.element_guid = c.element_guid
+				                   and exists (select 'x' from niutal_designer_func t
+				                         where t.func_guid = c.func_guid
+				                           and t.func_code in(select a.gnmkdm
+										  from niutal_xtgl_jsgnmkdmb a 
+										 start with a.gnmkdm = #{func_code}
+										connect by prior a.gnmkdm = a.fjgndm)
+			                        )));
+				/*删除元素关联查询条件数据*/
+				delete niutal_designer_func_querys a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_code in(select a.gnmkdm
+								  from niutal_xtgl_jsgnmkdmb a 
+								 start with a.gnmkdm = #{func_code}
+								connect by prior a.gnmkdm = a.fjgndm)
+				          ));
+		                   
+				/*删除元素关联JQGrid组件列数据*/
+				delete niutal_designer_jqgrid_fields a
+				 where exists (select 'x' from niutal_designer_func_widgets b 
+				         where a.func_widget_guid = b.func_widget_guid 
+				           and exists (select 'x' from niutal_designer_func_elements c
+				                 where b.element_guid = c.element_guid
+				                   and exists (select 'x' from niutal_designer_func t
+				                         where t.func_guid = c.func_guid
+				                           and t.func_code in(select a.gnmkdm
+										  from niutal_xtgl_jsgnmkdmb a 
+										 start with a.gnmkdm = #{func_code}
+										connect by prior a.gnmkdm = a.fjgndm)
+				         )));
+				/*删除元素关联组件数据*/
+				delete niutal_designer_func_widgets a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_code in(select a.gnmkdm
+									  from niutal_xtgl_jsgnmkdmb a 
+									 start with a.gnmkdm = #{func_code}
+									connect by prior a.gnmkdm = a.fjgndm)
+				                  ));
+		        /*删除功能关联元素数据*/
+				delete niutal_designer_func_elements a
+			     where exists (select 'x' from niutal_designer_func t
+			             where t.func_guid = a.func_guid
+			                and t.func_code in(select a.gnmkdm
+							  from niutal_xtgl_jsgnmkdmb a 
+							 start with a.gnmkdm = #{func_code}
+							connect by prior a.gnmkdm = a.fjgndm)
+			              );
+			    /*删除元素关联字段数据*/
+				delete niutal_designer_func_fields a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_code in(select a.gnmkdm
+								  from niutal_xtgl_jsgnmkdmb a 
+								 start with a.gnmkdm = #{func_code}
+								connect by prior a.gnmkdm = a.fjgndm)
+				   ));
+                /*删除功能关联自定义报表数据*/
+				 delete niutal_designer_reports a
+				 	where exists (select 'x'
+				     	from niutal_designer_func t
+				         	where t.func_guid = a.func_guid
+				         	  and t.func_code in(select a.gnmkdm
+								  from niutal_xtgl_jsgnmkdmb a 
+								 start with a.gnmkdm = #{func_code}
+								connect by prior a.gnmkdm = a.fjgndm)
+				         	  );
+		        /*删除自定义功能数据*/
+				delete niutal_designer_func t
+				 where t.func_code in(select a.gnmkdm
+				  from niutal_xtgl_jsgnmkdmb a 
+				 start with a.gnmkdm = #{func_code}
+				connect by prior a.gnmkdm = a.fjgndm);
+
+			end if;
+		end if;
+	end;
+	</delete>
+	
+	<!-- 更新【自定义菜单】信息-->
+	<update id="updateMenu" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel">
+	declare
+	begin
+	
+		 update niutal_xtgl_jsgnmkdmb t
+			set t.gnmkmc 	= #{func_name,jdbcType=VARCHAR},
+				t.xssx		= #{func_ordinal,jdbcType=VARCHAR},
+				t.gnsydx	= #{func_target,jdbcType=VARCHAR},
+				t.sfxs 		= #{func_displayed,jdbcType=VARCHAR} 
+		  where t.gnmkdm = #{func_code};
+					
+		 update niutal_xtgl_jsgnmkdmb t
+			set t.sfxs 		= #{func_displayed,jdbcType=VARCHAR} 
+		  where t.gnmkdm in(select a.gnmkdm
+		   from niutal_xtgl_jsgnmkdmb a 
+		  start with a.gnmkdm = #{func_code}
+		connect by prior a.gnmkdm = a.fjgndm); 
+		  
+	end;
+	</update>
+	
+	<!-- 更新【自定义菜单及自定义功能】信息-->
+	<update id="updateFuncMenu" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuModel">
+	declare
+		 v_count integer(2); 
+	begin
+	
+		 update niutal_xtgl_jsgnmkdmb t
+			set t.gnmkmc 	= #{func_name,jdbcType=VARCHAR},
+				t.xssx		= #{func_ordinal,jdbcType=VARCHAR},
+				t.gnsydx	= #{func_target,jdbcType=VARCHAR},
+				t.dyym		= #{func_url,jdbcType=VARCHAR},
+				t.sfxs 		= #{func_displayed,jdbcType=VARCHAR} 
+		  where t.gnmkdm = #{func_code};
+		  
+		  update niutal_xtgl_jsgnmkdmb t
+			set t.sfxs 		= #{func_displayed,jdbcType=VARCHAR} 
+	  	  where t.gnmkdm in(select a.gnmkdm
+		   from niutal_xtgl_jsgnmkdmb a 
+		  start with a.gnmkdm = #{func_code}
+		connect by prior a.gnmkdm = a.fjgndm); 
+		   
+		 update niutal_designer_func t
+			set t.func_name 	= #{func_name,jdbcType=VARCHAR},
+				t.func_desc 	= #{func_desc,jdbcType=VARCHAR},
+				t.func_type		= trim(#{func_type,jdbcType=VARCHAR}),
+				t.func_release 	= #{func_release,jdbcType=VARCHAR},
+				<if test="func_release == 1">
+				t.release_time = #{release_time,jdbcType=VARCHAR},
+				</if>
+				t.func_editable = #{func_editable,jdbcType=VARCHAR},
+				t.query_type 	= #{query_type,jdbcType=VARCHAR}
+		  where t.func_guid = #{func_guid};
+		  
+		 <if test="query_type != null and query_type == 0">
+	  		/*删除元素关联查询条件字段数据*/
+			delete niutal_designer_query_fields a
+			 where exists (select 'x' from niutal_designer_func_querys b 
+			         where a.query_guid = b.query_guid 
+			           and exists (select 'x' from niutal_designer_func_elements c
+			                 where b.element_guid = c.element_guid
+			                   and exists (select 'x' from niutal_designer_func t
+			                         where t.func_guid = c.func_guid
+			                           and t.func_guid = #{func_guid})));
+			/*删除元素关联查询条件数据*/
+			delete niutal_designer_func_querys a
+			 where exists (select 'x' from niutal_designer_func_elements b
+			         where a.element_guid = b.element_guid
+			           and exists (select 'x' from niutal_designer_func t
+			                 where t.func_guid = b.func_guid
+			                   and t.func_guid = #{func_guid}));
+	 	</if>
+	end;
+	</update>
+	
+    <!-- 获取系统 所有功能模块操作按钮 -->
+    <select id="getSystemFuncOptList" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+    	select a.gnmkdm as func_code,
+		       a.czdm as opt_code,
+			   a.sfxs as btn_displayed,
+		       nvl(a.sfzdycz,'0') as btn_user_defined,
+		       decode(#{localeKey},'en_US',nvl(nvl(a.ywmc, b.ywmc),nvl(a.czmc, b.czmc)),nvl(a.czmc, b.czmc)) as btn_text,
+		       b.anys as btn_icon,
+		       b.xssx as btn_ordinal,
+		       c.func_guid,
+		       (case when c.func_guid is not null then
+		          '1'
+		         else
+		          '0'
+		       end) btn_designed
+		  from niutal_xtgl_gnmkczb a, niutal_xtgl_czdmb b, niutal_designer_func c
+		 where a.czdm = b.czdm
+		   and a.gnmkdm = c.func_code(+)
+		   and a.czdm = c.opt_code(+)
+		 order by a.gnmkdm, to_number(b.xssx) asc
+    </select>
+    
+    <!-- 根据功能模块代码查询对应的功能操作按钮信息 -->
+    <select id="getSystemFuncOptMoldelList" parameterType="string"  resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+    	select a.gnmkdm as func_code,
+		       a.czdm as opt_code,
+			   a.sfxs as btn_displayed,
+		       nvl(a.sfzdycz,'0') as btn_user_defined,
+		       decode(#{localeKey},'en_US',nvl(nvl(a.ywmc, b.ywmc),nvl(a.czmc, b.czmc)),nvl(a.czmc, b.czmc)) as btn_text,
+		       b.anys as btn_icon,
+		       b.xssx as btn_ordinal,
+		       c.func_guid,
+		       (case when c.func_guid is not null then
+		          '1'
+		         else
+		          '0'
+		       end) btn_designed
+		  from niutal_xtgl_gnmkczb a, niutal_xtgl_czdmb b, niutal_designer_func c
+		 where a.czdm = b.czdm
+		   and a.gnmkdm = c.func_code(+)
+		   and a.czdm = c.opt_code(+)
+		   and a.gnmkdm =  #{func_code}
+		 order by a.gnmkdm, to_number(b.xssx) asc
+    </select>
+    
+    <!-- 根据功能模块代码+操作代码得到功能模块操作按钮信息 -->
+    <select id="getSystemFuncOptModel"  parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+    	select a.gnmkdm as func_code,
+    		   d.gnmkdm as parent_func_code,
+    		   decode(#{localeKey},'en_US',nvl(d.gnmkywmc,d.gnmkmc),d.gnmkmc) as parent_func_name, 
+		       a.czdm as opt_code,
+			   a.sfxs as btn_displayed,
+		       nvl(a.sfzdycz,'0') as btn_user_defined,
+		       decode(#{localeKey},'en_US',nvl(nvl(a.ywmc, b.ywmc),nvl(a.czmc, b.czmc)),nvl(a.czmc, b.czmc)) as btn_text,
+		       b.anys as btn_icon,
+		       b.xssx as btn_ordinal,
+		       c.func_guid,
+		       (case when c.func_guid is not null then
+		          '1'
+		         else
+		          '0'
+		       end) btn_designed
+		  from niutal_xtgl_gnmkczb 	a, 
+		  	   niutal_xtgl_czdmb 	b, 
+		  	   niutal_designer_func 	c,
+		  	   niutal_xtgl_jsgnmkdmb d
+		 where a.czdm = b.czdm
+		   and a.gnmkdm = c.func_code(+)
+		   and a.gnmkdm = d.gnmkdm
+		   and a.czdm = c.opt_code(+)
+		   and a.gnmkdm = #{func_code}
+		   and a.czdm = #{opt_code}
+    </select>
+    
+    <!-- 查询功能按钮信息 -->
+	<select id="getFuncOptModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel"> 
+	select t.gnmkdm as parent_func_code,
+	       decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as parent_func_name, 
+	       a.gnmkdm as func_code,
+	       a.czdm as opt_code,
+	       a.sfxs as btn_displayed,
+	       nvl(a.sfzdycz,'0') as btn_user_defined,
+	       decode(#{localeKey},'en_US',nvl(nvl(a.ywmc, b.ywmc),nvl(a.czmc, b.czmc)),nvl(a.czmc, b.czmc)) as btn_text,
+	       b.anys as btn_icon,
+	       b.xssx as btn_ordinal 
+	  from niutal_xtgl_jsgnmkdmb t,
+	       niutal_xtgl_gnmkczb   a,
+	       niutal_xtgl_czdmb     b
+	 where t.gnmkdm = a.gnmkdm
+	   and a.czdm = b.czdm
+	   and a.gnmkdm = #{func_code}
+	   and a.czdm   = #{opt_code}
+	</select>
+    
+    <!-- 添加【功能操作按钮】信息 -->
+	<insert id="insertFuncOpt" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel" >
+	declare
+		 v_count      integer(2); 
+	begin
+		insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz)values(#{func_code},#{opt_code},#{btn_displayed,jdbcType=VARCHAR},'1'); 
+		insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},#{opt_code},''); 
+		select count(1) into v_count from niutal_xtgl_czdmb t where t.czdm = #{opt_code} ;
+		if v_count = 0 then
+			insert into niutal_xtgl_czdmb (czdm, czmc, xssx, anys) values (#{opt_code}, #{btn_text}, 
+			(select max(t.xssx) + 1 from niutal_xtgl_czdmb t), #{btn_icon});
+		end if;
+	end;
+	</insert>
+	
+	<!-- 删除【功能操作按钮】信息-->
+	<delete id="deleteFuncOpt" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+	declare
+		 v_count      integer(2); 
+	begin
+	
+	  select count(1)
+	    into v_count
+	    from niutal_xtgl_gnmkczb t
+	   where t.gnmkdm 	= #{func_code} 
+	     and t.czdm   	= #{opt_code} 
+	     and t.sfzdycz 	= '1';
+			 
+		if v_count > 0 then
+		  	
+		  	 delete niutal_xtgl_gnmkczb t where t.gnmkdm = #{func_code} and t.czdm = #{opt_code};
+			 delete niutal_xtgl_jsgnmkczb t where t.gnmkdm = #{func_code} and t.czdm = #{opt_code};
+		  
+		  	 select count(1)
+			    into v_count
+			    from niutal_designer_func t
+			   where t.func_code = #{func_code} 
+                 and t.opt_code = #{opt_code};
+                 
+             if v_count > 0 then
+			    
+			    /*删除自定义功能引用的资源信息*/
+				delete niutal_designer_func_resources a 
+				where exists(select 'x' from niutal_designer_func t 
+       				   where t.func_code = #{func_code} 
+				         and t.opt_code = #{opt_code}
+       				     and t.func_guid = a.func_guid
+				);
+				
+				/*删除元素关联查询条件字段数据*/
+				delete niutal_designer_query_fields a
+				 where exists (select 'x' from niutal_designer_func_querys b 
+				         where a.query_guid = b.query_guid 
+				           and exists (select 'x' from niutal_designer_func_elements c
+				                 where b.element_guid = c.element_guid
+				                   and exists (select 'x' from niutal_designer_func t
+				                         where t.func_guid = c.func_guid
+				                           and t.func_code = #{func_code} 
+				                           and t.opt_code = #{opt_code})));
+				/*删除元素关联查询条件数据*/
+				delete niutal_designer_func_querys a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_code = #{func_code} 
+				                   and t.opt_code = #{opt_code}));
+		                   
+				/*删除元素关联JQGrid组件列数据*/
+				delete niutal_designer_jqgrid_fields a
+				 where exists (select 'x' from niutal_designer_func_widgets b 
+				         where a.func_widget_guid = b.func_widget_guid 
+				           and exists (select 'x' from niutal_designer_func_elements c
+				                 where b.element_guid = c.element_guid
+				                   and exists (select 'x' from niutal_designer_func t
+				                         where t.func_guid = c.func_guid
+				                           and t.func_code = #{func_code} 
+				                           and t.opt_code = #{opt_code})));
+				/*删除元素关联组件数据*/
+				delete niutal_designer_func_widgets a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_code = #{func_code} 
+				                   and t.opt_code = #{opt_code}));
+		        /*删除功能关联元素数据*/
+				delete niutal_designer_func_elements a
+			     where exists (select 'x' from niutal_designer_func t
+			             where t.func_guid = a.func_guid
+			               and t.func_code = #{func_code}
+			               and t.opt_code = #{opt_code});
+			    /*删除元素关联字段数据*/
+				delete niutal_designer_func_fields a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_code = #{func_code} 
+				                   and t.opt_code = #{opt_code}));
+		         /*删除功能关联自定义报表数据*/
+				 delete niutal_designer_reports a
+				 	where exists (select 'x'
+				     	from niutal_designer_func t
+				         	where t.func_code = #{func_code}
+				              and t.opt_code = #{opt_code}
+				              and t.func_guid = a.func_guid);
+		        /*删除自定义功能数据*/
+				delete niutal_designer_func t where t.func_code = #{func_code} and t.opt_code = #{opt_code};
+				
+			end if;
+			
+		end if;
+	end;
+	</delete>
+	
+	<!-- 更新【功能操作按钮】信息-->
+	<update id="updateFuncOpt" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+	 declare
+	  	v_count integer(2);
+	 begin
+	
+		    update niutal_xtgl_gnmkczb t
+		       set t.czdm   = #{btn_code},
+		       	   t.czmc	= #{btn_text,jdbcType=VARCHAR},
+		           t.sfxs   = #{btn_displayed}
+		     where t.gnmkdm = #{func_code}
+		       and t.czdm = #{opt_code};
+		  
+		    update niutal_xtgl_jsgnmkczb t
+		       set t.czdm = #{btn_code}
+		     where t.gnmkdm = #{func_code}
+		       and t.czdm = #{opt_code};
+		  
+		    select count(1) into v_count from niutal_xtgl_czdmb t where t.czdm = #{btn_code};
+		    if v_count = 0 then
+		      insert into niutal_xtgl_czdmb(czdm, czmc, xssx, anys)
+		      values(#{btn_code},#{btn_text},
+		         (select max(t.xssx) + 1 from niutal_xtgl_czdmb t),
+		         #{btn_icon});
+		    else
+		      update niutal_xtgl_czdmb t
+		         set t.anys = #{btn_icon} 
+		       where t.czdm = #{opt_code};
+		    end if;
+		    
+		    update niutal_designer_func t
+		       set t.opt_code = #{btn_code}
+		     where t.func_code = #{func_code}
+		       and t.opt_code = #{old_opt_code};
+	 end;
+	</update>
+	
+	<!-- 查询功能按钮上绑定的自定义功能信息 -->
+	<select id="getFuncOptLinkModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel"> 
+		select t.func_guid,
+		       t.func_code,
+		       t.opt_code,
+		       t.func_name,
+		       t.func_desc,
+		       trim(t.func_type) as func_type,
+		       t.func_editable,
+		       t.func_release,
+		       t.release_time,
+		       t.func_width,
+		       t.require_type,
+		       t.query_type,
+		       (select x.report_guid from niutal_designer_reports x where x.func_guid = t.func_guid) report_guid
+		  from niutal_designer_func t
+		 where t.func_guid = #{func_guid} 
+	</select>
+	
+	<!-- 根据功能代码获取该功能的操作按钮相应的自定义功能信息集合 -->
+	<select id="getFuncOptLinkList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel"> 
+		select t.func_guid,
+		       t.func_name,
+		       t.func_code,
+		       t.opt_code,
+		       t.func_editable,
+		       t.func_release,
+		       t.release_time,
+		       t.func_type,
+		       t.func_desc,
+		       t.func_width,
+		       t.require_type,
+		       (select x.report_guid from niutal_designer_reports x where x.func_guid = t.func_guid) report_guid
+		  from niutal_designer_func t, niutal_xtgl_gnmkczb a
+		 where t.func_code = a.gnmkdm
+		   and t.opt_code = a.czdm
+		   and a.sfxs = '1'
+		   and t.func_code = #{func_code} 
+	</select>
+	
+
+	<!-- 添加【功能操作按钮】对应功能页面信息 -->
+	<insert id="insertFuncOptLink" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel" >
+		declare
+		begin
+					
+			insert into niutal_designer_func(
+						func_guid,
+						func_code,
+						opt_code,
+						func_name,
+						func_desc,
+						func_type,
+						func_editable,
+						func_release,
+						func_width,
+						require_type,
+						query_type)
+			values(		#{func_guid},
+						#{func_code},
+						#{opt_code},
+						#{func_name,jdbcType=VARCHAR},
+						#{func_desc,jdbcType=VARCHAR},
+						trim(#{func_type,jdbcType=VARCHAR}),
+						#{func_editable,jdbcType=VARCHAR},
+						#{func_release,jdbcType=VARCHAR},
+						#{func_width,jdbcType=VARCHAR},
+						#{require_type,jdbcType=VARCHAR},
+						#{query_type,jdbcType=VARCHAR});
+						
+			<if test=" func_type != null and ( func_type == 3 or func_type == 41 or func_type == 42 or func_type == 43)">
+			
+			delete from niutal_xtgl_gnmkczb a where a.gnmkdm = #{func_code} and instr(a.czdm, 'report_') > 0;
+			delete from niutal_xtgl_jsgnmkczb a where a.gnmkdm = #{func_code} and instr(a.czdm, 'report_') > 0;
+			
+			insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz)values(#{func_code},'report_dy','0','0'); 
+			insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},'report_dy',''); 
+			insert into niutal_xtgl_gnmkczb(gnmkdm,czdm,sfxs,sfzdycz)values(#{func_code},'report_sc','0','0'); 
+			insert into niutal_xtgl_jsgnmkczb (jsdm,gnmkdm,czdm,dyym) values(#{user.jsdm},#{func_code},'report_sc',''); 
+		
+			<if test="  query_type != null and query_type != 0">
+			insert into niutal_designer_func_elements(func_guid,element_id,element_type,element_desc,element_width,element_ordinal)
+			values(#{func_guid},'query_form','1',#{func_name,jdbcType=VARCHAR}||'-查询条件','12',0);
+			</if>
+			insert into niutal_designer_reports(func_guid,report_guid) values(#{func_guid},#{report_guid});
+			</if>
+			
+		end;
+	</insert>
+	
+	<!-- 更新【功能操作按钮】对应功能页面信息-->
+	<update id="updateFuncOptLink" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+	declare
+		v_count  integer(2); 
+	begin
+		 update niutal_designer_func t
+			set t.func_name 		= #{func_name,jdbcType=VARCHAR},
+				t.func_desc 		= #{func_desc,jdbcType=VARCHAR},
+				t.func_editable 	= #{func_editable,jdbcType=VARCHAR},
+				t.func_type			= trim(#{func_type,jdbcType=VARCHAR}),
+				t.func_release 		= #{func_release,jdbcType=VARCHAR},
+				<if test="func_release == 1">
+				t.release_time 		= #{release_time,jdbcType=VARCHAR},
+				</if>
+				t.func_width		= #{func_width,jdbcType=VARCHAR},
+				t.require_type		= #{require_type,jdbcType=VARCHAR},
+				t.query_type		= #{query_type,jdbcType=VARCHAR}
+		  where t.func_guid = #{func_guid};
+		
+		<if test="report_guid != null and report_guid != ''">
+			select count(1) into v_count from niutal_designer_reports t where t.func_guid = #{func_guid};
+		    if v_count = 0 then
+		      	insert into niutal_designer_reports(func_guid,report_guid) values(#{func_guid},#{report_guid});
+		    else
+		      	update niutal_designer_reports t
+		         	set t.report_guid = #{report_guid} 
+		          where t.func_guid = #{func_guid};
+		    end if;
+		</if>
+			
+		  <if test="query_type != null and query_type == 0">
+	  		/*删除元素关联查询条件字段数据*/
+			delete niutal_designer_query_fields a
+			 where exists (select 'x' from niutal_designer_func_querys b 
+			         where a.query_guid = b.query_guid 
+			           and exists (select 'x' from niutal_designer_func_elements c
+			                 where b.element_guid = c.element_guid
+			                   and exists (select 'x' from niutal_designer_func t
+			                         where t.func_guid = c.func_guid
+			                           and t.func_guid = #{func_guid})));
+			/*删除元素关联查询条件数据*/
+			delete niutal_designer_func_querys a
+			 where exists (select 'x' from niutal_designer_func_elements b
+			         where a.element_guid = b.element_guid
+			           and exists (select 'x' from niutal_designer_func t
+			                 where t.func_guid = b.func_guid
+			                   and t.func_guid = #{func_guid}));
+		  </if>
+	  end;
+	</update>
+	
+	<!-- 删除【功能操作按钮】对应功能页面信息-->
+	<delete id="deleteFuncOptLink" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncMenuButtonModel">
+	declare
+	 	v_count      integer(2); 
+	begin
+		       
+		select count(1)
+		  into v_count
+		  from niutal_xtgl_gnmkczb a, niutal_designer_func b
+		 where instr(a.czdm, 'report_') > 0
+		   and a.gnmkdm = b.func_code
+		   and b.func_guid = #{func_guid};
+			   	 
+		if v_count > 0 then
+		  	
+		  	/*删除自定义报表操作按钮数据*/
+			delete niutal_xtgl_gnmkczb a
+			 where instr(a.czdm, 'report_') > 0
+			   and exists (select 'x'
+			          from niutal_designer_func t
+			         where a.gnmkdm = t.func_code
+			           and t.func_guid = #{func_guid});
+			           
+	        /*删除自定义报表操作权限按钮数据*/
+			delete niutal_xtgl_jsgnmkczb a
+			 where instr(a.czdm, 'report_') > 0
+			   and exists (select 'x'
+			          from niutal_designer_func t
+			         where a.gnmkdm = t.func_code
+			           and t.func_guid = #{func_guid});
+		  
+		  	 select count(1)
+			    into v_count
+			    from niutal_designer_func t
+			   where t.func_guid = #{func_guid};
+                 
+             if v_count > 0 then
+		             
+				/*删除元素关联查询条件字段数据*/
+				delete niutal_designer_query_fields a
+				 where exists (select 'x' from niutal_designer_func_querys b 
+				         where a.query_guid = b.query_guid 
+				           and exists (select 'x' from niutal_designer_func_elements c
+				                 where b.element_guid = c.element_guid
+				                   and exists (select 'x' from niutal_designer_func t
+				                         where t.func_guid = c.func_guid
+				                           and t.func_guid = #{func_guid})));
+				/*删除元素关联查询条件数据*/
+				delete niutal_designer_func_querys a
+				 where exists (select 'x' from niutal_designer_func_elements b
+				         where a.element_guid = b.element_guid
+				           and exists (select 'x' from niutal_designer_func t
+				                 where t.func_guid = b.func_guid
+				                   and t.func_guid = #{func_guid}));
+		        /*删除功能关联元素数据*/
+				delete niutal_designer_func_elements a where a.func_guid = #{func_guid};
+			 	/*删除功能关联自定义报表数据*/
+				delete niutal_designer_reports a where a.func_guid = #{func_guid};
+		        /*删除自定义功能数据*/
+			 	delete niutal_designer_func t where t.func_guid = #{func_guid};
+			 	
+			end if;
+		end if;
+	end;
+	</delete>
+    
+    <!-- 查询所有操作代码信息-->
+	<select id="getOptList" resultType="com.woshidaniu.common.query.BaseMap">
+	 	select distinct t.czdm as btn_code, t.czmc as btn_text, t.anys as btn_icon,t.xssx as btn_ordinal
+		  from niutal_xtgl_czdmb t
+		 order by t.czdm, to_number(t.xssx)
+	</select>
+	
+	<!-- 获取指定角色 所有功能模块 【菜单功能】-->
+    <select id="getFuncCodeListOfRole" parameterType="string" resultType="string">
+	    select distinct t.gnmkdm
+		  from niutal_xtgl_jsgnmkdmb t, niutal_xtgl_jsgnmkczb a
+		 where t.gnmkdm = a.gnmkdm
+		   and a.jsdm = #{jsdm,jdbcType=VARCHAR}
+		 order by t.gnmkdm
+    </select>
+    
+    <!-- 根据SQL语句查询数据-->
+	<select id="getTableDataList" parameterType="hashmap" resultType="com.woshidaniu.common.query.BaseMap">
+	 	${data_sql}
+	</select>
+	
+</mapper>

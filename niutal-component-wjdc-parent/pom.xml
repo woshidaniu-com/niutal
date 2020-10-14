@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-component-wjdc-parent</artifactId>
+	<packaging>pom</packaging>
+	<description>niutal框架-问卷调查组件</description>
+	
+	<modules>
+<!-- 		<module>niutal-component-wjdc-action</module> -->
+		<module>niutal-component-wjdc-controller</module>
+		<module>niutal-component-wjdc-ext</module>
+		<module>niutal-component-wjdc-api</module>
+		<module>niutal-component-wjdc-web-v5</module>
+	</modules>
+	
+</project>

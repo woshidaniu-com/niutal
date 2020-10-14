@@ -1,0 +1,71 @@
+<div class="modal" ng-controller="HelpModelCtrl">
+	<div class="modal-dialog wide ">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close()">&times;</button>
+				<h2>{{'MODEL.HELP.TITLE' | translate}}</h2>
+			</div>
+			<div class="modal-body">
+				<div>
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li role="presentation" class="active"><a href="#keys"
+							aria-controls="keys" role="tab" data-toggle="tab">{{'MODEL.HELP.KEYS'|translate}}</a></li>
+						<li role="presentation"><a href="#tutorial"
+							aria-controls="tutorial" role="tab" data-toggle="tab">{{'MODEL.HELP.TUTORIAL'|translate}}</a></li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div role="tabpanel" class="tab-pane active" id="keys">
+							<div class="well">
+								<p>
+									{{'MODEL.HELP.KEYS.Z' | translate}}：
+									<kbd>
+										<kbd>ctrl</kbd>
+										+
+										<kbd>Z</kbd>
+									</kbd>
+								</p>
+								<p>
+									{{'MODEL.HELP.KEYS.Y' | translate}}：
+									<kbd>
+										<kbd>ctrl</kbd>
+										+
+										<kbd>Y</kbd>
+									</kbd>
+								</p>
+								<p>
+									{{'MODEL.HELP.KEYS.C' | translate}}：
+									<kbd>
+										<kbd>ctrl</kbd>
+										+
+										<kbd>C</kbd>
+									</kbd>
+								</p>
+								<p>
+									{{'MODEL.HELP.KEYS.V' | translate}}：
+									<kbd>
+										<kbd>ctrl</kbd>
+										+
+										<kbd>V</kbd>
+									</kbd>
+								</p>
+								<p>
+									{{'MODEL.HELP.KEYS.DELETE' | translate}}：
+									<kbd>
+										<kbd>Delete</kbd>
+									</kbd>
+								</p>
+							</div>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="tutorial">
+							<div class="well">{{'MODEL.HELP.NOT_PROVIDED' | translate}}</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>

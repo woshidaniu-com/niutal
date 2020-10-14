@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+  
+	<!-- CXF-3.0 以上版本不再需要下面两行配置 -->
+	<!-- <import resource="classpath:META-INF/cxf/cxf.xml" /> -->
+    <!-- <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /> -->
+    <!-- <import resource="classpath:META-INF/cxf/cxf-servlet.xml" /> -->
+
+	<jaxws:endpoint address="/sjcjService"> 
+		<jaxws:implementor ref="dataQueryWebService" />
+		 <!-- 添加in拦截器 -->
+	    <jaxws:inInterceptors>
+	         <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+	    </jaxws:inInterceptors>
+	    <!-- 添加out拦截器 -->
+	    <jaxws:outInterceptors>
+	         <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+	    </jaxws:outInterceptors>
+	</jaxws:endpoint> 
+	
+	<!--webservice -->
+   	<bean id="dataQueryWebService" name="dataQueryWebService" class="com.woshidaniu.ws.impl.DataQueryWebServiceImpl" scope="prototype">
+   	</bean>
+
+</beans>

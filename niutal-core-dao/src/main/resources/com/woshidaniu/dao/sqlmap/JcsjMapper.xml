@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IJcsjDao" >
+
+		<!-- 查询基础数据列表（不分页） -->
+	<select id="cxJcsjList" parameterType="JcsjModel" resultType="JcsjModel">
+		select a.lx||a.dm pkValue,a.lx,a.dm,a.mc,b.lxmc,a.xtjb,a.zt from niutal_xtgl_jcsjb a 
+      left join niutal_xtgl_jcsjlxb b on a.lx=b.lxdm
+		<where>
+			<if test="lxdm != null and lxdm != ''">
+				and lx = #{lxdm}
+			</if>
+			<if test="dm != null and dm != ''">
+				and dm like '%'||#{dm}||'%'
+			</if>
+			<if test="mc != null and mc != ''">
+				and mc like '%'||#{mc}||'%'
+			</if>
+			<if test="zt != null and zt != ''">
+				and zt = #{zt}
+			</if>
+		</where>
+		
+	</select>
+	
+			<!-- 查询基础数据列表 （分页）-->
+	<select id="getPagedList" parameterType="JcsjModel" resultType="JcsjModel">
+		select * from (select a.lx||a.dm pkValue,a.lx,a.dm,a.mc,b.lxmc,a.xtjb,a.zt from niutal_xtgl_jcsjb a 
+      		left join niutal_xtgl_jcsjlxb b on a.lx=b.lxdm
+		)
+		<where>
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+	
+		<!-- 查询基础数据类型列表 -->
+	<select id="getModelList" parameterType="JcsjModel" resultType="JcsjModel">
+		select lxdm,lxmc from niutal_xtgl_jcsjlxb where 1=1 
+		<if test="xtjb != null and xtjb != ''">
+			and xtjb=#{xtjb} 
+		</if>
+		order by lxmc
+	</select>
+	
+	    <!-- 保存基础数据 -->
+    <insert id="insert" parameterType="JcsjModel">
+    	insert into niutal_xtgl_jcsjb (lx,dm,mc,xtjb,zt) values (#{lxdm},#{dm},#{mc},#{xtjb},#{zt})
+    </insert>
+    
+    	<!-- 查询单个代码 -->
+    <select id="getModel" parameterType="JcsjModel" resultType="JcsjModel">
+    	select 	b.lxdm,
+    			a.dm,
+    			a.mc,
+    			b.lxmc,
+    			b.yz,
+    			a.xtjb, 
+    			a.zt 
+			from niutal_xtgl_jcsjb a left join niutal_XTGL_JCSJLXB b on a.lx = b.lxdm
+    	where a.lx||a.dm = #{pkValue}
+    </select>
+    
+    	<!-- 修改基础数据 -->
+    <update id="update" parameterType="JcsjModel">
+    	update niutal_xtgl_jcsjb
+    	<set>
+    		<if test="dm != null and dm != ''">
+    			dm = #{dm},
+    		</if>
+    		<if test="lx != null and lx !=''">
+    			lx = #{lx},
+    		</if>
+    		<if test="mc != null and mc != ''">
+    			mc = #{mc},
+    		</if>
+    		<if test="zt != null and zt != ''">
+    			zt = #{zt}
+    		</if>
+    	</set> 
+    	where lx||dm =#{pkValue} 
+    </update>
+    
+     <!-- 删除基础数据 -->
+    <delete id="batchDelete" parameterType="hashMap"
+		flushCache="false" statementType="PREPARED" timeout="20000">
+    	delete niutal_xtgl_jcsjb where
+    	 <foreach collection="list" item="item" index="index"
+				separator=" OR">
+			   lx||dm = #{item.pkValue} 
+		</foreach>
+    </delete>
+    
+    	<!-- 查询基础数据列表 -->
+	<select id="getJcsjList" resultType="JcsjModel">
+		select dm,mc from niutal_xtgl_jcsjb where lx = #{lxdm} and zt = '1'
+	</select>
+	
+		<!-- 查询基础数据列表 -->
+	<select id="getJcsjHashMap" resultType="hashMap">
+		select dm,mc from niutal_xtgl_jcsjb where lx = #{lxdm} and zt = '1'
+	</select>
+    
+    <select id="checkDeletable" resultType="int" parameterType="hashMap">
+    	select count(*) as count from ${bm} where ${zdm} = #{zdz}
+    </select>
+    
+</mapper>

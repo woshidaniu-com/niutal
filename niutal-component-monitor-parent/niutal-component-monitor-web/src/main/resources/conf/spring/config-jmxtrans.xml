@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jmxtrans="http://www.jmxtrans.org/schema/embedded"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.jmxtrans.org/schema/embedded http://www.jmxtrans.org/schema/embedded/jmxtrans-1.1.xsd">
+    
+    <description>Spring Jmxtrans Configuration</description>
+    
+    <!-- 对象未创建: -->
+    <!-- 
+    <jmxtrans:jmxtrans id="jmxtrans" ignore-configuration-not-found="true" configuration-scan-period-in-seconds="30">
+        <jmxtrans:configuration>classpath:jmxtrans.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/druid.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/tomcat-7.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/jmxtrans-internals.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/jvm-sun-hotspot.json</jmxtrans:configuration>
+    </jmxtrans:jmxtrans> 
+    -->
+	
+	<bean id="jmxtrans_env" class="org.jmxtrans.embedded.spring.EmbeddedJmxTransFactory" destroy-method="destroy" scope="singleton">
+    	<!-- JMX对象名称  -->
+    	<property name="beanName" value="jmxtrans_env"/>
+    	<!-- 监听配置文件变化: 每60秒检测一次  -->
+    	<property name="configurationScanPeriodInSeconds" value="60"/>
+    	<!-- 如果未发现指定的配置文件 ，是否忽略 -->
+    	<property name="ignoreConfigurationNotFound" value="true"/>
+    	<!-- 初始配置文件 -->
+		<property name="configurationUrls">
+			<list>
+             	<value>classpath:jmxtrans_env.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/druid.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/tomcat-7.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/jmxtrans-internals.json</value> 
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/jvm-sun-hotspot.json</value>
+         	</list>
+		</property>
+    </bean>
+    
+    <bean id="jmxtrans_launcher_env" class="org.jmxtrans.embedded.EmbeddedJmxTransLauncher">
+    	<property name="jmxtrans" ref="jmxtrans_env"/>
+    </bean>
+	
+</beans>

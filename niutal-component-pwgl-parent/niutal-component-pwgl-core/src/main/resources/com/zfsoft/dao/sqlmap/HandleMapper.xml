@@ -1,0 +1,50 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IHandleDao">
+
+	<sql id="cols">
+		<foreach collection="modelList" item="item" separator=",">${item.col}</foreach>
+		<choose>
+			<when test="objMap.fileName != null and objMap.fileName.size() > 0">
+				, <foreach collection="objMap.fileName" item="item" separator="||'_'||">${item}</foreach> exp_filename
+			</when>
+			<otherwise>
+				, <foreach collection="objMap.key" item="item" separator="||'_'||">${item}</foreach> exp_filename
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<sql id="whereLimit">
+		(
+			select 1 from <include refid="existsT"/> z where 
+			<foreach collection="objMap.key" item="item" separator=" and ">z.${item} = a.${item}</foreach>
+		)
+	</sql>
+	
+	<sql id="existsT">
+		(
+			select <foreach collection="objMap.key" item="item" separator=",">'' as ${item}</foreach>
+			from dual union all
+			<foreach collection="objMap.val" item="item" separator=" union all " >
+				<foreach collection="item" item="i" open="select " separator="," close=" from dual">#{i}</foreach>
+			</foreach>
+		)
+	</sql>
+	
+	<sql id="sortOrder">
+		<choose>
+			<when test="null != queryModel and null != queryModel.sortName and queryModel.sortName != ''">
+				order by ${queryModel.sortName}
+				<if test="null != queryModel and null != queryModel.sortOrder and queryModel.sortOrder != ''"> ${queryModel.sortOrder}</if>
+			</when>
+			<when test="null != queryModel and null != queryModel.multiSort and queryModel.multiSort.size() > 0">
+				<foreach collection="queryModel.multiSort" item="item" separator="," open="order by "> ${item.sortName} ${item.sortOrder}</foreach>
+			</when>
+		</choose>
+	</sql>
+	
+	<select id="getDataList" resultType="map">
+		select <include refid="cols"/> from ${sjy} a where exists <include refid="whereLimit"/> <include refid="sortOrder"/>
+	</select>
+</mapper>

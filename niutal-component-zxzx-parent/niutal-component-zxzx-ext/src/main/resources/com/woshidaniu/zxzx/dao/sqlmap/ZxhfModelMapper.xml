@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.woshidaniu.zxzx.dao.daointerface.IZxhfDao" >
+  <resultMap id="BaseResultMap" type="com.woshidaniu.zxzx.dao.entities.ZxhfModel" >
+    <id column="HFID" property="hfid" jdbcType="VARCHAR" />
+    <result column="ZXID" property="zxid" jdbcType="VARCHAR" />
+    <result column="HFR" property="hfr" jdbcType="VARCHAR" />
+    <result column="HFSJ" property="hfsj" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.woshidaniu.zxzx.dao.entities.ZxhfModel" extends="BaseResultMap" >
+    <result column="HFNR" property="hfnr" jdbcType="CLOB" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    HFID, ZXID, HFR, HFSJ
+  </sql>
+  
+  <sql id="Blob_Column_List" >
+    HFNR
+  </sql>
+  
+  <select id="getModel" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from niutal_ZXZX_ZXHFB
+    where HFID = #{hfid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="delete" parameterType="com.woshidaniu.zxzx.dao.entities.ZxhfModel" >
+    delete from niutal_ZXZX_ZXHFB
+    <where>
+    	<trim prefixOverrides="or">
+	      <if test="hfid != null and hfid != ''" >
+	        or HFID = #{hfid,jdbcType=VARCHAR}
+	      </if>
+	      <if test="zxid != null and zxid != ''" >
+	        or ZXID = #{zxid,jdbcType=VARCHAR}
+	      </if>
+    	</trim>
+    </where>
+  </delete>
+  
+  <insert id="insert" parameterType="com.woshidaniu.zxzx.dao.entities.ZxhfModel" >
+    insert into niutal_ZXZX_ZXHFB (HFID, ZXID, HFR, HFSJ, HFNR)
+    values (#{hfid,jdbcType=VARCHAR}, #{zxid,jdbcType=VARCHAR}, #{hfr,jdbcType=VARCHAR}, #{hfsj,jdbcType=VARCHAR}, #{hfnr,jdbcType=CLOB})
+  </insert>
+ 
+  <update id="update" parameterType="com.woshidaniu.zxzx.dao.entities.ZxhfModel" >
+    update niutal_ZXZX_ZXHFB
+    <set >
+      <if test="zxid != null and zxid != ''" >
+        ZXID = #{zxid,jdbcType=VARCHAR},
+      </if>
+      <if test="hfr != null and hfr != ''" >
+        HFR = #{hfr,jdbcType=VARCHAR},
+      </if>
+      <if test="hfsj != null and hfsj != ''" >
+        HFSJ = #{hfsj,jdbcType=VARCHAR},
+      </if>
+      <if test="hfnr != null and hfnr != ''" >
+        HFNR = #{hfnr,jdbcType=CLOB},
+      </if>
+    </set>
+    where HFID = #{hfid,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

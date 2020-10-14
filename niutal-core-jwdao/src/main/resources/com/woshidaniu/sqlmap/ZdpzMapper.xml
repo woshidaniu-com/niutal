@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IZdpzDao" >
+
+	<!-- 查询数据列表字段信息配置信息 -->
+	<select id="getModelList" parameterType="com.woshidaniu.entities.ZdpzModel" resultType="com.woshidaniu.entities.ZdpzModel">
+		select t.zdpz_id,
+		       t.zd_fzdm,
+		       t.zd_label,
+		       t.zd_name,
+		       t.zd_index,
+		       t.zd_align,
+		       t.zd_hidden,
+		       t.zd_resizable,
+		       t.zd_sortable,
+		       t.zd_number
+		  from niutal_xtgl_zdpzb t
+		 where t.zd_fzdm = #{zd_fzdm}
+		   and t.yhm = #{yhm}
+		 order by to_number(t.zd_number) asc
+	</select>
+	
+   	<!-- 新增数据列表字段信息配置信息 -->
+    <insert id="insert" parameterType="com.woshidaniu.entities.ZdpzModel">
+    	insert into niutal_xtgl_zdpzb
+		  (zd_fzdm,
+		   zd_label,
+		   zd_name,
+		   zd_index,
+		   zd_align,
+		   zd_hidden,
+		   zd_resizable,
+		   zd_sortable,
+		   zd_number,
+		   yhm)
+		values
+		  (#{zd_fzdm,jdbcType=VARCHAR},
+		   #{zd_label,jdbcType=VARCHAR},
+		   #{zd_name,jdbcType=VARCHAR},
+		   #{zd_index,jdbcType=VARCHAR},
+		   #{zd_align,jdbcType=VARCHAR},
+		   #{zd_hidden,jdbcType=VARCHAR},
+		   #{zd_resizable,jdbcType=VARCHAR},
+		   #{zd_sortable,jdbcType=VARCHAR},
+		   #{zd_number,jdbcType=VARCHAR},
+		   #{yhm})
+    </insert>
+    
+    <!-- 修改数据列表字段信息配置信息 -->
+    <update id="update" parameterType="com.woshidaniu.entities.ZdpzModel">
+    	update niutal_xtgl_zdpzb t
+    	<set>
+    		<if test="zd_hidden != null and zd_hidden != ''">
+    			t.zd_hidden = #{zd_hidden},
+    		</if>
+    		<if test="zd_resizable != null and zd_resizable !=''">
+    			t.zd_resizable = #{zd_resizable},
+    		</if>
+    		<if test="zd_sortable != null and zd_sortable != ''">
+    			t.zd_sortable = #{zd_sortable},
+    		</if>
+    		<if test="zd_align != null and zd_align != ''">
+    			t.zd_align = #{zd_align},
+    		</if>
+    		<if test="zd_number != null and zd_number != ''">
+    			t.zd_number = #{zd_number}
+    		</if>
+    	</set> 
+    	where t.zdpz_id = #{zdpz_id}
+    </update>
+    
+</mapper>

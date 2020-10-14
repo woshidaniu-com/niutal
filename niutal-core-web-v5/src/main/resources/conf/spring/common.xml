@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- 
+		<context:component-scan/>标签注意事项：
+		1、<context:component-scan>有一个use-default-filters属性，该属性值为true时表示会扫描指定包下的全部的标有
+			@Component、@Repository、@Service和@Controller的类并注册成bean;
+		2、因为base-package="com.woshidaniu"在这个目录下包含了Action,Service,Dao;
+			如果配置文件中<context:component-scan base-package="com.woshidaniu"/>未指定 use-default-filters="false" ，
+			 默认不仅仅扫描指定规则的Bean，还扫描标注有@Component、@Repository、@Service和@Controller的Bean，可能造成一些问题。
+			 原因可参见网络博客：http://jinnianshilongnian.iteye.com/blog/1762632
+		3、 仅仅指定base-package的扫描方式粒度比较，我们需要指定扫描和不扫描的规则，获得更好的扫描效率。此时子标签
+			<context:incluce-filter>和<context:include-filter> 就起到了勇武之地。
+		       如下所示：
+			<context:component-scan base-package="com.woshidaniu" use-default-filters="false">  
+				<context:include-filter type="regex" expression="com.woshidaniu.*.impl.*"/>
+				<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+			</context:component-scan>  
+		      备注：
+		    context:exclude-filter 子节点指定排除哪些指定表达式的组件
+    		context:include-filter 子节点指定包含哪些表达式的组件，该子节点需要use-default-filters="false"配合使用（如果use-default-filters="ture"
+    		则使用系统默认扫描所有带有@Component@Controller@Service@Repository的组件）
+		4、filter标签在Spring3有五个type，如下：
+		|	Filter Type |	Examples Expression 		|	Description														|
+		|	annotation 	|	org.example.SomeAnnotation 	|	符合SomeAnnoation的target class									|
+		|	assignable 	|	org.example.SomeClass 		|	指定class或interface的全名											|
+		|	aspectj 	|	org.example..*Service+ 		|	AspectJ语法														|
+		|	regex 		|	org\.example\.Default.* 	|	Regelar Expression												|
+		|	custom 		|	org.example.MyTypeFilter 	|	Spring3新增自訂Type，实作org.springframework.core.type.TypeFilter	|
+    
+	 -->
+	<context:component-scan base-package="com.woshidaniu">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
+	</context:component-scan>
+	
+	<!-- 统一引入其他配置 -->
+	<import resource="classpath*:conf/spring/config-*.xml" />
+	<import resource="classpath*:conf/dataTable/config-*.xml" />
+	<import resource="classpath*:conf/cachekey/config-*.xml" />
+	
+	<!-- 自动注入扩展的ApplicationContext,便于对象获取 -->
+	<bean class="org.springframework.enhanced.context.SpringContextAwareContext"/>
+	<!-- 高性能ID生成器 -->
+	<bean id="sequence" name="sequence" class="com.woshidaniu.spring.factory.EnhancedSequenceFactory"/>
+	
+</beans>

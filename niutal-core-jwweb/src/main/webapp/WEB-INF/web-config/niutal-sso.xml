@@ -1,0 +1,45 @@
+<!--单点登录调试配置开始 -->
+<servlet>
+	<servlet-name>ZfssoLoginServlet</servlet-name>
+	<servlet-class>com.woshidaniu.niuca.tp.cas.client.zfsso.ZfssoLogin</servlet-class>
+	<!--客户端存放session类完整路径 业务系统开发人员配置 -->
+	<init-param>
+		<param-name>setsessionclass</param-name>
+		<param-value>com.woshidaniu.sso.niuca.ZfssoSession</param-value>
+	</init-param>
+</servlet>
+<servlet-mapping>
+	<servlet-name>ZfssoLoginServlet</servlet-name>
+	<url-pattern>/zfssologin</url-pattern>
+</servlet-mapping>
+<listener>
+	<listener-class>com.woshidaniu.niuca.tp.cas.client.logout.SingleSignOutHttpSessionListener</listener-class>
+</listener>
+<filter>
+	<filter-name>Zfca Single Sign Out Filter</filter-name>
+	<filter-class>com.woshidaniu.niuca.tp.cas.client.logout.SingleSignOutFilter</filter-class>
+</filter>
+<filter-mapping>
+	<filter-name>Niuca Single Sign Out Filter</filter-name>
+	<url-pattern>*.html</url-pattern>
+</filter-mapping>
+<filter>
+	<filter-name>ZFSSO Filter</filter-name>
+	<filter-class>com.woshidaniu.sso.filter.SsoLoginFilter</filter-class>
+	<!--开发人员配置参数 start配置存放用户登录信息session类名 -->
+	<init-param>
+		<param-name>setsessionclass</param-name>
+		<param-value>com.woshidaniu.sso.niuca.ZfssoSession</param-value>
+	</init-param>
+	<!--配置无需登录即可访问的页面，以英文逗号隔开 -->
+	<init-param>
+		<param-name>notCheckURLList</param-name>
+		<param-value>/studentlogin.do;/userLogin.do;/xtgl/init_cxYhxxIndex.html;/xtgl/init_fkIndex.html;/jxsgl/jxsbm_*.html</param-value>
+	</init-param>
+	<!--开发人员配置参数 end -->
+</filter>
+<filter-mapping>
+	<filter-name>ZFSSO Filter</filter-name>
+	<url-pattern>*.html</url-pattern>
+</filter-mapping>
+<!--单点登录配置结束 -->

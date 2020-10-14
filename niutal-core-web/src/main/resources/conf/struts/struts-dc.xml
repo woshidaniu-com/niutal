@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="niutal/dc" extends="configuration" namespace="/niutal/dc">
+		<!-- 自定义导出 -->
+		<action name="export_*" class="exportAction" method="{1}">
+			<result name="exportConfig">/WEB-INF/pages/dc/exportConfig.jsp</result>
+		</action>
+	</package>	
+</struts>

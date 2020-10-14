@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app [
+    <!ENTITY niutal-license SYSTEM "web-config/niutal-license.xml">
+    <!ENTITY niutal-basic SYSTEM "web-config/niutal-basic.xml">
+    <!ENTITY niutal-monitor SYSTEM "web-config/niutal-monitor.xml">
+]>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	
+	<!-- 关闭不安全的HTTP方法 -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>任意名称</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method>DELETE</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>OPTIONS</http-method>
+			<http-method>TRACE</http-method>
+			<http-method>PROPFIND</http-method>
+			<http-method>COPY</http-method>
+			<http-method>PATCH</http-method>
+			<http-method>MOVE</http-method>
+			<http-method>SEARCH</http-method>
+			<http-method>MKCOL</http-method>
+			<http-method>LOCK</http-method>
+			<http-method>UNLOCK</http-method>
+			<http-method>PROPPATCH</http-method>
+		</web-resource-collection>
+		<auth-constraint></auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	<!-- 关闭不安全的HTTP方法 -->
+	
+	<!-- 全局返回页面 -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.zf</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/500.zf</location>
+	</error-page>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>niutal.v5.root</param-value>
+	</context-param>
+
+	<!-- 我是大牛软件授权 -->
+	&niutal-license;
+	
+	<!-- 框架基础实现 -->
+	&niutal-basic;
+	
+	<!-- 会话,性能监控模块  -->
+	&niutal-monitor;
+	
+	<mime-mapping>
+		<extension>rar</extension>
+		<mime-type>application/rar</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>woff</extension>
+		<mime-type>application/font-woff</mime-type>
+	</mime-mapping>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/pages/globalweb/index.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

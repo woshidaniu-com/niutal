@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+   
+
+   <!-- 基础代码-表元素定义
+   <bean id="table_items_mapping" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="targetMapClass" value="java.util.LinkedHashMap"/>
+		<property name="sourceMap">
+			<map>
+				<entry key="niutal_xtgl_mzdmb" value-ref="niutal_xtgl_mzdmb_config"/>
+				<entry key="niutal_xtgl_xqdmb" value-ref="niutal_xtgl_xqdmb_config"/>
+				<entry key="niutal_xtgl_xxxsdmb" value-ref="niutal_xtgl_xxxsdmb_config"/>
+				<entry key="niutal_xtgl_xbdmb" value-ref="niutal_xtgl_xbdmb_config"/>
+			</map>
+		</property>
+	</bean>
+ 
+	<bean id="table_fields_mapping" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="targetMapClass" value="java.util.LinkedHashMap"/>
+		<property name="sourceMap">
+			<map>
+				<entry key="niutal_xtgl_mzdmb" value-ref="niutal_xtgl_mzdmb_list"/>
+				<entry key="niutal_xtgl_xqdmb" value-ref="niutal_xtgl_xqdmb_list"/>
+				<entry key="niutal_xtgl_xxxsdmb" value-ref="niutal_xtgl_xxxsdmb_list"/>
+				<entry key="niutal_xtgl_xbdmb" value-ref="niutal_xtgl_xbdmb_list"/>
+			</map>
+		</property>
+	</bean>-->
+</beans>

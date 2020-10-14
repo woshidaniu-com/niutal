@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IWjhdDao">
+
+	<select id="queryWjhd" resultType="com.woshidaniu.wjdc.dao.entites.WjhdModel">
+		select 
+			a.DAID
+			,a.DJRID
+			,a.WJID
+			,a.STID
+			,a.XXID
+			,a.HDSX
+			,TXNR
+		from 
+			niutal_WJDC_WJHDB a 
+		where 
+			a.wjid = #{wjid} 
+			and a.djrid = #{djrid}
+	</select>
+
+	<select id="queryWjSthd" resultType="com.woshidaniu.wjdc.dao.entites.WjhdModel">
+		select 
+			a.DAID
+			,a.DJRID
+			,a.WJID
+			,a.STID
+			,a.XXID
+			,a.HDSX
+			,TXNR
+		from 
+			niutal_WJDC_WJHDB a 
+		where 
+			a.wjid = #{wjid} 
+			and a.djrid = #{djrid}
+			and a.stid = #{stid}
+		order by wjid,stid,djrid,hdsx
+	</select>
+</mapper>

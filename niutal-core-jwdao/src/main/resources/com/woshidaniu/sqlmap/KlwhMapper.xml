@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IKlwhDao" >
+
+	<!-- 查询学生列表 -->
+	<select id="getPagedList" parameterType="XsmmModel" resultType="XsmmModel">
+		select xs.xh,
+		       xs.xm,
+		       nj.njmc as nj,
+		       jg.jgmc as xy,
+		       zy.zymc as zy,
+		       bj.bjmc as bj,
+		       xs.zjhm as sfzh
+		  from jw_xjgl_xsjbxxb  xs,
+		       jw_xjgl_xsxjxxb  xj,
+		       niutal_xtgl_njdmb nj,
+		       niutal_xtgl_jgdmb jg,
+		       niutal_xtgl_zydmb zy,
+		       niutal_xtgl_bjdmb bj
+		 where xs.xh_id = xj.xh_id
+		   and xj.njdm = nj.njdm_id(+)
+		   and xj.jg_id = jg.jg_id(+)
+		   and xj.zyh_id = zy.zyh_id(+)
+		   and xj.bh_id = bj.bh_id(+)
+		<if test="xm != null and xm != ''">
+			and xs.xm like '%'||#{xm}||'%'
+		</if>
+		<if test="xh != null and xh != ''">
+			and xs.xh like '%'||#{xh}||'%'
+		</if>	
+	</select>
+	
+	<!-- 查询学生列表 -->
+	<select id="getXsxxList" parameterType="XsmmModel" resultType="XsmmModel">
+		select t.xh,t.zjhm as sfzh
+  		from jw_xjgl_xsjbxxb t
+  		  <if test="pkValue != null and pkValue != ''" >
+ 		  	 join TABLE(my_split('${pkValue}',',') ) p on t.xh = p.column_value
+    	  </if>
+	</select>
+	
+	
+	<!-- 根据输入密码初始化 -->
+    <update id="updateForMany" >  
+    	merge into jw_xjgl_xsqtxxb b using TABLE(my_split('${pkValue}',',') ) p on (b.xh = p.column_value)
+		when matched then  update set b.xsmm = #{mm,jdbcType=VARCHAR}
+    </update>
+    
+    <!-- 根据输入密码全部初始化 -->
+    <update id="update">
+		
+		merge into jw_xjgl_xsqtxxb b using jw_xjgl_xsqtxxb p on (b.xh = p.xh)
+		when matched then  update set b.xsmm =  #{mm,jdbcType=VARCHAR}
+		
+    </update>
+    
+    <!-- 根据身份证密码初始化 -->
+    <update id="updateForManySFZ" >  
+    	merge into jw_xjgl_xsqtxxb b using (
+	    	<foreach collection="list" item="item" index="index" separator=" union">
+				  select #{item.xh} xh,#{item.mm} mm from dual
+			</foreach>
+		) p on (b.xh = p.xh)
+		when matched then  update set b.xsmm = p.mm
+    </update>
+</mapper>

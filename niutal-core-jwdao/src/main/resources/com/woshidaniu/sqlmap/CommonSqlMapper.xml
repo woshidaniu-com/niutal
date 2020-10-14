@@ -1,0 +1,978 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.ICommonSqlDao" >
+
+	<!-- 查询 学校信息 -->
+	<select id="getXxxx" resultType="hashMap">
+		select xxdm,xxmc from niutal_xtgl_xxxxszb
+	</select>
+	
+	<!--  得到系统内置参数值 -->
+	<select id="getInnerParam" resultType="string" parameterType="string">
+		select x.zdz from jw_jcdml_xtnzb x where x.zdm = #{zdm}
+	</select>
+	
+	<!--  得到系统内置参数值(批量) -->
+	<select id="getInnerParams" parameterType="com.woshidaniu.entities.CommonModel" resultType="hashMap">
+		select x.zdm,x.zdz from jw_jcdml_xtnzb x where x.zdm in 
+			<foreach collection="zdmList" item="item" index="index"  separator="," open="(" close=")" >
+	           #{item}
+	       </foreach>
+	</select>
+   
+   <sql id="JSxxQuery">
+    select t.jsdm,
+	       t.jsmc,
+	       t.jssm,
+	       t.sfksc,
+	       t.gwjbdm,
+	       t.sfejsq,
+	       t.gnmkdm,
+	       t.jsjb,
+	       t.jgh as yhm,
+	       decode((select count(1)
+	                from niutal_xtgl_jsxxb a
+	               where a.fjsdm = t.jsdm),
+	              0,
+	              'true',
+	              'false') leafStr,
+	       (select count(b.yhm) from niutal_xtgl_yhjsb b where b.jsdm = t.jsdm) yhnum,
+	       t.fjsdm,
+	       a.jsmc as fjsmc,
+	       a.jsjb as fjsjb,
+	       t.jslxdm,
+	       b.mc as jslxmc
+	  from niutal_xtgl_jsxxb t,
+	       niutal_xtgl_jsxxb a,
+	       (select c.lx, c.dm, c.mc from niutal_xtgl_jcsjb c where c.lx = '0025') b
+	 where t.fjsdm = a.jsdm(+)
+	   and t.jslxdm = b.dm(+)
+	   and t.jsdm != 'admin'
+	   <if test="jsdm !=null and jsdm != ''">
+	   and t.jsdm = #{jsdm}
+	 	</if>
+     </sql>
+   
+    <!-- 查询所有角色信息-->
+	<select id="queryAllJsByScope" resultType="JsglModel">
+		<include refid="JSxxQuery"/>
+		order by t.jsdm desc
+	</select>
+	
+	<!-- 分页查询角色信息；且进行数据范围控制-->
+	<select id="getPagedJsxxListByScope" resultType="JsglModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="JSxxQuery"/>
+	</select>
+	
+	<!-- 查询所有校区；且进行数据范围控制-->
+	<select id="queryAllXqByScope" resultType="XqdmModel" parameterType="com.woshidaniu.entities.CommonModel" >
+		select t.xqh_id, t.xqh, t.xqmc, t.xqdz, t.zjr, t.zjsj, t.xgr, t.xgsj 
+		  from niutal_xtgl_xqdmb t
+	</select>
+	
+	<!-- 分页查询校区信息；且进行数据范围控制-->
+	<select id="getPagedXqxxListByScope" resultType="XqdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.xqh_id, t.xqh, t.xqmc, t.xqdz, t.zjr, t.zjsj, t.xgr, t.xgsj 
+		  from niutal_xtgl_xqdmb t
+		  <if test="xqh_id != null and xqh_id != ''">
+			where t.xqh_id != #{xqh_id}
+		  </if>
+	</select>
+   
+   <!-- 查询所有星期-->
+   	<select id="queryXqj" resultType="JcsjModel">
+   		select dm, mc from niutal_xtgl_jcsjb where lx='0036'
+   	</select>
+   	
+    <!-- 查询所有年级；且进行数据范围控制-->
+	<select id="queryAllNjByScope"  resultType="NjdmModel">
+	  select  a.njdm_id,
+		  	  a.njdm,
+		      a.njmc
+		from niutal_xtgl_njdmb a
+	   where a.sfsy = '1'
+	   order by a.njdm desc
+	</select>
+	
+	<!-- 根据年级代码ID查询年级信息-->
+	<select id="getNjdmModel" parameterType="string" resultType="NjdmModel">
+	  select  a.njdm_id,
+		  	  a.njdm,
+		      a.njmc
+		from niutal_xtgl_njdmb a
+	   where a.sfsy = '1'
+	     and a.njdm_id = #{njdm_id}
+	</select>
+	
+	<select id="queryAllNjByScope2"  resultType="NjdmModel" parameterType="string">
+	  select  a.njdm_id,
+          a.njdm,
+          a.njmc
+    from niutal_xtgl_njdmb a
+     where a.sfsy = '1'
+     and a.njdm_id in (select distinct t.njdm_id from jw_xjgl_xsxjxxb t where t.xh_id =#{xhId} )
+     order by a.njdm desc
+	</select>
+	<!-- 查询所有年级；且进行数据范围控制-->
+	<select id="queryNjListByScope" resultType="NjdmModel" parameterType="com.woshidaniu.entities.CommonModel"  >
+	  select  a.njdm_id,
+		  	  a.njdm,
+		      a.njmc
+		from niutal_xtgl_njdmb  a
+	   where a.sfsy = '1'
+	   order by a.njdm desc
+	</select>
+	
+	<!-- 分页查询年级；且进行数据范围控制-->
+	<select id="getPagedNjListByScope" resultType="NjdmModel"  parameterType="com.woshidaniu.entities.CommonModel"  >
+	  select  a.njdm_id,
+		  	  a.njdm,
+		      a.njmc,
+		      rownum
+		from niutal_xtgl_njdmb a
+	   where a.sfsy = '1'
+	</select>
+	
+	<!-- 
+	机构:筛选条件
+	jgyxbs=1
+	lssjjgid is null
+	-->
+	<sql id="JgxxQuery">
+		<![CDATA[
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       t.lsxqid,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.kkxy
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   ]]>
+	</sql>
+	
+	<!-- 查询所有机构-->
+	<select id="getAllJgxxList" parameterType="string" resultType="BmdmModel">
+		<include refid="JgxxQuery"/>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据机构ID查询机构信息-->
+	<select id="getJgxxModel" parameterType="string" resultType="BmdmModel">
+		<include refid="JgxxQuery"/>
+	    and t.jg_id  = #{jg_id}
+	</select>
+	
+	<!-- 查询所有机构；且进行数据范围控制；且进行数据范围控制-->
+	<select id="queryAllJgxxByScope" parameterType="string" resultType="BmdmModel">
+		<include refid="JgxxQuery"/>
+		{ t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询符合条件的机构信息集合；且进行数据范围控制-->
+	<select id="getPagedJgxxListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="JgxxQuery"/>
+		 <if test="jg_id != null and jg_id != ''">
+				and t.jg_id = #{jg_id}
+		 </if>
+		<if test="rangeable != null and rangeable == true">
+		 { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询符合条件的机构信息集合for Autocomplete组件-->
+	<select id="getPagedJgxxPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.jgdm as key, t.jgmc as value
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and ( t.jgdm like '%'||#{key,jdbcType=VARCHAR}||'%' or t.jgmc like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		   { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		 </choose>
+	</select>
+	
+	<!-- 
+	开课学院:筛选条件
+	jgyxbs=1
+	sfjxbm=1
+	kkxy=1,3
+	lssjjgid is null
+	-->
+	<sql id="kkbmQuery">
+		<![CDATA[
+		select t.jg_id,
+               t.jgdm,
+               t.jgmc,
+               t.jgywmc,
+               t.jgjc,
+               t.jgjp,
+               t.jgdz,
+               t.lssjjgid,
+               t.lsxqid,
+               t.sfjxbm,
+               t.sfst,
+               t.kkxy
+          from niutal_xtgl_jgdmb t
+         where t.jgyxbs = '1'
+           and t.sfjxbm = '1'
+           and bitand(t.kkxy, 1) > 0
+	   ]]>
+	</sql>
+	
+	<!-- 查询所有开课部门；且进行数据范围控制；且进行数据范围控制-->
+	<select id="queryAllKkbmByScope" parameterType="com.woshidaniu.entities.CommonModel" resultType="BmdmModel">
+		<include refid="kkbmQuery"/>
+		<if test="rangeable != null and rangeable == true">
+		{ t.jg_id in func('view_xtgl_kkbm';'kkbm_id';'lssjjgid';'kkbm_id')}
+		</if>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.kkbmxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.kkbmxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据开课部门ID查询开课部门信息-->
+	<select id="getKkbmModel" parameterType="string" resultType="BmdmModel">
+		<include refid="kkbmQuery"/>
+		 and t.jg_id  = #{kkbm_id}
+	</select>
+	
+	<!-- 分页查询符合条件的开课部门集合；且进行数据范围控制-->
+	<select id="getPagedKkbmListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="kkbmQuery"/>
+		<if test="jg_id != null and jg_id != ''">
+		 	and t.jg_id  = #{jg_id}
+	    </if>
+		<if test="rangeable != null and rangeable == true">
+		{ t.jg_id in func('view_xtgl_kkbm';'kkbm_id';'lssjjgid';'kkbm_id')}
+		</if>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.kkbmxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.kkbmxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询符合条件的开课部门集合for Autocomplete组件；且进行数据范围控制-->
+	<select id="getPagedKkbmPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.jgdm as key, t.jgmc as value
+		  from (<include refid="kkbmQuery"/>) t
+		 where ( t.jgdm like '%'||#{key,jdbcType=VARCHAR}||'%' or t.jgmc like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		 { t.jg_id in func('view_xtgl_kkbm';'kkbm_id';'lssjjgid';'kkbm_id')}
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.kkbmxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.kkbmxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 
+	教师部门:筛选条件
+	jgyxbs=1 
+	-->
+	<sql id="jsbmQuery">
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       t.lsxqid,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.kkxy
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+	</sql>
+	
+	<!-- 查询所有的教师部门集合；且进行数据范围控制-->
+	<select id="queryAllJsbmByScope" parameterType="com.woshidaniu.entities.CommonModel" resultType="BmdmModel">
+		 <include refid="jsbmQuery"/>
+		 <if test="rangeable != null and rangeable == true">
+		  { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 </if>
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		 </choose>
+	</select>
+	
+	<!-- 分页查询符合条件的教师部门信息集合；且进行数据范围控制-->
+	<select id="getPagedJsbmListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="jsbmQuery"/>
+		<if test="rangeable != null and rangeable == true">
+		 { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询符合条件的教师部门集合for Autocomplete组件；且进行数据范围控制-->
+	<select id="getPagedJsbmPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.jgdm as key, t.jgmc as value
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and ( t.jgdm like '%'||#{key,jdbcType=VARCHAR}||'%' or t.jgmc like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		   { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.jgmc asc</otherwise>
+		 </choose>
+	</select>
+	
+	<!-- 
+	学生学院:筛选条件
+	jgyxbs=1
+	sfjxbm=1
+	kkxy=2,3
+	lssjjgid is null
+	-->
+	<sql id="xsxyQuery">
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       t.lsxqid,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.kkxy
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and t.sfjxbm = '1'
+		   and bitand(t.kkxy,2) > 0
+	</sql>
+	
+	<!-- 查询符合条件的学院信息集合；且进行数据范围控制-->
+	<select id="queryXyxxListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		 <include refid="xsxyQuery"/>
+		 <if test="rangeable != null and rangeable == true">
+		 { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 </if>
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.xsxyxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.xsxyxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据学院ID查询学院信息-->
+	<select id="getXyxxModel" parameterType="string" resultType="BmdmModel">
+		<include refid="xsxyQuery"/>
+	     and t.jg_id  = #{xy_id}
+	</select>
+	
+	<!-- 分页查询符合条件的学院信息集合；且进行数据范围控制-->
+	<select id="getPagedXyxxListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="xsxyQuery"/>
+	    <if test="jg_id != null and jg_id != ''">
+		 	and t.jg_id  = #{jg_id}
+	    </if>
+		<if test="rangeable != null and rangeable == true">
+		{ t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.xsxyxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.xsxyxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询符合条件的学院信息集合for Autocomplete组件-->
+	<select id="getPagedXyxxPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.jgdm as key, t.jgmc as value
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and t.sfjxbm = '1'
+		   and bitand(t.kkxy,2) > 0
+		   and ( t.jgdm like '%'||#{key,jdbcType=VARCHAR}||'%' or t.jgmc like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		   { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.xsxyxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.xsxyxh,t.jgmc asc</otherwise>
+		 </choose>
+	</select>
+	
+	<!-- 
+	系:筛选条件
+	jgyxbs=1
+	lssjjgid is not null
+	-->
+	<sql id="XxxQuery">
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       t.lsxqid,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.kkxy
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and t.lssjjgid is not null
+		   	<if test="jg_id != null and jg_id != ''">
+				and t.lssjjgid = #{jg_id}
+			</if>
+	</sql>
+	
+	<!-- 查询符合条件的系信息集合；且进行数据范围控制-->
+	<select id="queryXxxListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		 <include refid="XxxQuery"/>
+		 <if test="rangeable != null and rangeable == true">
+		 { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 </if>
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.kkbmxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.kkbmxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据系ID查询系信息 -->
+	<select id="getXxxModel" parameterType="string" resultType="BmdmModel">
+		select t.jg_id,
+		       t.jgdm,
+		       t.jgmc,
+		       t.jgywmc,
+		       t.jgjc,
+		       t.jgjp,
+		       t.jgdz,
+		       t.lssjjgid,
+		       t.lsxqid,
+		       t.sfjxbm,
+		       t.sfst,
+		       t.kkxy
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and t.lssjjgid is not null
+	       and t.jg_id  = #{xxx_id}
+	</select>
+	
+	<!-- 分页查询符合条件的系信息集合；且进行数据范围控制-->
+	<select id="getPagedXxxListByScope" resultType="BmdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="XxxQuery"/>
+	 	<if test="rangeable != null and rangeable == true">
+		{ t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		</if>
+		<choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.kkbmxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.kkbmxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询符合条件的系信息集合for Autocomplete组件-->
+	<select id="getPagedXxxPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.jgdm as key, t.jgmc as value
+		  from niutal_xtgl_jgdmb t
+		 where t.jgyxbs = '1'
+		   and t.lssjjgid is not null
+		   and ( t.jgdm like '%'||#{key,jdbcType=VARCHAR}||'%' or t.jgmc like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		   { t.jg_id in func('view_xtgl_jgdm';'jg_id';'lssjjgid';'jg_id')}
+		 <choose>
+			<when test="jgpxzd != null and jgpxzd == 1 ">order by t.kkbmxh,nvl((select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid),t.jgdm),(select jgdm from niutal_xtgl_jgdmb where jg_id=t.lssjjgid) desc,t.jgdm</when>
+			<otherwise>order by t.kkbmxh,t.jgmc asc</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 查询所有专业；且进行数据范围控制-->
+	<select id="queryAllZyByScope" resultType="ZydmModel">
+		select t.zyh_id,        
+		       t.zyh,           
+		       t.zymc,  
+		       t.zyjc,           
+		       t.zyywmc,           
+		       t.jg_id,   
+		       t.xkmlm as jcdm_id_xkml,       
+		       t.xz,             
+		       t.ccdm as jcdm_id_cc,     
+		       t.bzkzym, 
+		       t.sfty,           
+		       t.bz            
+		  from niutal_xtgl_zydmb t
+		  where t.sfty = '0' 
+		  { t.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+	   order by t.zymc asc
+	</select>
+	
+	<sql id="ZyxxQuery">
+		select zy.zyh_id, zy.zyh, zy.zymc, zy.zyjc, bm.jg_id, bm.jgdm, bm.jgmc,rownum rum
+			<if test="bj !=null and bj==0">
+			,nvl((select max(xz)
+			  from jw_jh_dlzydzb dzb
+			 where dzb.zyh_id = zy.zyh_id
+			 <if test="zyh_id !=null and zyh_id !='' ">
+			   and dzb.dldm = #{zyh_id}
+			 </if>
+			 <if test="njdm_id_list != null and njdm_id_list.size() > 0">
+			   	    <foreach collection="njdm_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+					 	dzb.njdm_id  = #{item} 
+					</foreach>
+			 </if>
+				),'未设置') xz
+		    </if>	
+		  from niutal_xtgl_zydmb zy, 
+		  	   niutal_xtgl_jgdmb bm
+		 where zy.jg_id = bm.jg_id(+)
+		   and zy.sfty = '0'
+		    <if test="jg_id_list != null and jg_id_list.size() > 0">
+		   	    <foreach collection="jg_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+				 	zy.jg_id  = #{item} 
+				</foreach>
+		    </if>
+		     <if test="jg_id != null and jg_id != ''">
+			   and zy.jg_id  = #{jg_id} 
+			</if>
+		    <if test="zyh != null and zyh != ''">
+			   and ( zy.zyh like '%'||#{zyh}||'%' or zy.zymc like '%'||#{zyh}||'%')
+			</if>
+	</sql>
+	
+	<!-- 按所属部门查询专业信息列表；且进行数据范围控制-->
+	<select id="queryZyxxListByScope" resultType="ZydmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="ZyxxQuery"/>
+		<if test="rangeable != null and rangeable == true"> 
+		{ zy.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+		</if>
+		 order by zy.zymc asc
+	</select>
+	
+	<!-- 根据专业信息ID查询专业信息 -->
+	<select id="getZyxxModel" parameterType="string" resultType="ZydmModel">
+		select zy.zyh_id, zy.zyh, zy.zymc, zy.zyjc, bm.jg_id, bm.jgdm, bm.jgmc,rownum rum 
+		  from niutal_xtgl_zydmb zy, 
+		  	   niutal_xtgl_jgdmb bm
+		 where zy.jg_id = bm.jg_id(+)
+		   and zy.sfty = '0'
+	       and zy.zyh_id  = #{zyh_id}
+	</select>
+	
+	<!-- 按所属部门分页查询符合条件的专业信息集合；且进行数据范围控制-->
+	<select id="getPagedZyxxListByScope" resultType="ZydmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="ZyxxQuery"/>
+		<if test="rangeable != null and rangeable == true">
+		{ zy.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+		</if>
+	</select>
+	
+	<!-- 分页查询符合条件的专业信息集合for Autocomplete组件-->
+	<select id="getPagedZyxxPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select zy.zyh as key, zy.zymc as value
+		  from niutal_xtgl_zydmb zy 
+		 where zy.sfty = '0'
+		   and ( zy.zyh like '%'||#{key,jdbcType=VARCHAR}||'%' or zy.zymc like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		   { zy.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+		 order by zy.zymc asc
+	</select>
+	
+	<sql id="ZyfxQuery">
+		select zyfx.zyfx_id,
+		       zyfx.zyfxdm,
+		       zyfx.zyfxmc,
+		       zyfx.zyfxywm,
+		       zyfx.zyfxywsx,
+		       zyfx.sxxnxq,
+		       zyfx.sxsj,
+		       zy.zyh_id,
+		       zy.zyh,
+		       zy.zymc,
+		       zy.zyjc,
+		       nj.njdm_id,
+		       nj.njdm,
+		       nj.njmc
+		  from niutal_xtgl_zyfxdmb zyfx,niutal_xtgl_zydmb zy, niutal_xtgl_njdmb nj
+		 where zyfx.zyh_id = zy.zyh_id(+)
+		   and zyfx.njdm_id = nj.njdm_id(+)
+		   and zyfx.sfqy = '1'
+		    <if test="njdm_id_list != null and njdm_id_list.size() > 0">
+		   	    <foreach collection="njdm_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+				 	zyfx.njdm_id  = #{item} 
+				</foreach>
+		    </if>
+		    <if test="zyh_id_list != null and zyh_id_list.size() > 0">
+		   	    <foreach collection="zyh_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+				 	zyfx.zyh_id  = #{item} 
+				</foreach>
+		    </if>
+		    <if test="jg_id_list != null and jg_id_list.size() > 0">
+		   	    <foreach collection="jg_id_list" item="item" index="index" open=" and zyfx.zyh_id in (select zyh_id from niutal_xtgl_zydmb zy where " separator="or" close=")">
+				 	zy.jg_id  = #{item} 
+				</foreach>
+		    </if>
+		    <if test="njdm_id != null and njdm_id != ''">
+			   and zyfx.njdm_id  = #{njdm_id} 
+			</if>
+			<if test="zyh_id != null and zyh_id != ''">
+			   and zyfx.zyh_id  = #{zyh_id} 
+			</if>
+		    <if test="zyfxdm != null and zyfxdm != ''">
+			   and ( zyfx.zyfxdm like '%'||#{zyfxdm}||'%' or zyfx.zyfxmc like '%'||#{zyfxdm}||'%')
+			</if>
+	</sql>
+	
+	<!-- 按所属专业查询符合条件的专业方向信息集合；且进行数据范围控制-->
+	<select id="queryZyfxListByScope" resultType="com.woshidaniu.entities.ZyfxdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="ZyfxQuery"/>
+		<if test="rangeable != null and rangeable == true">
+		{ zyfx.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+		</if>
+		order by zyfx.zyfxdm desc
+	</select>
+	
+	<!-- 根据专业方向ID查询专业方向信息 -->
+	<select id="getZyfxModel" parameterType="string" resultType="com.woshidaniu.entities.ZyfxdmModel">
+		select zyfx.zyfx_id,
+		       zyfx.zyfxdm,
+		       zyfx.zyfxmc,
+		       zyfx.zyfxywm,
+		       zyfx.zyfxywsx,
+		       zyfx.sxxnxq,
+		       zyfx.sxsj,
+		       zy.zyh_id,
+		       zy.zyh,
+		       zy.zymc,
+		       zy.zyjc,
+		       nj.njdm_id,
+		       nj.njdm,
+		       nj.njmc
+		  from niutal_xtgl_zyfxdmb zyfx,niutal_xtgl_zydmb zy, niutal_xtgl_njdmb nj
+		 where zyfx.zyh_id = zy.zyh_id(+)
+		   and zyfx.njdm_id = nj.njdm_id(+)
+		   and zyfx.sfqy = '1'
+	       and zyfx.zyh_id  = #{zyfx_id}
+	</select>
+	
+	<select id="getPagedZyfxListByScope" resultType="ZydmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="ZyfxQuery"/>
+		<if test="rangeable != null and rangeable == true">
+		{ zyfx.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+		</if>
+	</select>
+	
+	<!-- 分页查询符合条件的专业方向信息集合for Autocomplete组件-->
+	<select id="getPagedZyfxPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.zyfxdm as key, t.zyfxmc as value 
+		from niutal_xtgl_zyfxdmb t 
+		where ( t.zyfxdm like '%'||#{key,jdbcType=VARCHAR}||'%' or t.zyfxmc like '%'||#{key,jdbcType=VARCHAR}||'%')
+			  { t.zyh_id in func('select a.zyh_id, a.jg_id, b.lssjjgid from niutal_xtgl_zydmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'zyh_id';'zyh_id,lssjjgid';'zyh_id,jg_id')}
+		 order by t.zyfxmc asc
+	</select>
+	
+	<!-- 查询所有班级；且进行数据范围控制-->
+	<select id="queryAllBjByScope" resultType="BjdmModel"  parameterType="com.woshidaniu.entities.CommonModel">
+		select t.bh_id,
+	           t.bh,
+	           t.bj,
+	           t.zyh_id,
+	           t.jg_id,
+	           t.njdm_id,
+	           t.xqh_id,
+	           t.jbny,
+	           t.bzxh_id,
+	           t.zxrs,
+	           t.bz
+	     from niutal_xtgl_bjdmb t 
+        order by t.bj asc 		 
+        {func('select a.jg_id,a.zyh_id,a.bh_id,a.xqh_id,a.njdm_id, b.lssjjgid from niutal_xtgl_bjdmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'bh_id';'lssjjgid,zyh_id,bh_id,xqh_id,njdm_id';'jg_id,zyh_id,bh_id,xqh_id,njdm_id';'jg_id=jg_id,zyh_id=zyh_id,bh_id=bh_id,xqh_id=xqh_id,njdm_id=njdm_id')}
+	</select>
+	
+	<sql id="bjxxQuery">
+		   select bj.bh_id,
+			      bj.bh,
+			      bj.bj,
+			      zy.zyh_id,
+			      zy.zyh,
+			      bj.jg_id,
+			      bm.jgmc,
+			      bj.xqh_id,
+			      bj.njdm_id,
+			      nj.njmc
+			 from niutal_xtgl_bjdmb bj,
+			      niutal_xtgl_zydmb zy,
+			      niutal_xtgl_jgdmb bm,
+			      niutal_xtgl_njdmb nj
+			where bj.zyh_id = zy.zyh_id(+)
+			  and bj.jg_id = bm.jg_id(+)
+			  and bj.njdm_id = nj.njdm_id(+)
+		    <if test="njdm_id_list != null and njdm_id_list.size() > 0">
+	    	    <foreach collection="njdm_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+				 	bj.njdm_id = #{item} 
+				</foreach>
+			</if>
+			<if test="jg_id_list != null and jg_id_list.size() > 0">
+	    	    <foreach collection="jg_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+				 	bj.jg_id = #{item} 
+				</foreach>
+			</if>
+			<if test="zyh_id_list != null and zyh_id_list.size() > 0">
+	    	    <foreach collection="zyh_id_list" item="item" index="index" open=" and (" separator="or" close=")">
+				 	bj.zyh_id = #{item} 
+				</foreach>
+			</if>
+			<if test="zyh_id!=null and zyh_id != ''	">
+			   and bj.zyh_id = #{zyh_id}
+			</if>
+			<if test="xqh_id!=null and xqh_id != ''	">
+			   and bj.xqh_id = #{xqh_id}
+			</if>
+			<if test="jg_id!=null and jg_id != ''">
+			   and bj.jg_id = #{jg_id}
+			</if>
+			<if test="njdm_id!=null and njdm_id != ''">
+			   and bj.njdm_id = #{njdm_id}
+			</if>
+			<if test="bh!=null and bh != ''">
+			   and ( bj.bh like '%'||#{bh}||'%' or bj.bj like '%'||#{bh}||'%')
+			</if>
+	</sql>
+	
+	<!-- 按所属部门、专业查询班级信息集合;且进行数据范围控制-->
+	<select id="queryBjxxByScope" resultType="BjdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+ 		<include refid="bjxxQuery"/>
+ 		order by bj.bj asc
+ 		<if test="rangeable != null and rangeable == true">
+ 		{func('select a.jg_id,a.zyh_id,a.bh_id,a.xqh_id,a.njdm_id, b.lssjjgid from niutal_xtgl_bjdmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'bh_id';'lssjjgid,zyh_id,bh_id,xqh_id,njdm_id';'jg_id,zyh_id,bh_id,xqh_id,njdm_id';'jg_id=jg_id,zyh_id=zyh_id,bh_id=bh_id,xqh_id=xqh_id,njdm_id=njdm_id')}
+ 		</if>
+	</select>
+	
+	<!-- 根据班号ID查询班级信息 -->
+	<select id="getBjxxModel" parameterType="string" resultType="BjdmModel">
+	   select bj.bh_id,
+		      bj.bh,
+		      bj.bj,
+		      zy.zyh_id,
+		      zy.zyh,
+		      bj.jg_id,
+		      bm.jgmc,
+		      bj.xqh_id,
+		      bj.njdm_id,
+		      nj.njmc
+		 from niutal_xtgl_bjdmb bj,
+		      niutal_xtgl_zydmb zy,
+		      niutal_xtgl_jgdmb bm,
+		      niutal_xtgl_njdmb nj
+		where bj.zyh_id = zy.zyh_id(+)
+		  and bj.jg_id = bm.jg_id(+)
+		  and bj.njdm_id = nj.njdm_id(+)
+	      and bj.bh_id  = #{bh_id}
+	</select>
+	
+	<!-- 按所属部门、专业分页查询符合条件的班级信息集合;且进行数据范围控制-->
+	<select id="getPagedBjxxListByScope" resultType="BjdmModel" parameterType="com.woshidaniu.entities.CommonModel">
+		<include refid="bjxxQuery"/>
+		<if test="rangeable != null and rangeable == true">
+		{func('select a.jg_id,a.zyh_id,a.bh_id,a.xqh_id,a.njdm_id, b.lssjjgid from niutal_xtgl_bjdmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'bh_id';'lssjjgid,zyh_id,bh_id,xqh_id,njdm_id';'jg_id,zyh_id,bh_id,xqh_id,njdm_id';'jg_id=jg_id,zyh_id=zyh_id,bh_id=bh_id,xqh_id=xqh_id,njdm_id=njdm_id')}
+		</if>
+	</select>
+	
+	<!-- 分页查询符合条件的班级信息集合for Autocomplete组件-->
+	<select id="getPagedBjxxPairListByScope" resultType="com.woshidaniu.entities.PairModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.bh as key, 
+		       t.bj as value,
+		       t.jg_id,
+		       t.zyh_id,
+		       t.bh_id,
+		       t.xqh_id,
+		       t.njdm_id
+		from niutal_xtgl_bjdmb t
+		where ( t.bh like '%'||#{key,jdbcType=VARCHAR}||'%' or t.bj like '%'||#{key,jdbcType=VARCHAR}||'%') 
+		order by t.bj asc
+		{func('select a.jg_id,a.zyh_id,a.bh_id,a.xqh_id,a.njdm_id, b.lssjjgid from niutal_xtgl_bjdmb a, view_xtgl_jgdm b  where a.jg_id = b.jg_id';'bh_id';'lssjjgid,zyh_id,bh_id,xqh_id,njdm_id';'jg_id,zyh_id,bh_id,xqh_id,njdm_id';'jg_id=jg_id,zyh_id=zyh_id,bh_id=bh_id,xqh_id=xqh_id,njdm_id=njdm_id')}
+	</select>
+	
+    <!-- 查询角色List-->
+	<select id="getJsListByScope" resultType="JsglModel" parameterType="com.woshidaniu.entities.CommonModel">
+		select jsdm,jsmc,rownum rum from  niutal_xtgl_jsxxb order by jsdm desc
+	</select>
+	
+	<!-- 查询除学生外角色 -->
+	<select id="getJsMapList" resultType="com.woshidaniu.common.query.BaseMap">
+		<![CDATA[
+			select jsdm,jsmc from niutal_xtgl_jsxxb where jsdm <> 'xs'
+		]]>
+	</select>
+	
+	<!-- 查询教学场地 -->
+	<select id="getPagedJxcdListByScope" resultType="hashMap" parameterType="com.woshidaniu.entities.CommonModel">
+		select a.cdxqxx_id,
+		       a.cdbh,
+		       a.cdmc,
+		       b.cdlbmc,
+		       a.xnm,
+		       a.xqm,
+		       a.xqh_id,
+		       a.jg_id,
+		       (select xqmc from niutal_xtgl_xqdmb where xqh_id = a.xqh_id) xqmc,
+		       (select jgmc from niutal_xtgl_jgdmb where jg_id = a.jg_id) jgmc,
+		       a.cd_id
+		  from jw_jcdm_cdxqxxb a,jw_jcdm_cdlbdmb b
+		 where bitand(a.cdkyzt, 1)>0
+		 	   and a.cdlb_id = b.cdlb_id
+			<if test="xnm!=null and xnm != ''">
+			   and a.xnm = #{xnm} 
+			</if>
+			<if test="xqm!=null and xqm != ''">
+			   and a.xqm = #{xqm} 
+			</if>
+			<if test="xqh_id!=null and xqh_id != ''">
+			   and a.xqh_id = #{xqh_id} 
+			</if>
+			<if test="jg_id!=null and jg_id != ''">
+			   and a.jg_id = #{jg_id} 
+			</if>
+			<if test="cdlb_id!=null and cdlb_id != ''">
+			   and a.cdlb_id = #{cdlb_id} 
+			</if>
+			<if test="cdmc!=null and cdmc != ''">
+		 	   and a.cdmc like '%'||#{cdmc}||'%'
+		 	</if>
+	</select>
+	
+	<!-- 查询专业年级 -->
+	<select id="getPagedZynjListByScope" resultType="hashMap" parameterType="com.woshidaniu.entities.CommonModel">
+		select t.* from  (
+	 	 	select a.zyh_id||b.njdm_id id,
+	 	 		   b.njdm||a.zyh dm,b.njmc||a.zymc mc,
+	 			   (select jgmc from niutal_xtgl_jgdmb where jg_id=a.jg_id)jgmc
+	 		from niutal_xtgl_zydmb a,
+	 		 	 niutal_xtgl_njdmb b 
+			 <where>
+			 	<if test="jg_id!=null and jg_id != ''">
+			 		 a.jg_id=#{jg_id}
+			 	</if>
+			 </where>
+		 ) t
+		 <where>
+		 	<if test="njzy!=null and njzy != ''">
+		 		t.mc like '%'||#{njzy}||'%'
+		 	</if>
+		 </where>
+		 { func('select a.zyh_id||b.njdm_id as id,a.zyh_id,b.njdm_id,c.lssjjgid from niutal_xtgl_zydmb a,niutal_xtgl_njdmb b,view_xtgl_jgdm c where a.jg_id = c.jg_id';'id';'lssjjgid,zyh_id,nj_id';'jg_id,zyh_id,njdm_id';'id=')}
+	</select>
+	
+	<!-- 查询用户 -->
+	<select id="getPagedYhList" resultType="hashMap" parameterType="com.woshidaniu.entities.CommonModel">
+		select case when lower(a.sjly)='jw_jg_jzgxxb' then (select jgh_id from jw_jg_jzgxxb where jgh=a.yhm )
+ 	   				when lower(a.sjly)='jw_xjgl_xsjbxxb' then (select xh_id from jw_xjgl_xsjbxxb where xh=a.yhm) end yhlybid, 
+			   a.yhm,
+		       a.xm,
+		       a.kl,
+		       a.sjhm,
+		       a.dzyx,
+		       decode(a.sfqy, '1', '是', '0', '否') sfqy,
+		       (select count(*) from niutal_xtgl_yhjsb d where a.yhm = d.yhm) jss,
+		       b.jgmc 
+		  from niutal_xtgl_yhb a,niutal_xtgl_jgdmb b
+		 where a.jgdm = b.jg_id(+)
+	 	<if test="jg_id!=null and jg_id != ''">
+	 		and b.jg_id=#{jg_id}
+	 	</if>
+	 	<if test="jsdm !=null and jsdm != ''">
+	 		and exists (select js.jsdm from niutal_xtgl_yhjsb js where js.yhm = a.yhm and js.jsdm = #{jsdm})
+	 	</if>
+	 	<if test="yhm !=null and yhm != ''">
+	 		and a.yhm like '%'|| #{yhm} ||'%'
+	 	</if>
+	 	<if test="xm !=null and xm != ''">
+	 		and a.xm like '%'|| #{xm} ||'%'
+	 	</if>
+	</select>
+	
+	<!-- 查询符合条件的学年代码集合-->
+	<select id="getXnMapList" resultType="com.woshidaniu.common.query.BaseMap">
+		select t.xnm,t.xnmc from jw_jcdm_xnb t where t.sfyx = '1'  order by xnmc desc
+	</select>
+	
+	<!-- 查询基础数据表List-->
+	<select id="getJcsjList" resultType="com.woshidaniu.common.query.BaseMap" parameterType="string">
+	  	  select t.lx, t.dm, decode(#{localeKey},'en_US',nvl(t.ywmc,t.mc),t.mc) as mc
+		    from niutal_xtgl_jcsjb t
+		   where t.lx = #{lxdm}
+		   order by to_number(lpad(t.dm,10,'0'))
+	</select>
+	
+	<!-- 获得【功能模块代码表】中所有进行不重复处理后的功能模块代码信息List<PairModel>集合 -->
+	<select id="getGnmkdmPairList" parameterType="string" resultType="com.woshidaniu.entities.PairModel" >
+	    select t.gnmkdm as key, 
+	    	   decode(#{localeKey},'en_US',nvl(p.gnmkywmc,p.gnmkmc),p.gnmkmc) || ' - ' || decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) as value
+		  from niutal_xtgl_jsgnmkdmb t,
+		       niutal_xtgl_jsgnmkdmb p
+		 where t.fjgndm = p.gnmkdm(+)
+		   and t.sfxs = '1'
+		   and t.dyym is not null
+		   and p.gnmkdm is not null
+		order by p.gnmkdm,t.gnmkdm asc
+	</select>
+	
+	<!-- 获得【操作代码表】中所有进行不重复处理后的操作代码信息List<PairModel>集合 -->
+	<select id="getCzdmPairList" parameterType="string" resultType="com.woshidaniu.entities.PairModel" >
+	   select distinct 
+	   		  t.czdm as key, 
+	   		  decode(#{localeKey},'en_US',nvl(t.ywmc,t.czmc),t.czmc) as value
+	     from niutal_xtgl_czdmb t order by t.czmc
+	</select>
+	
+	<!-- 获取系统设置当前年度 -->
+	<select id="getDqnd" resultType="string">
+	   select t.zdz from niutal_xtgl_xtszb t WHERE 1 = 1
+			   and t.ssmk = 'GGMK'
+			   and t.zdm = 'DQND'
+	</select>
+	
+	<!-- 拼装SQL返回结果List -->
+	<select id="queryResultList" resultType="hashMap" parameterType="string">
+		select ${tabCol} from ${tableName} where ${tabColV}
+	</select>
+	<!-- 拼装SQL返回结果String List -->
+	<select id="queryStrList" resultType="string" parameterType="string">
+		select ${tabCol} from ${tableName} where ${tabColV}
+	</select>
+	<select id="queryResultObjList" resultType="hashMap" parameterType="string">
+		select ${tabCol} from ${tableName} where ${tabColV}
+	</select>
+	<select id="querySingleResult" resultType="hashMap" parameterType="string">
+		select ${tabCol} from ${tableName} where ${tabColV}
+	</select>
+	
+	
+	
+	<!-- 查询考试名称-->
+	<select id="queryKsmcList" parameterType="com.woshidaniu.entities.CommonModel" resultType="com.woshidaniu.entities.CommonModel">
+		select t.ksmcdmb_id,t.xnm,t.xqm,t.ksmc 
+		  from jw_kw_ksmcdmb t where 1=1 
+		  <if test="xnm != null and xnm  != ''">
+			and t.xnm  = #{xnm }
+		  </if>
+		  <if test="xqm != null and xqm  != ''">
+			and t.xqm  = #{xqm }
+		  </if>
+	</select>
+	
+	
+	
+</mapper>

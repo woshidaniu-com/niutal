@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.jcsj.dao.daointerface.IBjdmDao">
+	
+	<select id="getCount" parameterType="com.woshidaniu.jcsj.dao.entities.BjdmModel" resultType="java.lang.Integer">
+		select count(1) from niutal_xtgl_bjdmb t where t.bjdm = #{bjdm,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getPagedList" 
+			parameterType="com.woshidaniu.jcsj.dao.entities.BjdmModel"
+			resultType="com.woshidaniu.jcsj.dao.entities.BjdmModel">
+			
+		select t1.bjdm_id,t1.bjdm,t1.bjmc,t1.zydm_id,t1.bmdm_id,t1.njdm_id,
+		       t2.zymc,t3.bmmc 
+		from niutal_xtgl_bjdmb t1
+		left join niutal_xtgl_zydmb t2 on t1.zydm_id=t2.zydm_id
+		left join niutal_xtgl_bmdmb t3 on t1.bmdm_id=t3.bmdm_id
+		
+		<where>
+    		<if test="bmdm_id != null and bmdm_id !=''">
+    			and t1.bmdm_id=#{bmdm_id}
+    		</if>
+    		<if test="zydm_id != null and zydm_id !=''">
+    			and t1.zydm_id=#{zydm_id}
+    		</if>
+    		<if test="njdm_id != null and njdm_id !=''">
+    			and t1.njdm_id=#{njdm_id}
+    		</if>
+    		<if test="bjdm != null and bjdm !=''">
+    			and t1.bjdm like '%'||#{bjdm}||'%'
+    		</if>
+    		<if test="bjmc != null and bjmc !=''">
+    			and t1.bjmc like '%'||#{bjmc}||'%'
+    		</if>
+   		</where>
+	</select>
+
+	<insert id="insert" parameterType="com.woshidaniu.jcsj.dao.entities.BjdmModel">
+    	insert into niutal_xtgl_bjdmb (bjdm_id,bjdm,bjmc,zydm_id,bmdm_id,njdm_id) 
+    	values (#{bjdm},#{bjdm},#{bjmc},#{zydm_id},#{bmdm_id},#{njdm_id})
+    </insert>
+
+	<select id="getModel" parameterType="com.woshidaniu.jcsj.dao.entities.BjdmModel" 
+			resultType="com.woshidaniu.jcsj.dao.entities.BjdmModel">
+    	select bjdm_id,bjdm,bjmc,zydm_id,bmdm_id,njdm_id from niutal_xtgl_bjdmb where bjdm_id=#{bjdm_id}
+    </select>
+    
+    <select id="getModelList" 
+			parameterType="com.woshidaniu.jcsj.dao.entities.BjdmModel"
+			resultType="com.woshidaniu.jcsj.dao.entities.BjdmModel">
+			
+		select t1.bjdm_id,t1.bjdm,t1.bjmc,t1.zydm_id,t1.bmdm_id,t1.njdm_id
+		from niutal_xtgl_bjdmb t1
+		<where>
+    		<if test="bmdm_id != null and bmdm_id !=''">
+    			and t1.bmdm_id=#{bmdm_id}
+    		</if>
+    		<if test="zydm_id != null and zydm_id !=''">
+    			and t1.zydm_id=#{zydm_id}
+    		</if>
+    		<if test="njdm_id != null and njdm_id !=''">
+    			and t1.njdm_id=#{njdm_id}
+    		</if>
+    		<if test="bjdm != null and bjdm !=''">
+    			and t1.bjdm like '%'||#{bjdm}||'%'
+    		</if>
+    		<if test="bjmc != null and bjmc !=''">
+    			and t1.bjmc like '%'||#{bjmc}||'%'
+    		</if>
+   		</where>
+	</select>
+    
+    <update id="update" parameterType="com.woshidaniu.jcsj.dao.entities.BjdmModel">
+    	update niutal_xtgl_bjdmb set bjmc=#{bjmc},zydm_id=#{zydm_id},bmdm_id=#{bmdm_id},njdm_id=#{njdm_id}
+    	where bjdm_id=#{bjdm_id}
+    </update>
+    
+    
+     <!-- 删除班级 -->
+	<delete id="batchDelete" parameterType="java.util.Map">
+		delete from niutal_xtgl_bjdmb a where (
+		<foreach collection="bjdmArr" item="item" index="index"
+				separator=" OR">
+			   a.bjdm_id = #{item} 
+		</foreach>
+		)
+	</delete>	
+</mapper>

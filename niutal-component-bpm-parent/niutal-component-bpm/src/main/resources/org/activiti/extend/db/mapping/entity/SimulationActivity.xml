@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.engine.extend.persistence.entity.SimulationActivityEntity">
+
+  <resultMap id="simulationActivityMap" type="org.activiti.engine.extend.persistence.entity.SimulationActivityEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="processDefinitionId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />
+    <result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+    <result property="activityId" column="ACT_ID_" jdbcType="VARCHAR" />
+    <result property="activityName" column="ACT_NAME_" jdbcType="VARCHAR" />
+    <result property="activityType" column="ACT_TYPE_" jdbcType="VARCHAR" />
+    <result property="order" column="ORDER_" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <!-- INFO UPDATE -->
+  <insert id="insertSimulationActivity" parameterType="org.activiti.engine.extend.persistence.entity.SimulationActivityEntity">
+    insert into ${prefix}ACT_SI_ACTIVITY (ID_, PROC_DEF_ID_, BUSINESS_KEY_, ACT_ID_, ACT_NAME_, ACT_TYPE_, ORDER_)
+    values (
+      #{id ,jdbcType=VARCHAR},
+      #{processDefinitionId ,jdbcType=VARCHAR},
+      #{businessKey ,jdbcType=VARCHAR},
+      #{activityId ,jdbcType=VARCHAR},
+      #{activityName ,jdbcType=VARCHAR},
+      #{activityType ,jdbcType=VARCHAR},
+      #{order ,jdbcType=INTEGER}
+    )
+  </insert>
+  
+  <delete id="deleteSimulationActivity" parameterType="org.activiti.engine.extend.persistence.entity.SimulationActivityEntity">
+    delete from ${prefix}ACT_SI_ACTIVITY where ID_ = #{id}
+  </delete>
+  
+  <delete id="deleteSimulationActivityByBusinessKey" >
+    delete from ${prefix}ACT_SI_ACTIVITY where BUSINESS_KEY_ = #{businessKey}
+  </delete>
+  
+  <!-- INFO SELECT -->
+
+  <select id="selectSimulationActivity" parameterType="string" resultMap="simulationActivityMap">
+    select * from ${prefix}ACT_SI_ACTIVITY where ID_ = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectSimulationActivityByBusinessKey" resultMap="simulationActivityMap">
+    select * from ${prefix}ACT_SI_ACTIVITY where BUSINESS_KEY_ = #{businessKey,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

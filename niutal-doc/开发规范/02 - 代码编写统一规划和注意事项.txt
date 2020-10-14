@@ -1,0 +1,434 @@
+
+0、全局变量
+
+//系统访问路径
+var _path = "<%=systemPath%>";
+var _systemPath = "<%=systemPath %>";
+//样式访问路径
+var _stylePath = "<%=stylePath %>";
+//报表访问路径
+var _reportPath = "<%=reportPath %>";
+
+不可出现：
+页面定义元素：
+<input type="hidden" id="stylePath" value="<%=stylePath%>">
+js代码使用： 
+$("#stylePath").val() 
+
+请各位同事多关注 *.ini文件都引入什么；如果你在使用的时候连一个引入文件的作用都不知道，为了完成一个功能可能会写出各式各样的代码
+
+1、为防止元素ID冲突，所使用ID需要指定为 按钮元素功能值+功能操作代码
+	
+	xxxIndex,jsp
+	
+	xnm_cx 
+	xqn_cx
+	
+	
+	
+	如果：（1）、主页查询有个元素为 专业，那么其ID 应为：zyh_id_cx
+		  （2）、增加页面有个元素为班级，那么器其ID应为：bh_id_zj
+		  
+2、除了包含在Grid列表意外的所有Select下拉框都必须使用chosen组件进行美化：
+
+	（1）、添加样式： chosen-select
+	（2）、调用脚本：
+			<script type="text/javascript">
+				jQuery('#cx_njdm_id').trigger("chosen");
+			</script>
+	
+3、查询区域如果少于两个查询条件，不可使用 col-md-6 或col-sm-6；统一使用 “col-md-4 col-sm-4”
+			
+4、如果有列表区域需要小标题，使用bootstrap的panel组件：
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Panel title</h3>
+		</div>
+		<div class="panel-body">
+			Panel content
+		</div>
+	</div> 
+	 
+5、JQGrid初始化必须定义如下格式，如非必要不得随意重写额外参数：
+
+	var TempGrid = $.extend(true,{},BaseJqGrid,{  
+		pager		: "#pager", //分页工具栏 
+		caption		: "xsss",		
+		resizeHandle: "#searchForm", 
+		postData	: paramMap(),
+	    url: _path + '/xszbbgl/xszbbgl_cxXszbbshIndex.html?doType=query', //这是Action的请求地址  
+	    colModel:[
+			{label:'主键',name:'key', index: 'key',key:true,hidden:true},  
+			
+			{label:'状态',name:'status', index: 'status',align:'center',width:'120px'
+				cellattr : function(cellvalue, options, rowObject){
+				
+				},
+				formatter:function(cellvalue, options, rowObject){ 
+					//1:待审核;2:审核中;3:已通过;4:退回;5:不通过
+					if(cellvalue == '1'){
+						return = '<span class="text-muted">待审核</span>';
+					}else if(cellvalue == '2'){
+						return = '<span class="text-info">审核中</span>';
+					}else if(cellvalue == '3'){
+						return = '<span class="text-success">已通过</span>';
+					}else if(cellvalue == '4'){
+						return = '<span class="text-warning">退回</span>';
+					}else if(cellvalue == '5'){
+						return = '<span class="text-danger">不通过</span>';
+					}
+					return res;
+				}
+			},			
+			{label:'等长字符',name:'dczf', index: 'dczf',align:'center',width:'120px'},
+			{label:'不等长字符',name:'bdczf', index: 'bdczf',align:'left',width:'120px'},
+			{label:'数字',name:'number', index: 'number',align:'right',width:'60px'},
+			{label:'超链接',name:'link', index: 'link',align:'center',width:'80px',
+				formatter:function(cellvalue, options, rowObject){
+					var res = "";
+					if(rowObject["sfglywh"] == '1'){
+						res = '';
+					}else{
+						res = "<a class='clj' href='javascript:void(0);' onclick='ckWorkFlow(\""+rowObject["xszbbsqb_id"]+"\")'>流程跟踪</a>";
+					}
+					return res;
+				}
+			}			 		
+		],		
+		sortname: 'sqsj', //首次加载要进行排序的字段 
+	 	sortorder: 'desc',
+	 	gridComplete: function() {
+		
+		}
+	});
+
+    $("#tabGrid").loadJqGrid(TempGrid);
+
+	
+	
+6、列表中的超链接必须使用统一样式 ：
+	
+	"<a class='clj' href='javascript:void(0);' onclick='ckWorkFlow(\""+rowObject["xszbbsqb_id"]+"\")'>流程跟踪</a>"
+	
+7、列表中的特殊列；如 状态，类型等，必须使用不同颜色进行区分：
+
+	参考bootstrap辅助类：
+	<span class="text-muted">...</span>
+	<span class="text-primary">...</span>
+	<span class="text-success">...</span>
+	<span class="text-info">...</span>
+	<span class="text-warning">...</span>
+	<span class="text-danger">...</span>
+	
+	<span class="label label-default">Default</span>
+	<span class="label label-primary">Primary</span>
+	<span class="label label-success">Success</span>
+	<span class="label label-info">Info</span>
+	<span class="label label-warning">Warning</span>
+	<span class="label label-danger">Danger</span>
+
+	
+8、列表字段居中方式：
+
+	数字类型：居右 align:'right'
+	等长字符：居中 align:'center'
+	不等长字符：居左 align:'left'
+
+9、列表初始化不得使用以前的普通方法，需要统一使用基于JQuery实现的方法，参见 jquery.jqGrid-adapter.js：
+
+	 $("#tabGrid").loadJqGrid(TempGrid);
+	 
+	 var ids = $("#tabGrid").getKeys();
+	 
+	
+10、JQGrid列表初始化参数中的格式化函数；在没有个性化的前提下必须写在 colModel 对象中；如下
+
+		colModel:[
+			 
+			{label:'超链接',name:'link', index: 'link',align:'center',width:'80px',
+				formatter:function(cellvalue, options, rowObject){
+					var res = "";
+					if(rowObject["sfglywh"] == '1'){
+						res = '';
+					}else{
+						res = "<a class='clj' href='javascript:void(0);' onclick='ckWorkFlow(\""+rowObject["xszbbsqb_id"]+"\")'>流程跟踪</a>";
+					}
+					return res;
+				},
+				cellattr: function(rowId, tv, rawObject, cm, rdata) {
+		    	 	
+		    	 	return '';
+	   			}
+			}			 		
+		],
+	
+	
+10、按钮绑定事件直接使用如下方式绑定，不得先获取元素jQuery对象，又进行判断之后才绑定，这种做法是毫无意义的：
+
+	/*
+	 * 绑定操作按钮
+	 */
+	jQuery("#btn_xksq").click(function (e) {
+	
+	});
+
+11、判断审批流是否定义使用统一的判断方法：
+	
+	if(!$.hasWorkFlow("KCSQ_JSKCSQ")){
+		$.alert("【教师课程申请】流程未配置,请联系管理员！");
+		return false;
+	}
+		
+12、查看审批流也要使用统一的方法：
+
+	（1）、列表名称为tabGrid的JQGrid列表，使用如下格式：
+	
+		{label:'流程跟踪',name:'', index: '',width:'80px',formatter:function(cellvalue, options, rowObject){
+			var res = "";
+			if(rowObject["sqzt"]>0&&rowObject["kcdmbbb_id"] != ""){
+				res = "<a class='clj' href='javascript:void(0);' onclick='ckWorkFlow(\""+rowObject["kcdmbbb_id"]+"\")'>流程跟踪</a>";
+			}
+			return res;
+		}},
+
+	（2）、列表名称不是 tabGrid 的需要在自己的函数中调用统一方法
+	
+		function ckLcgz(rowid){
+			jQuery("#tabGrid2").resetSelection();
+			jQuery("#tabGrid2").setSelection(rowid,false);
+			jQuery.viewWorkFlow(rowid);
+		}
+
+13、查询参数对象，请安如下格式编写：
+
+var map= {}；
+	map["ss"] = $(dd).val()
+map["ss"] = $(dd).val()
+	map["ss"] = $(dd).val()
+	//查询参数
+	function paramMap(){
+		return {
+			"nodeStatus"	: jQuery('#nodeStatus').val(),
+			"sqqssj"		: jQuery('#sqqssj').val(),
+			"sqjssj"		: jQuery('#sqjssj').val(),	
+			"xm"			: jQuery('#xm').val(),	
+			"jg_id"			: jQuery('#jg_id').val(),
+			"zyh_id"		: jQuery("#zyh_id").val(),
+			"njdm_id"		: jQuery("#njdm_id").val(),	
+			"bh_id"			: jQuery("#bh_id").val()
+		};
+	}
+
+14、弹窗窗口代码必须编写规范，不得定义过多无用变量；如：
+
+	不规范写法：
+	
+	var url = _path + '/sp/spSetting_cxPlshPage.html';
+	var dialogConfig = $.extend(true,{},addConfig,{			
+		width:'700px',
+		modalName:"plshModal",
+		buttons:{
+			success : {
+				callback : function() {
+					returnData(function (data){
+						$.closeModal("plshModal");
+						data.ids = ids.join(",");
+						data.noteIds = noteIds.join(",");
+						//alert($.param(data));
+						//批量审核
+						var plshUrl = _path + '/jlsgl/jlsxmsbsh_plshJlsxmsbBc.html';
+						$.post(plshUrl,data,function(msg){
+							refershGrid('tabGrid');
+							$.alert(msg);
+						},"json");
+					});
+					return false;
+				}
+			}
+		}
+	});
+	$.showDialog(url,'批量审核',dialogConfig);
+	
+	规范写法：
+		 
+	$.showDialog(_path + '/sp/spSetting_cxPlshPage.html','批量审核',$.extend(true,{},addConfig,{			
+		width:'700px',
+		modalName:"plshModal",
+		buttons:{
+			success : {
+				callback : function() {
+					returnData(function (data){
+						$.closeModal("plshModal");
+						data.ids = ids.join(",");
+						data.noteIds = noteIds.join(",");
+						//alert($.param(data));
+						//批量审核
+						var plshUrl = _path + '/jlsgl/jlsxmsbsh_plshJlsxmsbBc.html';
+						$.post(plshUrl,data,function(msg){
+							refershGrid('tabGrid');
+							$.alert(msg);
+						},"json");
+					});
+					return false;
+				}
+			}
+		}
+	}));
+	
+
+15、Ajax请求代码必须编写规范，不得定义过多无用变量；如：
+
+	不规范写法：
+	
+	var data = {};
+	//批量审核
+	var plshUrl = _path + '/xszbbgl/xszbbgl_shXszbbxx.html';
+	$.post(plshUrl,data,function(msg){
+		if(msg.indexOf('成功')>=0){
+			$.success(msg,function(){
+				searchResult();							
+			});
+		}else{
+			$.error(msg);
+		}									
+	},"json");
+	
+	规范写法：
+	
+ 	$.post(_path + '/xszbbgl/xszbbgl_shXszbbxx.html',{
+		
+	},function(responseText){
+		if(responseText.indexOf("成功") > -1){
+			$.success(responseText,function() {
+				//关闭弹窗
+				$.closeModal("modifyModal");
+				//刷新页面
+				$("#tabGrid").refershGrid(requestMap);				
+			});
+		}else if(responseText.indexOf("失败") > -1){
+			$.error(responseText,function() {
+				
+			});
+		} else{
+			$.alert(responseText,function() {
+				
+			});
+		}								
+	},"json");
+	
+
+16、弹窗统一宽度定义：
+
+	超大宽度：width: ($("#yhgnPage").innerWidth() + 100)+"px",
+	最大宽度：width: $("#yhgnPage").innerWidth()+"px",
+	中上宽度：width: ($("#yhgnPage").innerWidth() - 100)+"px",
+	中等宽度：width: "700px",
+	中下宽度：width: "600px",
+	最小宽度：width: "500px" 
+
+17、流程跟踪 统一为 流程跟踪
+18、非必选或查询条件必须包含 ： 全部 选项
+
+19、SQL语句中的固定参数如果不能百分百的确定一定会有值：请使用如下书写方式：
+   
+	select * from xx a where a.xx = #{jgh_id,jdbcType=VARCHAR}
+	
+	${jgh_id}
+	#{jgh_id}
+	#{jgh_id,jdbcType=VARCHAR}
+	
+20、所有 日期类型的输入框 class 添加  Wdate ;如： class="form-control  Wdate" 
+          并根据日期是时间还是日期添加提示语句 如：placeholder="点击选择日期" 或 placeholder="点击选择时间"
+
+21、除特殊页面，如一个页面有两个分支判断的主页在加载按钮时可使用明确的功能代码获取按钮外，均应采用自动获取方式获取按钮
+
+   	明确的功能代码格式：<%=IndexAction.cxButtons("N0305")%>
+   	自动获取的格式： <%=IndexAction.cxButtons(request.getParameter("gnmkdm"))%>
+   
+	注意：替换原格式时候记得添加备注说明原功能代码ID
+	
+	<!-- 加载当前菜单栏目下操作    : N250710  -->
+	<%=IndexAction.cxButtons(request.getParameter("gnmkdm"))%>
+	<!-- 加载当前菜单栏目下操作 -->
+	
+22、在js或css文件后必须统一加上，版本取值方式，方便后期更新js后直接更新客户端js，css文件
+	
+	<script type="text/javascript" src="<%=systemPath%>/js/xxxxx.js?ver=<%=jsVersion%>"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="<%=stylePath%>/xxx.css?ver=<%=cssVersion%>" />
+
+	
+23、在该禁用按钮的情况下记得禁用按钮，比如某行数据在某状态下某个按钮是的事件在执行的时候也会检测不通过，这种情况下，建议直接在jqgrid的四个事件中做级联状态变更和提示：
+	onCellSelect	: function(rowid,iCol,cellcontent,e){},
+	ondblClickRow	: function(rowid,iRow,iCol,e){},
+	onSelectAll		: function(aRowids,status){},
+	onSelectRow		: function(rowid,status){},
+
+	$("#xxx").attr("disabled",'disabled')
+	$("#xxx").prop("disabled",true);
+	class = 'disabled' 
+	$.data("disabled",'')
+	
+	#禁用: $(btn).disabled();
+	#是否禁用: $(btn).isDisabled();
+	#解除禁用： $(btn).enabled();
+	#是否可用: $(btn).isEnabled();
+				 
+24、中午字符乱码问题使用统一工具
+
+原写法：
+URLDecoder.decode(xxx, "UTF-8")
+URLDecoder.decode(xxx, "utf-8")
+改为：
+URLUtils.escape(xxx)
+
+
+原写法：
+URLEncoder.encode(xxx, "UTF-8")
+URLEncoder.encode(xxx, "utf-8")
+改为：
+URLUtils.unescape(xxx)
+
+25、所有在页面上直接使用类似以下写法的全部改掉：
+
+<s:select id="syzt" name="syzt" list="#{'0':'停用'}" 
+
+请将list的集合定义在 baseData_zh_CN.xml 和 baseData_en_US.xml分别定义
+
+<s:select id="ywdjxm" name="ywdjxm" list="#{'有':'有','无':'无'}" headerKey="" 
+
+不允许使用中文作为key
+ 
+26、不得同时在引用对象上使用 @Autowired 和  @Resource 注解；另外  @Autowired 常与 @Qualifier搭配使用；如下
+
+@Autowired(required = false)       
+@Qualifier("newMemcachedClient") 
+
+
+27、新结构中如果一个页面打开是空白的表示其html标签语法有问题，多为 标签上属性重复或者没有正确的开始和结束，
+如：<body></body> 如果写成了 <body><body> 将会无法正确的返回页面内容；显示为空白页面
+
+
+28、为了实现jqgrid的自动宽度调整，通常我们都会指定resizeHandle参数，但是会存在一个问题就是部分页面设置该参数后出现grid宽度不对问题；
+所有今后需要自动适应宽度的jqgrid可在jqGrid元素所在的位置添加固定元素：
+
+<div class="ui-grid-handle" id="searBox-ddpj">&nbsp;</div>
+<table id="ddpj_Grid"></table>
+<div id="ddpj_pager"></div>
+	 			
+仅需要修改ID为指定ID即可：
+
+var TempGrid = $.extend(true,{},BaseJqGrid,{
+	resizeHandle:"#searBox-ddpj",
+	...	
+});
+$("#ddpj_Grid").loadJqGrid(TempGrid);
+
+29、统一角色判断逻辑代码：凡是教师判断和学生判断必须如下写法（原因是可能有学校角色代码不一样又必须使用它们的角色代码）
+
+"js".equals(getUser().getJsdm())  改为：  getUser().isTeacher() 或 RoleUtils.isTeacher(getUser().getJsdm())
+"xs".equals(getUser().getJsdm())  改为：  getUser().isStudent() 或 RoleUtils.isStudent(getUser().getJsdm())
+其他类似角色判断一律以上面代码为准；
+
+
+

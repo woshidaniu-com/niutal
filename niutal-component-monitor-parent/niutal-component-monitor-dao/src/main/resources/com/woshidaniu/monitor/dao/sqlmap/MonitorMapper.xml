@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.monitor.dao.daointerface.MonitorDao" >
+	
+   	<!-- 分页查询【可自动完成字段】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.monitor.dao.entities.MonitorModel" resultType="com.woshidaniu.monitor.dao.entities.MonitorModel">
+		 select t.auto_guid,
+				t.field_name,
+				t.field_text,
+				t.field_minLength,
+				t.field_items,
+				t.field_delay,
+				t.field_setvalue,
+				t.field_realvalue,
+				t.field_format,
+				t.field_action,
+				(case when (select count(1) from niutal_designer_auto_fields a where a.auto_guid = t.auto_guid) > 0 then '1' else '0' end) field_used
+		   from niutal_autocomplete_fields  t 
+	     <where>
+	     	<if test=" field_text != null and field_text != '' ">
+	     		and t.field_text like '%'||#{field_text}||'%' 
+	     	</if>
+	     </where>
+	</select>
+	
+	<!-- 查询可【可自动完成字段】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.monitor.dao.entities.MonitorModel" resultType="com.woshidaniu.monitor.dao.entities.MonitorModel">
+	 select t.auto_guid,
+			t.field_name,
+			t.field_text,
+			t.field_minLength,
+			t.field_items,
+			t.field_delay,
+			t.field_setvalue,
+			t.field_realvalue,
+			t.field_format,
+			t.field_action,
+			(case when (select count(1) from niutal_designer_auto_fields a where a.auto_guid = t.auto_guid) > 0 then '1' else '0' end) field_used
+	   from niutal_autocomplete_fields  t 
+	  where t.auto_guid = #{auto_guid}
+	</select>
+	
+	<!-- 保存使用状况信息 -->
+	<insert id="insertMemory" parameterType="com.woshidaniu.monitor.dao.entities.MonitorModel" >
+        insert into niutal_MONITOR_MEMORYS(
+				MEMORY_KEY,
+				MEMORY_TIME,
+				MEMORY_HOST,
+			    MEMORY_JVM,
+			    MEMORY_VALUE)
+		values(	#{key},
+				#{memory['']},
+				#{field_minLength,jdbcType=VARCHAR},
+				#{field_items,jdbcType=VARCHAR},
+				#{field_delay,jdbcType=VARCHAR},
+				#{field_setvalue,jdbcType=VARCHAR},
+				#{field_realvalue,jdbcType=VARCHAR},
+				#{field_format,jdbcType=VARCHAR},
+				#{memory[${key}]})
+	</insert>
+	
+	<!-- 保存使用率信息 -->
+	<insert id="insertUsage" parameterType="com.woshidaniu.monitor.dao.entities.MonitorModel" >
+	insert into niutal_autocomplete_fields(
+				field_name,
+				field_text,
+				field_minLength,
+			    field_items,
+			    field_delay,
+			    field_setvalue,
+			    field_realvalue,
+			    field_format,
+   				field_action)
+	values(		#{field_name},
+				#{field_text},
+				#{field_minLength,jdbcType=VARCHAR},
+				#{field_items,jdbcType=VARCHAR},
+				#{field_delay,jdbcType=VARCHAR},
+				#{field_setvalue,jdbcType=VARCHAR},
+				#{field_realvalue,jdbcType=VARCHAR},
+				#{field_format,jdbcType=VARCHAR},
+				#{field_action,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 删除可【可自动完成字段】信息-->
+	<update id="delete" parameterType="com.woshidaniu.monitor.dao.entities.MonitorModel">
+		<if test="deleteList!=null and deleteList.size()>0">
+			delete niutal_autocomplete_fields t  
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.auto_guid = #{item} ]]>
+			</foreach>
+		</if>
+	</update>
+	
+	<!-- 更新可【可自动完成字段】信息-->
+	<update id="update" parameterType="com.woshidaniu.monitor.dao.entities.MonitorModel">
+	 update niutal_autocomplete_fields t
+		set t.field_name 		= #{field_name},
+			t.field_text 		= #{field_text},
+			t.field_minLength 	= #{field_minLength,jdbcType=VARCHAR},
+			t.field_items 		= #{field_items,jdbcType=VARCHAR},
+			t.field_delay 		= #{field_delay,jdbcType=VARCHAR},
+			t.field_setvalue 	= #{field_setvalue,jdbcType=VARCHAR},
+			t.field_realvalue 	= #{field_realvalue,jdbcType=VARCHAR},
+			t.field_format		= #{field_format,jdbcType=VARCHAR},
+			t.field_action 		= #{field_action,jdbcType=VARCHAR}
+	  where t.auto_guid = #{auto_guid}
+	</update>
+    
+</mapper>

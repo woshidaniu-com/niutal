@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ILoginDao">
+
+	<!-- 用户属性 -->
+	<resultMap type="com.woshidaniu.common.log.User" id="userMap">  
+        <id property="yhm" column="zgh" />  
+        <result property="xm" column="xm" />  
+        <result property="yhlx" column="yhlx" />  
+        <result property="bmmc" column="bmmc" />  
+        <result property="bmdm_id" column="bmdm_id" /> 
+        <result property="sfqy" column="sfqy" /> 
+        <collection property="jsdms" ofType="string" column="jsdm">  
+        </collection>  
+    </resultMap> 
+	
+	
+	<!--通过用户名密码获取教师信息  -->
+ 	<select id="getUserInfo" parameterType="LoginModel" resultMap="userMap">
+       select js.jsdm,yh.zgh as ZGH,yh.xm as XM , yh.sfqy as SFQY,yh.yhlx AS YHLX,yh.jgdm as BMDM_ID,
+       (select bmmc from niutal_xtgl_bmdmb where bmdm_id=yh.jgdm) bmmc
+	   from niutal_xtgl_yhb yh left join niutal_xtgl_yhjsb js on yh.zgh=js.zgh 
+       where yh.zgh = #{yhm}  and exists (select 1 from niutal_xtgl_jsxxb t1 where js.jsdm=t1.jsdm and t1.qyzt='1')
+  			<if test="mm != null and mm != ''">
+  				and yh.mm = #{mm}
+  			</if>
+  			<if test="yhlx != null and yhlx != ''">
+  				and yh.yhlx = #{yhlx}
+  			</if>
+  			order by js.sfmrjs desc
+   </select>
+   
+   <select id="getStudentInfo" parameterType="LoginModel" resultType="com.woshidaniu.common.log.User">
+    	select xx.xh as yhm,xx.xm,'' bmdm_id,'' bmmc,'student' yhlx from niutal_xtgl_xsmmb mm 
+    	left join niutal_xtgl_xsxxb xx on mm.xh = xx.xh 
+    	<where>
+   			xx.xh = #{yhm} 
+   			<if test="mm != null and mm != ''">
+   				and mm.mm = #{mm}
+   			</if>
+    	</where>
+    </select>
+   
+    <update id="disableAccount" parameterType="String">
+    	update niutal_xtgl_yhb
+    	<set>
+    		SFQY = '0'
+    	</set> 
+    	where ZGH=#{account} 
+    </update>
+</mapper>

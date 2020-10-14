@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IYwgnDao">
+
+	<select id="getYwgnList"  resultType="YwgnModel">
+		select 
+			a.gnid, 
+			a.gnmc, 
+			a.gnlj
+		from niutal_wjdc_ywgnb a
+	</select>
+	
+	<select id="getAllYwgnList" resultType="com.woshidaniu.wjdc.dao.entites.YwgnModel">
+		select 
+			a.gnid, 
+			a.gnmc, 
+			a.gnlj,
+			b.wjid,
+			b.clsx
+  		from 
+  			niutal_WJDC_YWGNB a,
+  			niutal_WJDC_YWGNBDB b
+ 		where 
+ 			a.gnid = b.gnid
+ 		order by to_number(b.clsx) asc
+	</select>
+</mapper>
+	

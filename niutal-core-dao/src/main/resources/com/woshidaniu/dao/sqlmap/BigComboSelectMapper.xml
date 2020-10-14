@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IBigComboSelectDao" >
+	<select id="getAllXYInitial" resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select distinct substr(F_PINYIN(bmmc), 0, 1) initialname
+		from niutal_xtgl_bmdmb order by initialName
+	</select>
+	
+	<select id="getXYDataByInitial" resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select t.* from (select distinct bmdm_id dm,
+                bmmc mc,
+                substr(F_PINYIN(bmmc), 0, 1) initialname
+		from niutal_xtgl_bmdmb ) t where t.initialname = #{initialname}
+	</select>
+	
+	<select id="getBigComboInitial" parameterType="com.woshidaniu.dao.entities.BigComboSelectModel" 
+		resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select distinct substr(F_PINYIN(${selectName}), 0, 1) initialname
+		from (${selectTable})
+		<where> 1 = 1
+			<if test="parentName != null and parentName !=''">
+				and ${parentName} = #{parentId}
+			</if>
+			<if test="secondparentName != null and secondparentName !=''">
+				and ${secondparentName} = #{secondParentId}
+			</if>
+		</where>
+		order by initialName
+	</select>
+	
+	<select id="getBigComboDataByInitial" parameterType="com.woshidaniu.dao.entities.BigComboSelectModel" 
+		resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select t.* from (select distinct ${selectId} dm,
+                ${selectName} mc,
+                substr(F_PINYIN(${selectName}), 0, 1) initialname
+		from (${selectTable}) 
+		<where> 1 = 1
+			<if test="parentName != null and parentName !=''">
+				and ${parentName} = #{parentId}
+			</if>
+			<if test="secondparentName != null and secondparentName !=''">
+				and ${secondparentName} = #{secondParentId}
+			</if>
+		</where>
+		) t where t.initialname = #{initialname}
+	</select>
+	
+	<select id="getBigComboDataWithoutInitial" parameterType="com.woshidaniu.dao.entities.BigComboSelectModel" 
+		resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select distinct ${selectId} dm,${selectName} mc
+        from (${selectTable})
+        <where> 1 = 1
+			<if test="parentName != null and parentName !=''">
+				and ${parentName} = #{parentId}
+			</if>
+			<if test="secondparentName != null and secondparentName !=''">
+				and ${secondparentName} = #{secondParentId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 省 -->
+	<select id="getShengList" resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like '__0000' and zt='1' order by dm
+	</select>
+	
+	<!-- 市 -->
+	<select id="getShiList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like substr(#{sheng},0,2)||'__00' and dm &lt;&gt; #{sheng} and zt='1' order by dm
+	</select>
+	
+	<!-- 直辖市下区 -->
+	<select id="getZxsqList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like substr(#{sheng},0,2)||'____' and dm not like '____00' and zt='1' order by dm
+	</select>
+	
+	<!-- 县 -->
+	<select id="getXianList" parameterType="java.lang.String" resultType="com.woshidaniu.dao.entities.BigComboSelectModel">
+		select dm,mc from DM_GB_B_ZHRMGHGXZQHDM where dm like substr(#{shi},0,4)||'__' and dm &lt;&gt; #{shi} and zt='1' order by dm
+	</select>
+</mapper>

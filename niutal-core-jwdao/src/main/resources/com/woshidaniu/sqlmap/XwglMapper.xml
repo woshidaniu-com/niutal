@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IXwglDao">
+
+	<insert id="insert" parameterType="com.woshidaniu.entities.XwglModel" flushCache="false" statementType="PREPARED" timeout="20000">
+		insert into niutal_xtgl_xwfbb ( xwbh, xwbt, fbsj, fbr, fbnr, sffb, sfzd,mxdxlb,mxdxbh) 
+		values (sys_guid() , #{xwbt}, #{fbsj},#{fbr}, #{fbnr}, #{sffb}, #{sfzd},#{mxdxlb},#{mxdxbh})   
+    </insert>
+    
+    <insert id="insertXsdx" parameterType="com.woshidaniu.entities.XwglModel">
+		 insert into niutal_xtgl_tzmxxsdxb(xzlb,xqh_id,jg_id,zyh_id,zyfx_id,njdm_id,bh_id,xbm,xslbm,ccdm,xh_id,mxdxbh) 
+		 values(#{xzlb},#{xqh_id},#{jg_id},#{zyh_id},#{zyfx_id},#{njdm_id},#{bh_id},#{xbm},#{xslbdm},#{pyccdm},#{xh_id},#{mxdxbh})
+    </insert>
+    
+     <insert id="insertJsdx" parameterType="com.woshidaniu.entities.XwglModel">
+		 insert into niutal_xtgl_tzmxfxsdxb(xnm,xqm,xzlb,xqh_id,szbmjg_id,kkbmjg_id,xbm,jgh_id,mxdxbh) 
+		 values(#{xnm},#{xqm},#{xzlb},#{xqh_id},#{jg_id},#{kkbm_id},#{xbm},#{jgh_id},#{mxdxbh})
+    </insert>
+    
+     <insert id="insertGwdx" parameterType="com.woshidaniu.entities.XwglModel">
+		 insert into niutal_xtgl_tzmxfxsdxb(xzlb,jsdm,jgh_id,mxdxbh) values(#{xzlb},#{jsdm},#{jgh_id},#{mxdxbh})
+    </insert>
+    
+    <delete id="deleteMxdx" parameterType="com.woshidaniu.entities.XwglModel">
+    	declare
+    	begin
+    		 delete from  niutal_xtgl_tzmxxsdxb a where exists(select 'x' from niutal_xtgl_xwfbb where mxdxbh=a.mxdxbh and xwbh=#{xwbh});
+    		 delete from  niutal_xtgl_tzmxfxsdxb a where exists(select 'x' from niutal_xtgl_xwfbb where mxdxbh=a.mxdxbh and xwbh=#{xwbh});
+    	end;
+    </delete>
+    
+	<update id="update" parameterType="com.woshidaniu.entities.XwglModel" flushCache="true" statementType="PREPARED" timeout="20000">
+		update niutal_xtgl_xwfbb
+		<set>
+			<if test="xwbt != null">
+				xwbt = #{xwbt},
+    		</if>
+			<if test="fbsj != null">
+				fbsj = #{fbsj},
+    		</if>
+			<if test="fbr != null">
+				fbr = #{fbr},
+    		</if>
+			<if test="sffb != null">
+				sffb = #{sffb},
+    		</if>
+			<if test="sfzd != null">
+				sfzd = #{sfzd},
+    		</if>
+			<if test="fbnr != null">
+				fbnr = #{fbnr},
+    		</if>
+    		<if test="mxdxbh != null">
+				mxdxbh = #{mxdxbh},
+    		</if>
+    		<if test="mxdxlb != null">
+				mxdxlb = #{mxdxlb}
+    		</if>
+    		
+		</set>
+		where xwbh=#{xwbh}
+	</update>
+	
+	<update id="batchUpdate" parameterType="hashMap" flushCache="true"
+		statementType="PREPARED" timeout="20000">
+		update niutal_XTGL_XWFBB
+		<set>
+			<if test="sffb != null">
+				sffb = #{sffb}
+    		</if>
+			<if test="sfzd != null">
+				sfzd = #{sfzd}
+    		</if>
+		</set>
+		<where>
+			<foreach collection="list" item="item" index="index"
+				separator=" OR">
+			   xwbh = #{item.xwbh} 
+			</foreach>
+		</where>
+	</update>
+	
+	<delete id="batchDelete" parameterType="hashMap"
+		flushCache="false" statementType="PREPARED" timeout="20000">
+		delete from niutal_XTGL_XWFBB
+		<where>
+			<foreach collection="list" item="item" index="index"
+				separator=" OR">
+			   xwbh = #{item.xwbh} 
+			</foreach>
+		</where>
+	</delete>
+
+	<select id="getModel" parameterType="string" resultType="com.woshidaniu.entities.XwglModel" useCache="false"
+            resultSetType="FORWARD_ONLY" flushCache="false" statementType="PREPARED"
+            timeout="20000">
+		select t1.*,
+		       t2.xm fbrxm,
+		       (select count(distinct ydr) from niutal_xtgl_xwckjlb y where y.xwbh = t1.xwbh) yds,
+		       case when t1.MXDXLB = '1' then
+		          (select decode(xzlb, 'mx', '面向', 'xz', '限制')
+		             from niutal_xtgl_TZMXXSDXB
+		            where mxdxbh = t1.mxdxbh
+		              and rownum = 1)
+		         when t1.mxdxlb = '2' or t1.mxdxlb = '3' then
+		          (select decode(xzlb, 'mx', '面向', 'xz', '限制')
+		             from niutal_xtgl_TZMXFXSDXB
+		            where mxdxbh = t1.mxdxbh
+		              and rownum = 1)
+		       end xzlb
+		  from niutal_XTGL_XWFBB t1, niutal_XTGL_yhb t2
+		 where t1.fbr = t2.yhm
+		   and t1.xwbh = #{xwbh}
+    </select>
+    
+    <select id="getModelList" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.entities.XwglModel">
+   		select t1.xwbh,
+		       t1.xwbt,
+		       t1.fbsj,
+		       t2.xm fbr,
+		       t1.mxdxlb,
+		       t1.sffb,
+		       t1.sfzd
+		  from niutal_XTGL_XWFBB t1, niutal_XTGL_yhb t2
+		 where t1.fbr = t2.yhm
+		   and instr(#{xwbh},t1.xwbh) > 0
+    </select>
+    
+    <select id="getPagedList" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.entities.XwglModel">
+		select t1.xwbh,
+		       t1.xwbt,
+		       t1.fbsj,
+		       t2.xm fbr,
+		       t1.mxdxlb,
+		       decode(t1.mxdxlb, '0', '全校', '1', '学生', '2', '教师','3','岗位') fbdx,
+		       t1.sffb,
+		       decode(t1.sffb, '1', '是', '否') sffbmc,
+		       t1.sfzd,
+		       decode(t1.sfzd, '1', '是', '否') sfzdmc
+		  from niutal_XTGL_XWFBB t1, niutal_XTGL_yhb t2
+		 where t1.fbr = t2.yhm
+		<if test="xwbt != null and xwbt !=''">
+			and t1.xwbt like '%'||#{xwbt}||'%'
+		</if>
+		<if test="sffb != null and sffb !=''">
+			and t1.sffb = #{sffb}
+		</if>
+		<if test="sfzd != null and sfzd !=''">
+			and t1.sfzd = #{sfzd}
+		</if>
+    </select>
+    
+	<!--保存通知(新闻)查看记录-->
+    <insert id="insertNewsLog" parameterType="com.woshidaniu.entities.XwglModel">
+    	insert into niutal_xtgl_xwckjlb(xwbh,ydr,ydsj) values (#{xwbh},#{ydr},to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+	
+	<sql id="xwQuery">
+		<!-- 学生 -->
+		<if test="yhlx==1">
+		 <![CDATA[
+		       select x.xwbh,x.xwbt,x.sfzd,x.fbsj,x.sffb,x.fbr,x.sfyd
+				  from (select a.xwbh,
+				               substr(a.xwbt, 0, 25) || case
+				                 when length(a.xwbt) > 25 then
+				                  '...'
+				               end xwbt,
+				               a.sfzd,
+				               substr(a.fbsj, 0, 10) fbsj,
+				               a.sffb,
+				               a.fbr,
+				               (select count(distinct ydr)
+					                  from niutal_xtgl_xwckjlb y
+					                 where y.xwbh = a.xwbh
+					                   and ydr = #{yhm}
+					           ) sfyd
+				          from niutal_xtgl_xwfbb a
+				         where exists (select 'x'
+				                  from (select a.xwbh
+				                          from niutal_XTGL_XWFBB a
+				                         where exists (select 'X'
+				                                  from niutal_xtgl_tzmxxsdxb t1,
+				                                       (select (select xqh_id from niutal_xtgl_bjdmb where bh_id = m.bh_id) xqh_id,
+				                                               m.jg_id,
+				                                               m.zyh_id,
+				                                               m.zyfx_id,
+				                                               m.njdm_id,
+				                                               m.bh_id,
+				                                               n.xbm,
+				                                               m.xslbdm,
+				                                               m.pyccdm,
+				                                               m.xh_id
+				                                          from jw_xjgl_xsxjxxb m,
+				                                               jw_xjgl_xsjbxxb n
+				                                         where m.xh_id = n.xh_id
+				                                           and n.xh = #{yhm}
+				                                       ) t2
+				                                 where t1.xzlb = 'mx'
+				                                   and nvl(t1.xqh_id, t2.xqh_id) = t2.xqh_id
+				                                   and nvl(t1.jg_id, t2.jg_id) = t2.jg_id
+				                                   and nvl(t1.zyh_id, t2.zyh_id) = t2.zyh_id
+				                                   and nvl(t1.zyfx_id, t2.zyfx_id) = t2.zyfx_id
+				                                   and nvl(t1.njdm_id, t2.njdm_id) = t2.njdm_id
+				                                   and nvl(t1.bh_id, t2.bh_id) = t2.bh_id
+				                                   and nvl(t1.xbm, t2.xbm) = t2.xbm
+				                                   and nvl(t1.xslbm, t2.xslbdm) = t2.xslbdm
+				                                   and nvl(t1.ccdm, t2.pyccdm) = t2.pyccdm
+				                                   and nvl(t1.xh_id, t2.xh_id) = t2.xh_id
+				                                   and t1.mxdxbh = a.mxdxbh
+				                               )
+				                           and not exists (select 'X'
+				                                  from niutal_xtgl_tzmxxsdxb t1,
+				                                       (select (select xqh_id from niutal_xtgl_bjdmb where bh_id = m.bh_id) xqh_id,
+				                                               m.jg_id,
+				                                               m.zyh_id,
+				                                               m.zyfx_id,
+				                                               m.njdm_id,
+				                                               m.bh_id,
+				                                               n.xbm,
+				                                               m.xslbdm,
+				                                               m.pyccdm,
+				                                               m.xh_id
+				                                          from jw_xjgl_xsxjxxb m,
+				                                               jw_xjgl_xsjbxxb n
+				                                         where m.xh_id = n.xh_id
+				                                           and n.xh = #{yhm}
+				                                       ) t2
+				                                 where t1.xzlb = 'xz'
+				                                   and nvl(t1.xqh_id, t2.xqh_id) = t2.xqh_id
+				                                   and nvl(t1.jg_id, t2.jg_id) = t2.jg_id
+				                                   and nvl(t1.zyh_id, t2.zyh_id) = t2.zyh_id
+				                                   and nvl(t1.zyfx_id, t2.zyfx_id) = t2.zyfx_id
+				                                   and nvl(t1.njdm_id, t2.njdm_id) = t2.njdm_id
+				                                   and nvl(t1.bh_id, t2.bh_id) = t2.bh_id
+				                                   and nvl(t1.xbm, t2.xbm) = t2.xbm
+				                                   and nvl(t1.xslbm, t2.xslbdm) = t2.xslbdm
+				                                   and nvl(t1.ccdm, t2.pyccdm) = t2.pyccdm
+				                                   and nvl(t1.xh_id, t2.xh_id) = t2.xh_id
+				                                   and t1.mxdxbh = a.mxdxbh
+				                             )
+				                        union
+				                        select a.xwbh
+				                          from niutal_XTGL_XWFBB a
+				                         where not exists (select 'X'
+			                                  from niutal_xtgl_tzmxxsdxb t1,
+			                                       (select (select xqh_id from niutal_xtgl_bjdmb where bh_id = m.bh_id) xqh_id,
+			                                               m.jg_id,
+			                                               m.zyh_id,
+			                                               m.zyfx_id,
+			                                               m.njdm_id,
+			                                               m.bh_id,
+			                                               n.xbm,
+			                                               m.xslbdm,
+			                                               m.pyccdm,
+			                                               m.xh_id
+			                                          from jw_xjgl_xsxjxxb m,
+			                                               jw_xjgl_xsjbxxb n
+			                                         where m.xh_id = n.xh_id
+			                                           and n.xh = #{yhm}
+			                                       ) t2
+			                                 where t1.xzlb = 'xz'
+			                                   and nvl(t1.xqh_id, t2.xqh_id) = t2.xqh_id
+			                                   and nvl(t1.jg_id, t2.jg_id) = t2.jg_id
+			                                   and nvl(t1.zyh_id, t2.zyh_id) = t2.zyh_id
+			                                   and nvl(t1.zyfx_id, t2.zyfx_id) = t2.zyfx_id
+			                                   and nvl(t1.njdm_id, t2.njdm_id) = t2.njdm_id
+			                                   and nvl(t1.bh_id, t2.bh_id) = t2.bh_id
+			                                   and nvl(t1.xbm, t2.xbm) = t2.xbm
+			                                   and nvl(t1.xslbm, t2.xslbdm) = t2.xslbdm
+			                                   and nvl(t1.ccdm, t2.pyccdm) = t2.pyccdm
+			                                   and nvl(t1.xh_id, t2.xh_id) = t2.xh_id
+			                                   and t1.mxdxbh = a.mxdxbh
+			                               )
+			                           and not exists (select 'X'
+			                                  from niutal_xtgl_tzmxxsdxb c
+			                                 where c.xzlb = 'mx'
+			                                   and c.mxdxbh = a.mxdxbh
+		                                )
+		                           ) t
+			                 where t.xwbh = a.xwbh
+			               )
+			           and a.sffb = 1
+			           and a.fbsj <= to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')
+			         order by a.sfzd desc, a.fbsj desc
+				 ) x
+    	 ]]>
+		</if>
+		<!-- 任课教师 -->
+		<if test="yhlx==2">
+		 <![CDATA[
+	         select x.xwbh,x.xwbt,x.sfzd,x.fbsj,x.sffb,x.fbr,x.sfyd
+			  from (select a.xwbh,
+			               substr(a.xwbt, 0, 25) || case
+			                 when length(a.xwbt) > 25 then
+			                  '...'
+			               end xwbt,
+			               a.sfzd,
+			               substr(a.fbsj, 0, 10) fbsj,
+			               a.sffb,
+			               a.fbr,
+			               (select count(distinct ydr)
+				                  from niutal_xtgl_xwckjlb y
+				                 where y.xwbh = a.xwbh
+				                   and ydr = #{yhm}
+				           ) sfyd
+			          from niutal_xtgl_xwfbb a
+			         where exists (select 'x'
+			                  from (select t1.xwbh
+			                          from niutal_xtgl_xwfbb t1
+			                         where exists (select 'x'
+			                                  from niutal_xtgl_tzmxfxsdxb a,
+			                                       (select a.xnm,
+			                                               a.xqm,
+			                                               a.xqh_id,
+			                                               (select jg_id from jw_jg_jzgxxb where jgh_id = b.jgh_id) szbmjg_id,
+			                                               (select kkbm_id from jw_jh_kcdmb where kch_id = a.kch_id) kkbmjg_id,
+			                                               (select xbm from jw_jg_jzgxxb where jgh_id = b.jgh_id) xbm,
+			                                               b.jgh_id
+			                                          from jw_jxrw_jxbxxb   a,
+			                                               jw_jxrw_jxbjsrkb b
+			                                         where a.jxb_id = b.jxb_id
+			                                           and exists (select 'x'
+			                                                  from jw_jg_jzgxxb
+			                                                 where jgh_id = b.jgh_id
+			                                                   and jgh = #{yhm}
+			                                               )
+			                                       ) b
+			                                 where a.xzlb = 'mx'
+			                                   and a.jsdm is null
+			                                   and nvl(a.xnm, b.xnm) = b.xnm
+			                                   and nvl(a.xqm, b.xqm) = b.xqm
+			                                   and nvl(a.xqh_id, b.xqh_id) = b.xqh_id
+			                                   and nvl(a.szbmjg_id, b.szbmjg_id) = b.szbmjg_id
+			                                   and nvl(a.kkbmjg_id, b.kkbmjg_id) = b.kkbmjg_id
+			                                   and nvl(a.xbm, b.xbm) = b.xbm
+			                                   and nvl(a.jgh_id, b.jgh_id) = b.jgh_id
+			                                   and a.mxdxbh = t1.mxdxbh
+			                               )
+			                           and not exists (select 'x'
+			                                  from niutal_xtgl_tzmxfxsdxb a,
+			                                       (select a.xnm,
+			                                               a.xqm,
+			                                               a.xqh_id,
+			                                               (select jg_id from jw_jg_jzgxxb where jgh_id = b.jgh_id) szbmjg_id,
+			                                               (select kkbm_id from jw_jh_kcdmb where kch_id = a.kch_id) kkbmjg_id,
+			                                               (select xbm from jw_jg_jzgxxb where jgh_id = b.jgh_id) xbm,
+			                                               b.jgh_id
+			                                          from jw_jxrw_jxbxxb   a,
+			                                               jw_jxrw_jxbjsrkb b
+			                                         where a.jxb_id = b.jxb_id
+			                                           and exists (select 'x'
+			                                                  from jw_jg_jzgxxb
+			                                                 where jgh_id = b.jgh_id
+			                                                   and jgh = #{yhm}
+			                                             )
+			                                       ) b
+			                                 where a.xzlb = 'xz'
+			                                   and a.jsdm is null
+			                                   and nvl(a.xnm, b.xnm) = b.xnm
+			                                   and nvl(a.xqm, b.xqm) = b.xqm
+			                                   and nvl(a.xqh_id, b.xqh_id) = b.xqh_id
+			                                   and nvl(a.szbmjg_id, b.szbmjg_id) = b.szbmjg_id
+			                                   and nvl(a.kkbmjg_id, b.kkbmjg_id) = b.kkbmjg_id
+			                                   and nvl(a.xbm, b.xbm) = b.xbm
+			                                   and nvl(a.jgh_id, b.jgh_id) = b.jgh_id
+			                                   and a.mxdxbh = t1.mxdxbh
+			                            )
+			                        union
+			                        select t1.xwbh
+			                          from niutal_xtgl_xwfbb t1
+			                         where not exists (select 'x'
+			                                  from niutal_xtgl_tzmxfxsdxb a,
+			                                       (select a.xnm,
+			                                               a.xqm,
+			                                               a.xqh_id,
+			                                               (select jg_id from jw_jg_jzgxxb where jgh_id = b.jgh_id) szbmjg_id,
+			                                               (select kkbm_id from jw_jh_kcdmb where kch_id = a.kch_id) kkbmjg_id,
+			                                               (select xbm from jw_jg_jzgxxb where jgh_id = b.jgh_id) xbm,
+			                                               b.jgh_id
+			                                          from jw_jxrw_jxbxxb   a,
+			                                               jw_jxrw_jxbjsrkb b
+			                                         where a.jxb_id = b.jxb_id
+			                                           and exists (select 'x'
+			                                                  from jw_jg_jzgxxb
+			                                                 where jgh_id = b.jgh_id
+			                                                   and jgh = #{yhm}
+			                                               )
+			                                       ) b
+			                                 where a.xzlb = 'xz'
+			                                   and a.jsdm is null
+			                                   and nvl(a.xnm, b.xnm) = b.xnm
+			                                   and nvl(a.xqm, b.xqm) = b.xqm
+			                                   and nvl(a.xqh_id, b.xqh_id) = b.xqh_id
+			                                   and nvl(a.szbmjg_id, b.szbmjg_id) = b.szbmjg_id
+			                                   and nvl(a.kkbmjg_id, b.kkbmjg_id) = b.kkbmjg_id
+			                                   and nvl(a.xbm, b.xbm) = b.xbm
+			                                   and nvl(a.jgh_id, b.jgh_id) = b.jgh_id
+			                                   and a.mxdxbh = t1.mxdxbh
+			                               )
+			                           and not exists (select 'X'
+			                                  from niutal_xtgl_tzmxxsdxb c
+			                                 where c.xzlb = 'mx'
+			                                   and c.mxdxbh = t1.mxdxbh
+			                               )
+			                        ) t
+			                 where t.xwbh = a.xwbh
+			               )
+			           and a.sffb = 1
+			           and a.fbsj <= to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')
+			         order by a.sfzd desc, a.fbsj desc
+			   ) x
+    	 ]]>
+		</if>
+		<!-- 其它，岗位 -->
+		<if test="yhlx==3">
+		 <![CDATA[
+	      select x.xwbh,x.xwbt,x.sfzd,x.fbsj,x.sffb,x.fbr,x.sfyd
+		  from (select a.xwbh,
+		               substr(a.xwbt, 0, 25) || case
+		                 when length(a.xwbt) > 25 then
+		                  '...'
+		               end xwbt,
+		               a.sfzd,
+		               substr(a.fbsj, 0, 10) fbsj,
+		               a.sffb,
+		               a.fbr,
+		               (select count(distinct ydr)
+			                  from niutal_xtgl_xwckjlb y
+			                 where y.xwbh = a.xwbh
+			                   and y.ydr = #{yhm}
+			           ) sfyd
+		          from niutal_xtgl_xwfbb a
+		         where exists (select 'x'
+		                  from (select t1.xwbh
+		                          from niutal_xtgl_xwfbb t1
+		                         where exists (select 'x'
+		                                  from niutal_xtgl_tzmxfxsdxb a,
+		                                       niutal_xtgl_yhjsb      b,
+		                                       niutal_xtgl_yhb        c
+		                                 where a.xnm is null
+		                                   and a.xzlb = 'mx'
+		                                   and nvl(a.jsdm, b.jsdm) = b.jsdm
+		                                   and nvl(a.jgh_id, b.yhm) = b.yhm
+		                                   and b.yhm = c.yhm
+		                                   and a.mxdxbh = t1.mxdxbh
+		                                   and c.yhm = #{yhm})
+		                           and not exists  (select 'x'
+		                                  from niutal_xtgl_tzmxfxsdxb a,
+		                                       niutal_xtgl_yhjsb      b,
+		                                       niutal_xtgl_yhb        c
+		                                 where a.xnm is null
+		                                   and a.xzlb = 'xz'
+		                                   and nvl(a.jsdm, b.jsdm) = b.jsdm
+		                                   and nvl(a.jgh_id, b.yhm) = b.yhm
+		                                   and b.yhm = c.yhm
+		                                   and a.mxdxbh = t1.mxdxbh
+		                                   and c.yhm = #{yhm}
+		                               )
+		                        union
+		                        select t1.xwbh
+		                          from niutal_xtgl_xwfbb t1
+		                         where not exists (select 'x'
+		                                  from niutal_xtgl_tzmxfxsdxb a,
+		                                       niutal_xtgl_yhjsb      b,
+		                                       niutal_xtgl_yhb        c
+		                                 where a.xnm is null
+		                                   and a.xzlb = 'xz'
+		                                   and nvl(a.jsdm, b.jsdm) = b.jsdm
+		                                   and nvl(a.jgh_id, b.yhm) = b.yhm
+		                                   and b.yhm = c.yhm
+		                                   and a.mxdxbh = t1.mxdxbh
+		                                   and c.yhm = #{yhm}
+		                               )
+		                           and not exists (select 'X'
+		                                  from niutal_xtgl_tzmxxsdxb c
+		                                 where c.xzlb = 'mx'
+		                                   and c.mxdxbh = t1.mxdxbh
+		                               )
+		                       ) t
+		                 where t.xwbh = a.xwbh)
+		           and a.sffb = 1
+		           and a.fbsj <= to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')
+		         order by a.sfzd desc, a.fbsj desc
+		     ) x
+    	 ]]>
+		</if>
+	</sql>
+	
+	<!-- 查询个人通知 -->
+	<select id="getGrtzList" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.entities.XwglModel">
+		<include refid="xwQuery"></include>
+		<if test="limit != null and limit !=''">
+			where rownum <![CDATA[<=]]> #{limit}
+		</if>
+	</select>
+	
+	<!-- 查询学生信息 -->
+	<select id="getPagedByScopeXsxx" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select b.xh_id,
+		       b.xh,
+		       b.xm,
+		       (select jgmc from niutal_xtgl_jgdmb where jg_id = a.jg_id) jgmc,
+		       (select zymc from niutal_xtgl_zydmb where zyh_id = a.zyh_id) zymc,
+		       (select njmc from niutal_xtgl_njdmb where njdm_id = a.njdm_id) njmc,
+		       (select bj from niutal_xtgl_bjdmb where bh_id = a.bh_id) bj,
+		       (select mc from niutal_xtgl_jcsjb  where lx = '0006'  and dm = b.xbm) xbmc
+		  from jw_xjgl_xsxjxxb a, jw_xjgl_xsjbxxb b
+		 where a.xh_id = b.xh_id
+		   and a.xnm = (select zdz from niutal_xtgl_xtszb where zdm = 'DQXNM')
+		   and a.xqm = (select zdz from niutal_xtgl_xtszb where zdm = 'DQXQM')
+		<if test="xqh_id != null and xqh_id !=''">
+			and exists (select 'x' from niutal_xtgl_bjdmb where bh_id=a.bh_id and xqh_id=#{xqh_id})
+		</if>
+		<if test="jg_id != null and jg_id !=''">
+			and a.jg_id=#{jg_id}
+		</if>
+		<if test="zyh_id != null and zyh_id !=''">
+		 	and a.zyh_id=#{zyh_id}
+		</if>
+		<if test="njdm_id != null and njdm_id !=''">
+			and a.njdm_id=#{njdm_id}
+		</if>
+		<if test="bh_id != null and bh_id !=''">
+			and a.bh_id=#{bh_id}
+		</if>
+		<if test="xbm != null and xbm !=''">
+			and b.xbm=#{xbm} 
+		</if>
+		<if test="xslbdm != null and xslbdm !=''">
+			and a.xslbdm=#{xslbdm}
+		</if>
+		<if test="pyccdm != null and pyccdm !=''">
+			and a.pyccdm=#{pyccdm}
+		</if>
+	</select>
+	
+	<!-- 查询教师信息 -->
+	<select id="getPagedByScopeJsxx" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select a.xnm,
+		       a.xqm,
+		       b.jgh_id,
+		       c.xm,
+		       c.xbmc,
+		       c.jg_id,
+		       a.xqh_id,
+		       c.zcmc,
+		       c.jgh
+		  from jw_jxrw_jxbxxb a, jw_jxrw_jxbjsrkb b, jw_jg_jzgxxb c
+		 where a.jxb_id = b.jxb_id
+		   and b.jgh_id = c.jgh_id
+		<if test="xnm != null and xnm !=''">
+			and a.xnm=#{xnm}
+		</if>
+		<if test="xqm != null and xqm !=''">
+			and a.xqm=#{xqm}
+		</if>
+		<if test="xqh_id != null and xqh_id !=''">
+			and a.xqh_id=#{xqh_id}
+		</if>
+		<if test="jg_id != null and jg_id !=''">
+			and c.jg_id=#{jg_id}
+		</if>
+		<if test="kkbm_id != null and kkbm_id !=''">
+			and exists(select 'x' from jw_jh_kcdmb where  kch_id=a.kch_id and kkbm_id=#{kkbm_id})
+		</if>
+		<if test="xbm != null and xbm !=''">
+			and c.xbm=#{xbm}
+		</if>
+	</select>
+	
+	<!-- 查询符合条件的学年代码集合-->
+	<select id="queryXnList" resultType="com.woshidaniu.common.query.BaseMap">
+		select t.xnm,t.xnmc from jw_jcdm_xnb t where t.sfyx = '1'  order by xnmc desc
+	</select>
+	
+	<!-- 查询除学生外角色 -->
+	<select id="queryJsList" resultType="com.woshidaniu.common.query.BaseMap">
+		<![CDATA[
+			select jsdm,jsmc from niutal_xtgl_jsxxb where jsdm<>'xs'
+		]]>
+	</select>
+	
+	<!-- 查询岗位用户信息 -->
+	<select id="getPagedByScopeGwxx" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.common.query.BaseMap">
+		select a.xm,
+		       a.yhm,
+		       (select jgmc from niutal_xtgl_jgdmb where jg_id = a.jgdm) jgmc
+		  from niutal_xtgl_yhb a
+		 where not exists (select 'x'
+		          from niutal_xtgl_yhjsb
+		         where yhm = a.yhm
+		           and jsdm = 'xs'
+		       )
+		<if test="jsdm != null and jsdm !=''">
+			and exists(select 'x' from niutal_xtgl_yhjsb where yhm=a.yhm and jsdm=#{jsdm})
+		</if>
+	</select>
+	
+	<!-- 分页查询新闻 -->
+	<select id="getPagedByScopeXwList" parameterType="com.woshidaniu.entities.XwglModel" resultType="com.woshidaniu.entities.XwglModel">
+		<include refid="xwQuery"></include>
+		<if test="xwbt != null and xwbt !=''">
+			where xwbt like '%'||#{xwbt}||'%'
+		</if>
+	</select>
+	
+</mapper>

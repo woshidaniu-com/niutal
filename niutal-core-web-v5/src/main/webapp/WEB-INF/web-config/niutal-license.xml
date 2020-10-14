@@ -1,0 +1,41 @@
+<!-- license 配置 -->
+<!-- 1. 校验执行周期:单位MINUTES -->
+<context-param>
+	<param-name>license_check_period</param-name>
+	<param-value>1</param-value>
+</context-param>
+
+<context-param>
+	<param-name>product_name_provider</param-name>
+	<param-value>com.woshidaniu.license.DefaultProductNameProvider
+	</param-value>
+</context-param>
+
+<!-- 只有在license开启dev模式下才能使用 -->
+<!-- 2. 是否开启license功能 -->
+<context-param>
+	<param-name>_dev_license_enable</param-name>
+	<param-value>true</param-value>
+</context-param>
+<!-- 3. license自增线程初始化时间 -->
+<context-param>
+	<param-name>_dev_license_thread_delay</param-name>
+	<param-value>0</param-value>
+</context-param>
+<!-- 4. license自增线程执行周期 -->
+<context-param>
+	<param-name>_dev_license_thread_period</param-name>
+	<param-value>5</param-value>
+</context-param>
+<!-- 4. license自增线程执行周期时间单位：SECONDS,MINUTES,HOURS,DAYS -->
+<context-param>
+	<param-name>_dev_license_thread_timeunit</param-name>
+	<param-value>SECONDS</param-value>
+</context-param>
+<!-- 只有在license开启dev模式下才能使用 -->
+
+<listener>
+	<listener-class>com.woshidaniu.license.integration.LicenseContextListener
+	</listener-class>
+</listener>
+<!-- license 配置 -->

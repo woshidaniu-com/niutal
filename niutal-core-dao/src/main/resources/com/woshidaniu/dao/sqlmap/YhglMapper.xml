@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IYhglDao" >
+
+	<!-- 基础查询 -->
+	<sql id="queryListSql">
+		select * from (
+			select zgh,xm,mm,lxdh,dzyx,sfqy,jgdm,yhlx,
+				(select bmmc from niutal_xtgl_bmdmb where bmdm_id=a.jgdm) jgmc,
+				(select wm_concat(jsmc) from niutal_xtgl_jsxxb t1, niutal_xtgl_yhjsb t2 where t1.jsdm = t2.jsdm and t2.zgh = a.zgh) jsxx
+			from niutal_xtgl_yhb a 
+		) where 1=1 
+		<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+			 and ${searchModel.querySQL}
+		</if>
+	</sql>
+	
+	<!-- 查询用户信息列表 -->
+	<select id="getPagedList" parameterType="YhglModel" resultType="YhglModel">
+		<include refid="queryListSql"></include>
+	</select>
+	
+	<select id="getModelList" parameterType="YhglModel" resultType="YhglModel">
+		<include refid="queryListSql"></include>
+	</select> 
+	
+   	<!-- 查询单个用户信息 -->
+    <select id="getModel" parameterType="YhglModel" resultType="YhglModel">
+    	 select t.*,
+    			(select bmmc from niutal_xtgl_bmdmb where bmdm_id=t.jgdm) jgmc, 
+    			(select wm_concat(jsmc) from niutal_xtgl_jsxxb t1, niutal_xtgl_yhjsb t2 where t1.jsdm = t2.jsdm and t2.zgh = t.zgh) jsxx
+    	   from niutal_xtgl_yhb t 
+    	  where zgh = #{zgh}
+    	  <if test="mm != null and mm != ''">
+   			and mm = #{mm}
+   		  </if>
+    </select>
+    
+    <!-- 增加用户 -->
+    <insert id="insert" parameterType="YhglModel">
+    	insert into niutal_xtgl_yhb (zgh,xm,mm,lxdh,dzyx,sfqy,jgdm,yhlx) values (#{zgh},#{xm},#{mm},#{lxdh},#{dzyx},#{sfqy},#{jgdm},#{yhlx})
+    </insert>
+    
+   	<!-- 修改用户信息 -->
+    <update id="update" parameterType="YhglModel">
+    	update niutal_xtgl_yhb 
+    	<set>
+    		<if test="xm != null and xm != ''">
+    			xm = #{xm},
+    		</if>
+    		<if test="mm != null and mm != ''">
+    			mm = #{mm},
+    		</if>
+    		<if test="lxdh != null ">
+    			lxdh = #{lxdh},
+    		</if>
+    		<if test="dzyx != null ">
+    			dzyx = #{dzyx},
+    		</if>
+    		<if test="sfqy != null and sfqy !=''">
+    			sfqy = #{sfqy},
+    		</if>
+    		<if test="jgdm != null and jgdm !=''">
+    			jgdm = #{jgdm},
+    		</if>
+    		<if test="yhlx != null and yhlx != ''">
+    			yhlx = #{yhlx}
+    		</if>
+    	</set> 
+    	where zgh=#{zgh} 
+    </update>
+	
+	
+	<!-- 保存用户角色信息 -->
+    <insert id="zjYhjsxx" >
+    	insert into niutal_xtgl_yhjsb (zgh,jsdm) 
+		<foreach collection="jsdms" item="item" index="index" separator="union all">
+            select #{zgh},#{item} from dual
+        </foreach>
+    </insert>
+	
+	<!-- 删除用户角色信息 -->
+    <delete id="scYhjsxx" >
+    	delete niutal_xtgl_yhjsb 
+    	<where>
+    		<foreach collection="zgh" item="item" index="index" separator=" OR">
+				   zgh = #{item} 
+			</foreach>
+    	</where> 
+    </delete>
+	
+    <!-- 删除用户信息 -->
+    <delete id="scYhxx" >
+    	delete niutal_xtgl_yhb  
+    	<where>
+		    <foreach collection="zgh" item="item" index="index" separator=" OR">
+				   zgh = #{item} 
+			</foreach>
+		</where> 
+    </delete>
+    
+    <!-- 批量更新启用停用 -->
+     <update id="batchUpdate" parameterType="hashMap">
+		update niutal_xtgl_yhb set sfqy = #{sfqy}
+		<where>
+			<foreach collection="zghs" item="item" index="index"
+				separator=" OR">
+			   zgh = #{item} 
+			</foreach>
+		</where>
+	</update>
+    
+    <!-- 批量修改用户密码 -->
+    <update id="updateYhmm">
+    	update niutal_xtgl_yhb set mm=#{password} where 
+    	<foreach collection="zghs" item="item" index="index"
+			separator=" OR">
+		   zgh = #{item} 
+		</foreach>
+    </update>
+    
+     <!-- 批量保存用户数据范围 -->
+    <insert id="insertYhsjfw">
+   		 insert into niutal_xtgl_yhsjfw (zgh,sjdm,sjid) 
+		<foreach collection="list" item="item" index="index" separator="union all">
+            select #{item.zgh},#{item.sjdm},#{item.sjid} from dual
+        </foreach>
+    </insert>
+    
+     <!-- 批量删除用户数据范围 -->
+    <delete id="deleteYhsjfw">
+    	delete from niutal_xtgl_yhsjfw where
+		<foreach collection="zghs" item="item" index="index"
+			separator=" OR">
+		   zgh = #{item} 
+		</foreach>
+    </delete>
+    
+    <!-- 查询用户数据范围 -->
+    <select id="getSjfwByYh" resultType="map">
+    	select * from niutal_xtgl_yhsjfw where zgh=#{zgh}
+    </select>
+    
+     <!-- 按类型查询用户数据范围 -->
+    <select id="getYhsjfwList" resultType="string">
+    	select sjid from niutal_xtgl_yhsjfw where zgh=#{zgh} and sjdm=#{sjdm}
+    </select>
+    
+    <delete id="deleteCheckedYhsjfw">
+    	delete from niutal_xtgl_yhsjfw where zgh = #{zgh} and sjdm = #{sjdm} and sjid = #{value}
+    </delete>
+    
+    <insert id="insertCheckedYhsjfw">
+    	insert into niutal_xtgl_yhsjfw(zgh,sjdm,sjid)values(#{zgh},#{sjdm},#{value})
+    </insert>
+    
+</mapper>

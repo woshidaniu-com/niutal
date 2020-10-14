@@ -1,0 +1,157 @@
+ul,
+li {
+	list-style-type: none;
+}
+
+.tree {
+	display: block;
+	position: relative;
+	padding: 5px 15px;
+}
+
+.tree span {
+	display: inline-block;
+	box-sizing: border-box;
+	height: 30px;
+	line-height: 28px;
+	min-width: 60px;
+	text-align: center;
+	color: #888;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 0 8px;
+}
+
+.tree ul {
+	position: relative;
+	padding-left: 60px;
+	margin: 0;
+}
+
+.tree ul>li {
+	position: relative;
+	padding: 5px 0;
+}
+
+.tree>ul {
+	padding: 0;
+	margin: 0;
+}
+
+
+/** 水平方向连线 */
+
+.tree>ul ul>li:after {
+	content: ' ';
+	position: absolute;
+	top: 20px;
+	left: -45px;
+	width: 45px;
+	border: none;
+	border-top: 1px solid #ddd;
+}
+
+
+/** 垂直方向连线 */
+
+.tree ul>li:not(:last-child):before {
+	content: ' ';
+	position: absolute;
+	top: 0;
+	left: -45px;
+	height: 100%;
+	border: none;
+	border-left: 1px solid #ddd;
+}
+
+.tree ul>li:last-child:before {
+	content: ' ';
+	position: absolute;
+	top: 0;
+	left: -45px;
+	height: 20px;
+	border: none;
+	border-left: 1px solid #ddd;
+}
+
+
+/** 控制鼠标移上去的颜色 */
+
+.tree span:hover,
+.tree span:hover+ul span {
+	color: #fff;
+	background-color: #1890ff;
+}
+
+.tree span:hover,
+.tree span:hover+ul span,
+.tree span:hover+ul li:before,
+.tree span:hover+ul li:after {
+	border-color: #1890ff;
+}
+
+
+/** 折叠图标 */
+
+.tree .fa:before {
+	margin-right: 5px;
+}
+
+.tree .fa-minus-circle,
+.tree .fa-plus-circle {
+	cursor: pointer;
+}
+
+.tree .active {
+	border-color: #1890ff;
+	color: #1890ff;
+}
+
+.panel-left {
+	height: 700px;
+	margin-top: 5px;
+	overflow: auto;
+}
+
+.panel-right {
+	height: 700px;
+	margin-top: 5px;
+}
+
+span.treeitem {
+	cursor: pointer;
+}
+
+div.ruleitem {
+	margin-left: 5px;
+	margin-top: 10px;
+	float: left;
+	padding-left: 15px;
+	padding-top: 5px;
+}
+
+div.group {
+	margin: 5px;
+	padding: 5px;
+	border: 1px dashed;
+	height: 340px;
+	overflow: auto;
+}
+
+div.groupitem {
+	margin-left: 5px;
+	margin-top: 10px;
+	float: left;
+	padding-left: 15px;
+	padding-top: 5px;
+}
+
+label.show-item:hover {
+	cursor: pointer;
+	color: orange;
+}
+
+[class^="col-"]:not(.pad-no) {
+	padding-left: 2.5px;
+	padding-right: 2.5px;
+}

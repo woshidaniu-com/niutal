@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IBmdmDao" >
+
+	<!-- 增加部门代码 -->
+    <insert id="insert" parameterType="BmdmModel">
+		insert into niutal_xtgl_jgdmb (jgdm,jgmc,jgywmc,jgjc,jgjp,jgdz,lssjjgid,lsxqid,jgyxbs,sfjxbm,sfst,jgyzbm,fzrzgh)
+		values (#{jgdm},#{jgmc},#{jgywmc},#{jgjc},#{jgjp},#{jgdz},#{lssjjgid},#{lsxqid},'1',#{sfjxbm},#{sfst},#{jgyzbm},#{fzrzgh})
+    </insert>
+    
+    <!-- 修改部门代码 -->    
+    <update id="update" parameterType="BmdmModel">
+		update niutal_xtgl_jgdmb t
+		<set>
+			<if test="jgmc != null and jgmc != ''">
+		   	   	t.jgmc = #{jgmc}
+		   	</if>
+		   	<if test="lssjjgid != null and lssjjgid != ''">
+		    	,t.lssjjgid = #{lssjjgid}
+		   	</if>
+		   	<if test="jgywmc != null and jgywmc != ''">
+		   	   	,t.jgywmc = #{jgywmc}
+		   	</if>
+			<if test="jgjc != null and jgjc != ''">
+			    ,t.jgjc = #{jgjc}
+			</if>		       
+			<if test="sfjxbm != null and sfjxbm != ''">
+			   ,t.sfjxbm = #{sfjxbm}
+			</if>	
+			<if test="sfst != null and sfst != ''">
+			   ,t.sfst = #{sfst}
+			</if> 
+			<if test="fzrjgh != null and fzrjgh != ''">
+			   ,t.fzrjgh = #{fzrjgh}
+			</if> 
+			<if test="kkxy != null and kkxy != ''">
+			   ,t.kkxy = #{kkxy}
+			</if> 
+		</set>
+		 where t.jg_id = #{jg_id}
+    </update>
+    
+     <!-- 删除部门代码 -->
+    <delete id="batchDelete" parameterType="hashMap" flushCache="false" statementType="PREPARED" timeout="20000">
+    	delete niutal_xtgl_jgdmb t 
+    	 <foreach collection="list" item="item" index="index" separator=" OR " open=" where (" close=" ) ">
+		 	t.jg_id = #{item.pkvalue} 
+		</foreach>
+    </delete>
+    
+	<!-- 查询部门代码（分页）-->
+	<select id="getPagedList" parameterType="BmdmModel" resultType="BmdmModel">
+	    select t.jg_id,
+	           t.jgmc,
+	           (select jgmc from niutal_xtgl_jgdmb a where a.jg_id = t.lssjjgid) as ls_jgmc,
+	           t.jgywmc,
+	           t.bmjc,
+	           t.lssjjgid,
+	           t.sfst,
+	           t.fzrjgh,
+	           t.kkxy
+	      from niutal_xtgl_jgdmb t
+		<where>
+			<if test="jgmc != null and jgmc != ''">
+				and t.jgmc like '%' || #{jgmc} || '%'
+			</if>
+			<if test="bmjc != null and bmjc != ''">
+				and t.jgjc like '%' || #{jgjc}|| '%'
+			</if>
+			<if test="lssjjgid != null and lssjjgid != ''">
+				and t.lssjjgid = #{lssjjgid}
+			</if>
+			<if test="sfst != null and sfst != ''">
+				and t.sfst = #{sfst}
+			</if>
+			<if test="kkxy != null and kkxy != ''">
+				and t.kkxy = #{kkxy}
+			</if>			
+		</where>
+	</select>
+	
+	<!-- 查询所有机构代码-->
+	<select id="getModelList" parameterType="BmdmModel" resultType="BmdmModel">
+		select t.jg_id,t.jgmc,t.lssjjgid from niutal_xtgl_jgdmb t
+		<if test="jgmc!=null and jgmc!=''">
+			where t.jgmc like '%' || #{jgmc} || '%'
+		</if>
+		order by t.jg_id
+	</select>
+	
+	<!-- 根据开课学院,查询部门列表-->
+	<select id="queryModel" parameterType="hashMap" resultType="BmdmModel">
+	    select jg_id, t.jgmc, t.kkxy,t.lssjjgid
+	    from niutal_xtgl_jgdmb t 
+	    where 1 = 1
+    	<if test="kkxy != null and kkxy != ''">
+     		and t.kkxy= #{kkxy}
+    	</if> 
+    	<if test="lssjjgid != null and lssjjgid != ''">
+     		and t.lssjjgid = #{lssjjgid}
+    	</if> 
+	</select>
+ 
+</mapper>

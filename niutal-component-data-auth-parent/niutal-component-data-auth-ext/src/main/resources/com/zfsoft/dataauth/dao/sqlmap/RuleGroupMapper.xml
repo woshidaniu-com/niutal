@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dataauth.dao.daointerface.RuleGroupDao" >
+	<insert id="insert" parameterType="com.woshidaniu.dataauth.dao.entities.RuleGroup">
+		insert into niutal_data_rule_group 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="groupId != null and groupId != ''">group_id,</if>
+			<if test="groupCode != null and groupCode != ''">group_code,</if>
+			<if test="groupName != null and groupName != ''">group_name,</if>
+			<if test="groupType != null and groupType != ''">group_type,</if>
+			<if test="selectItem != null and selectItem != ''">select_item,</if>
+		</trim>
+		<trim prefix=" values (" suffix=")" suffixOverrides=",">
+			<if test="groupId != null and groupId != ''">#{groupId,jdbcType=VARCHAR},</if>
+			<if test="groupCode != null and groupCode != ''">#{groupCode,jdbcType=VARCHAR},</if>
+			<if test="groupName != null and groupName != ''">#{groupName,jdbcType=VARCHAR},</if>
+			<if test="groupType != null and groupType != ''">#{groupType,jdbcType=VARCHAR},</if>
+			<if test="selectItem != null and selectItem != ''">#{selectItem,jdbcType=VARCHAR},</if>
+		</trim>
+		<selectKey keyProperty="groupId" resultType="String" order="BEFORE">select sys_guid() from dual</selectKey>
+	</insert>
+	
+	<update id="update" parameterType="com.woshidaniu.dataauth.dao.entities.RuleGroup">
+		update niutal_data_rule_group set group_code = #{groupCode},group_name = #{groupName},group_type = #{groupType},select_item = #{selectItem} where group_id = #{groupId}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from niutal_data_rule_group where group_id = #{groupId,jdbcType=VARCHAR}
+	</delete>
+	
+	<sql id="Base_Column_List">
+		group_id as groupId,group_code as groupCode,group_name as groupName,group_type as groupType,select_item as selectItem
+	</sql>
+	<select id="getPagedList" resultType="com.woshidaniu.dataauth.dao.entities.RuleGroup" parameterType="com.woshidaniu.dataauth.dao.entities.RuleGroup">
+		select 
+		<include refid="Base_Column_List" />
+		from niutal_data_rule_group 
+		<where>
+			<if test="groupType != null and groupType != ''">
+				and group_type = #{groupType}
+			</if>
+			<if test="groupName != null and groupName != ''">
+				and group_name like '%'|| #{groupName} ||'%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="getModel" resultType="com.woshidaniu.dataauth.dao.entities.RuleGroup" parameterType="java.lang.String">
+		select <include refid="Base_Column_List" /> from niutal_data_rule_group where group_id = #{id} 
+	</select>
+</mapper>

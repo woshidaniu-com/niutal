@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IXxzywhDao" >
+
+    <!-- 分页查询专业信息-->
+    <select id="getPagedByScope" parameterType="com.woshidaniu.entities.XxzywhModel" resultType="com.woshidaniu.entities.XxzywhModel">
+		select t.xxzydmb_id,
+		       t.pcdm,
+		       (select nj.njmc from niutal_xtgl_njdmb nj where nj.njdm_id = t.pcdm) pcmc,
+		       t.zydm,
+		       t.zymc,
+		       t.xkdm,
+		       t.xkmc,
+		       t.mldm,
+		       t.mlmc
+		  from niutal_xtgl_xxzydmb t
+		  <where> 
+			  <if test="pcdm!=null and pcdm!=''">
+			  	and t.pcdm=#{pcdm}
+			  </if>
+			  <if test="zydm!=null and zydm!=''">
+			  	and t.zydm||t.zymc like '%'||#{zydm}||'%'
+			  </if>
+		  </where>
+    </select>
+    
+    <!-- 查询model-->
+    <select id="getModel" parameterType="com.woshidaniu.entities.XxzywhModel" resultType="com.woshidaniu.entities.XxzywhModel">
+		select t.xxzydmb_id,
+		       t.pcdm,
+		       (select nj.njmc from niutal_xtgl_njdmb nj where nj.njdm_id = t.pcdm) pcmc,
+		       t.zydm,
+		       t.zymc,
+		       t.xkdm,
+		       t.xkmc,
+		       t.mldm,
+		       t.mlmc
+		  from niutal_xtgl_xxzydmb t
+		  where t.xxzydmb_id= #{xxzydmb_id}
+    </select>
+    <!-- 插入专业信息 -->
+    <insert id="insert" parameterType="com.woshidaniu.entities.XxzywhModel" >
+   	 	insert into niutal_xtgl_xxzydmb (xxzydmb_id,pcdm,zydm,zymc,xkdm,xkmc,mldm,mlmc)
+		values(sys_guid(),
+				#{pcdm,jdbcType=VARCHAR},
+				#{zydm,jdbcType=VARCHAR},
+				#{zymc,jdbcType=VARCHAR},
+				#{xkdm,jdbcType=VARCHAR},
+				#{xkmc,jdbcType=VARCHAR},
+				#{mldm,jdbcType=VARCHAR},
+				#{mlmc,jdbcType=VARCHAR})
+    </insert>
+    
+    <!-- 更新专业信息 -->
+    <update id="update" parameterType="com.woshidaniu.entities.XxzywhModel" >
+    	update niutal_xtgl_xxzydmb t
+    	<set>
+    		<if test="xkdm!=null and xkdm!=''">
+    			t.xkdm=#{xkdm},
+    		</if>
+    		<if test="xkmc!=null and xkmc!=''">
+    			t.xkmc=#{xkmc},
+    		</if>
+    		<if test="mldm!=null and mldm!=''">
+    			t.mldm=#{mldm},
+    		</if>
+    		<if test="mlmc!=null and mlmc!=''">
+    			t.mlmc=#{mlmc},
+    		</if>
+    		<if test="pcdm!=null and pcdm!=''">
+    			t.pcdm=#{pcdm},
+    		</if>
+    		t.zymc = #{zymc}
+    	</set>
+    	   where t.xxzydmb_id= #{xxzydmb_id}
+    </update>
+    
+    
+    <!--删除专业信息 -->
+    <delete id="delete" parameterType="com.woshidaniu.entities.XxzywhModel">
+    	delete niutal_xtgl_xxzydmb t
+    	where 1=1  and 
+    	<foreach collection="pks" index="index" item="item" open=" (" close=")" separator="or">
+    		t.xxzydmb_id = #{item}
+    	</foreach>
+    </delete>
+    
+    
+    <!-- 查询专业是否已被使用 -->
+    <select id="getCount" parameterType="com.woshidaniu.entities.XxzywhModel" resultType="int">
+    	select nvl(count(*), '0')
+		  from jw_jh_dlzydzb t
+		 where exists (select 1
+		          from niutal_xtgl_xxzydmb a
+		         where a.pcdm = t.njdm_id
+		           and a.zydm = t.xxzydm
+		           and a.xxzydmb_id in
+		               <foreach collection="pks" index="index" item="item" open=" (" close=")" separator=",">
+				    		#{item}
+				    	</foreach>
+    					
+    				)
+    </select>
+
+</mapper>

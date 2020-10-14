@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IBaseReportDetailDao" >
+
+	<!-- 分页查询【高级报表基本信息】 -->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel" resultType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel">
+		select t.report_guid, t.report_name, t.report_alias , t.report_desc, t.report_used
+		  from (select x.report_guid,
+		               x.report_name,
+		               x.report_alias,
+		               x.report_desc,
+		               (case when (select count(1) from niutal_designer_reports a where a.report_guid = x.report_guid) > 0 then
+		                  '1'
+		                 else
+		                  '0'
+		               end) report_used
+		          from niutal_report_details x
+		       ) t
+	     <where>
+	     	<if test=" report_name != null and report_name != '' ">
+	     		and t.report_name like '%'||#{report_name}||'%' 
+	     	</if>
+	     	<if test=" report_used != null and report_used != '' ">
+	     		and t.report_used = #{report_used} 
+	     	</if>
+	     </where>
+	</select>
+	
+	<!-- 查询【高级报表基本信息】 -->
+	<select id="getModelList" resultType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel">
+		select t.report_guid, t.report_name from niutal_report_details t
+	</select>
+	
+	<!-- 查询【高级报表基本信息】-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel" resultType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel">
+	select t.report_guid, t.report_name, t.report_alias , t.report_desc, t.report_used
+	  from (select x.report_guid,
+	               x.report_name,
+	               x.report_alias,
+	               x.report_desc,
+	               (case when (select count(1) from niutal_designer_reports a where a.report_guid = x.report_guid) > 0 then
+	                  '1'
+	                 else
+	                  '0'
+	               end) report_used
+	          from niutal_report_details x
+	       ) t
+	  where t.report_guid = #{report_guid}
+	</select>
+	
+	<!-- 查询【高级报表基本信息】-->
+	<select id="getReportDetailModel" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel">
+	select t.report_guid, t.report_name,  t.report_alias ,t.report_desc, t.report_used
+	  from (select x.report_guid,
+	               x.report_name,
+	               x.report_alias,
+	               x.report_desc,
+	               (case when (select count(1) from niutal_designer_reports a where a.report_guid = x.report_guid) > 0 then
+	                  '1'
+	                 else
+	                  '0'
+	               end) report_used
+	          from niutal_report_details x
+	       ) t
+	  where t.report_guid = #{report_guid}
+	</select>
+	
+	
+	<!-- 添加【高级报表基本信息】 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel" >
+		insert into niutal_report_details(report_name,report_alias,report_desc,report_file)
+		values(#{report_name},#{report_alias},#{report_desc,jdbcType=VARCHAR},#{report_file,jdbcType=BLOB})
+	</insert>
+	
+	<!-- 查询【高级报表基本信息】被使用次数 -->
+	<select id="getUseCount" parameterType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel" resultType="int"  >
+		<if test="deleteList!=null and deleteList.size()>0">
+			select count(1)  as counts from niutal_designer_reports t
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.report_guid = #{item} ]]>
+			</foreach>
+		 </if>
+	</select>
+	
+	<!-- 删除【高级报表基本信息】-->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel">
+	<if test="deleteList!=null and deleteList.size()>0">
+		declare
+		begin
+			delete niutal_report_details t 
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.report_guid = #{item} ]]>
+			</foreach>;
+		end;
+	</if>
+	</delete>
+	
+	<!-- 更新【高级报表基本信息】-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.BaseReportDetailModel">
+	 update niutal_report_details t
+		set t.report_name 	= #{report_name,jdbcType=VARCHAR},
+			t.report_desc 	= #{report_desc,jdbcType=VARCHAR}<if test="report_file != null ">,
+			t.report_alias 	= #{report_alias,jdbcType=VARCHAR},
+			t.report_file 	= #{report_file,jdbcType=BLOB} </if>
+	  where t.report_guid = #{report_guid}
+	</update>
+    
+</mapper>

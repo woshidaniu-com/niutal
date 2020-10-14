@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IXsxzDao">
+	
+	<!-- 查询学生信息分页 -->
+	<select id="getPagedList" parameterType="com.woshidaniu.dao.entities.XsxzModel"
+		resultType="com.woshidaniu.dao.entities.XsxzModel">
+		select * from (
+		      select a.xh,
+		             a.xm,
+		             a.xbdm,
+		             a.mzdm,
+		             a.zzmmdm,
+		             a.sfzh,
+		             a.csrq,
+		             a.syszd,
+		             a.hkszd,
+		             a.jg,
+		             a.bjdm_id bjdm,
+		             a.xlcc,
+		             f.mc      xlccmc,
+		             a.xjzt,
+		             a.sfzxs,
+		             a.xszt,
+		             a.sjhm,
+		             a.gddh,
+		             a.email,
+		             a.qqhm,
+		             a.jtdz,
+		             a.jtyb,
+		             a.jtdh,
+		             b.njdm_id njdm,
+		             b.njdm_id njmc,
+		             d.bmmc    xymc,
+		             d.bmdm_id xydm,
+		             c.zymc,
+		             c.zydm,
+		             b.bjmc,
+		             e.mc      xbmc
+		        from niutal_xtgl_xsxxb a
+		        left join niutal_xtgl_bjdmb b
+		          on a.bjdm_id = b.bjdm_id
+		        left join niutal_xtgl_zydmb c
+		          on a.zydm = c.zydm_id and a.xlcc = c.cydm_id_cc
+		        left join niutal_xtgl_bmdmb d
+		          on a.bmdm = d.bmdm_id
+		        left join dm_gb_b_rdxbdm e
+		          on a.xbdm = e.dm
+		        left join dm_gb_b_xldm f
+		          on a.xlcc = f.dm
+		      ) a
+			<where>
+				<!-- 在校生 -->
+				xszt='1'
+				<if test="njdm != null and njdm != ''">
+						and a.njdm=#{njdm}
+				</if>
+				<if test="xydm != null and xydm != ''">
+						and a.xydm=#{xydm}
+				</if>
+				<if test="zydm != null and zydm != ''">
+						and a.zydm=#{zydm}
+				</if>
+				<if test="bjdm != null and bjdm != ''">
+						and a.bjdm=#{bjdm}
+				</if>
+				<if test="xlcc != null and xlcc != ''">
+						and a.xlcc=#{xlcc}
+				</if>
+				<if test="xh != null and xh != ''">
+					  and a.xh like '%'||#{xh}||'%'
+				</if>
+				<if test="xm != null and xm != ''">
+						and a.xm like '%'||#{xm}||'%'
+				</if>
+			</where>
+	</select>
+	
+	
+	<!-- 查询学生信息分页 -->
+	<select id="getPagedByScope" parameterType="com.woshidaniu.dao.entities.XsxzModel"
+		resultType="com.woshidaniu.dao.entities.XsxzModel">
+		select * from (
+			select a.xh,
+			       a.xm,
+			       a.xbdm,
+			       a.mzdm,
+			       a.zzmmdm,
+			       a.sfzh,
+			       a.csrq,
+			       a.syszd,
+			       a.hkszd,
+			       a.jg,
+			       a.bjdm_id bjdm,
+			       a.xlcc,
+			       a.xjzt,
+			       a.sfzxs,
+			       a.xszt,
+			       a.sjhm,
+			       a.gddh,
+			       a.email,
+			       a.qqhm,
+			       a.jtdz,
+			       a.jtyb,
+			       a.jtdh,
+			       b.njdm_id njdm,
+			       b.njdm_id njmc,
+			       d.bmmc    xymc,
+			       d.bmdm_id xydm,
+			       c.zymc,
+			       c.zydm,
+			       b.bjmc,
+			       e.mc      xbmc
+			  from niutal_xtgl_xsxxb a
+			  left join niutal_xtgl_bjdmb b
+			    on a.bjdm_id = b.bjdm_id
+			  left join niutal_xtgl_zydmb c
+			    on a.zydm = c.zydm_id and a.xlcc = c.cydm_id_cc
+			  left join niutal_xtgl_bmdmb d
+			    on a.bmdm = d.bmdm_id
+			  left join dm_gb_b_rdxbdm e
+			    on a.xbdm = e.dm
+			) a
+			<where>
+				<!-- 在校生 -->
+				{a.xh in func("jy_jyxt_syxxb";"xh";"xydm,zydm";"bmdm_id,zydm_id")}
+				and xszt='1'
+				<if test="xh != null and xh != ''">
+					  and a.xh like '%'||#{xh}||'%'
+				</if>
+				<if test="xm != null and xm != ''">
+						and a.xm like '%'||#{xm}||'%'
+				</if>
+				<if test="njdm != null and njdm != ''">
+						and a.njdm=#{njdm}
+				</if>
+				<if test="xydm != null and xydm != ''">
+						and a.xydm=#{xydm}
+				</if>
+				<if test="zydm != null and zydm != ''">
+						and a.zydm=#{zydm}
+				</if>
+				<if test="bjdm != null and bjdm != ''">
+						and a.bjdm=#{bjdm}
+				</if>
+			</where>
+	</select>
+	
+	<!-- 获取学生信息 -->
+	<select id="getModel" parameterType="com.woshidaniu.dao.entities.XsxzModel"
+		resultType="com.woshidaniu.dao.entities.XsxzModel">
+		select * from (
+			select a.xh,
+			       a.xm,
+			       a.xbdm,
+			       a.mzdm,
+			       a.zzmmdm,
+			       a.sfzh,
+			       a.csrq,
+			       a.syszd,
+			       a.hkszd,
+			       a.jg,
+			       a.bjdm_id bjdm,
+			       a.xlcc,
+			       a.xjzt,
+			       a.sfzxs,
+			       a.xszt,
+			       a.sjhm,
+			       a.gddh,
+			       a.email,
+			       a.qqhm,
+			       a.jtdz,
+			       a.jtyb,
+			       a.jtdh,
+			       b.njdm_id njdm,
+			       b.njdm_id njmc,
+			       d.bmmc    xymc,
+			       d.bmdm_id xydm,
+			       c.zymc,
+			       c.zydm,
+			       b.bjmc,
+			       e.mc      xbmc
+			  from niutal_xtgl_xsxxb a
+			  left join niutal_xtgl_bjdmb b
+			    on a.bjdm_id = b.bjdm_id
+			  left join niutal_xtgl_zydmb c
+			    on a.zydm = c.zydm_id and a.xlcc = c.cydm_id_cc
+			  left join niutal_xtgl_bmdmb d
+			    on a.bmdm = d.bmdm_id
+			  left join dm_gb_b_rdxbdm e
+			    on a.xbdm = e.dm
+			) a
+				<where>
+					a.xh=#{xh}
+				</where>
+	</select>
+	
+	
+	<!-- 获取学生信息 -->
+	<select id="getModelList" parameterType="hashMap"
+		resultType="com.woshidaniu.dao.entities.XsxzModel">
+		select * from (
+			select a.xh,
+			       a.xm,
+			       a.xbdm,
+			       a.mzdm,
+			       a.zzmmdm,
+			       a.sfzh,
+			       a.csrq,
+			       a.syszd,
+			       a.hkszd,
+			       a.jg,
+			       a.bjdm_id bjdm,
+			       a.xlcc,
+			       a.xjzt,
+			       a.sfzxs,
+			       a.xszt,
+			       a.sjhm,
+			       a.gddh,
+			       a.email,
+			       a.qqhm,
+			       a.jtdz,
+			       a.jtyb,
+			       a.jtdh,
+			       b.njdm_id njdm,
+			       b.njdm_id njmc,
+			       d.bmmc    xymc,
+			       d.bmdm_id xydm,
+			       c.zymc,
+			       c.zydm,
+			       b.bjmc,
+			       e.mc      xbmc
+			  from niutal_xtgl_xsxxb a
+			  left join niutal_xtgl_bjdmb b
+			    on a.bjdm_id = b.bjdm_id
+			  left join niutal_xtgl_zydmb c
+			    on a.zydm = c.zydm_id and a.xlcc = c.cydm_id_cc
+			  left join niutal_xtgl_bmdmb d
+			    on a.bmdm = d.bmdm_id
+			  left join dm_gb_b_rdxbdm e
+			    on a.xbdm = e.dm
+			) a
+				<where>
+					<foreach collection="list" item="item" index="index"
+					 open="(" separator="or" close=") " >
+						  a.xh=#{item.xh}
+					</foreach>
+				</where>
+	</select>
+	
+</mapper>

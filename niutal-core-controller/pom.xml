@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-controller</artifactId>
+	<name>业务框架-WEB逻辑代码（SpringMVC实现）</name>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- niukit-web : Web快速调用组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-search-taglib</artifactId>
+		</dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-qa</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- ###################### niutal核心组件 ###################### -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-webmvc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-shiro</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-export</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<!-- ###################### Java Web 组件 ###################### -->
+		
+		<!-- SiteMesh 是一个网页布局和修饰的框架，利用它可以将网页的内容和页面结构分离，以达到页面结构共享的目的 -->
+		<dependency>
+			<groupId>org.sitemesh</groupId>
+			<artifactId>sitemesh</artifactId>
+		</dependency>
+		<!-- Kaptcha是一个基于SimpleCaptcha的验证码开源项目  http://chenzhou123520.iteye.com/blog/1987636 -->
+		<dependency>
+			<groupId>com.github.penggle</groupId>
+			<artifactId>kaptcha</artifactId>
+		</dependency>
+		
+	</dependencies>
+
+	 
+</project>

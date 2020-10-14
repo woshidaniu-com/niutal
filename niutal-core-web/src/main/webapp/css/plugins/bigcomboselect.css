@@ -1,0 +1,216 @@
+.more_block{
+	clear: both;
+	width: 354px;
+	border-radius: 6px;
+	position: absolute;
+	z-index: 4000;
+	background-color:#FFFFFF;
+	-moz-box-shadow: 0 0 7px #ccc;
+	-webkit-box-shadow: 0 0 7px #ccc;
+	box-shadow: 0 0 7px #ccc;
+}
+
+.more_block_ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: block;
+}
+
+.more_block_ul>li{
+	width:10px;
+	border: 1px solid #CED2D6;
+	border-top:0px;
+    /*border-right: 1px solid #CED2D6;*/
+    /*border-bottom: 1px solid #CED2D6;*/
+    float: left;
+    display: inline-block;
+    font-size: 12px;
+    padding-right: 8px;
+    padding-left: 8px;
+    color:#000000;
+    text-align: center;
+    padding-top:5px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    margin: 0 0 -1px -1px;
+    -webkit-transition: .2s linear;
+	transition: .2s linear;
+}
+
+.more_block_ul>li:HOVER {
+	 color:#fff;
+     cursor: pointer;
+     background-color: #43B8EE;
+}
+.initialPanelDiv{
+	margin-left: 1px;
+	border-right: 1px solid #e1e1e8;
+	background-color: #FFF;
+}
+.bigComboTipText{
+	float: left;
+	margin-left: 10px;
+	padding-left: 20px;
+	color:#666666;
+	font-weight:bold;
+	background: url(../../images/ico_tablehead.gif) no-repeat -5px -82px;
+}
+.selected {
+	 color:#fff !important;
+     cursor: text;
+     background-color: #999999 !important;
+     border-bottom: 0;
+     cursor: text  !important;
+}
+
+.li_first{
+    border-left: 1px solid #CED2D6;
+}
+        
+.data-inital-label{
+	font-style: normal;
+	font-size: 12px;
+	color:#fff;
+	background-color: #999999;
+	border: 1px solid #FFF;
+	padding: 3px 3px 3px 3px;
+	line-height : 10px;
+	margin-top:5px;
+	margin-left:5px;
+	font-weight: bold;
+}
+
+.more-data{
+	clear: both;
+	border: 1px solid #CED2D6;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 7px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	max-height: 250px;
+	min-height: 200px;
+	overflow-y: auto;
+	background-color: #FFF;
+}
+.more-data-xzq{
+	clear: both;
+	border: 1px solid #CED2D6;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 7px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	max-height: 250px;
+	min-height: 200px;
+	overflow-y: auto;
+	background-color: #FFF;
+}
+.more-data-maxheight{
+	height:187px;
+	max-height: 187px;
+	overflow-y: scroll;
+}
+
+.more-data>a {
+	padding: 0 20px;
+	display:inline-block; 
+	color: #666666;
+	height: 20px;
+	line-height: 20px;
+	margin-top: 7px;
+	text-decoration: none;
+	-webkit-transition: .2s linear;
+	transition: .2s linear;
+}
+.more-data-xzq>a {
+	padding: 0 15px;
+	display:inline-block; 
+	color: #666666;
+	height: 20px;
+	line-height: 20px;
+	margin-top: 7px;
+	text-decoration: none;
+	-webkit-transition: .2s linear;
+	transition: .2s linear;
+}
+
+.more-data>a:hover {
+	border-radius: 8px;
+	color: #FFFFFF;
+	background-color: #43B8EE;
+}
+.more-data-xzq>a:hover {
+	border-radius: 8px;
+	color: #FFFFFF;
+	background-color: #43B8EE;
+}
+.hiddenOne{
+	background-color: #888;filter:alpha(opacity=50);-moz-opacity:0.5;opacity: 0.5;
+}
+.bigSelectDivcloseBut{
+	background: url(../../images/close-icons.gif);
+	width: 13px;
+	height: 13px;
+	margin-top: 5px;
+	margin-right: 6px;
+}
+.bigComboTab{
+width: 100%;
+height: 25px;
+float: left;
+border-bottom: 2px solid #edd28b;
+overflow: visible;
+}
+.bigComboTab a{
+position: relative;
+float: left;
+height: 23px;
+padding: 0 20px 1px 10px;
+line-height: 23px;
+text-align: center;
+text-decoration: none;
+cursor: pointer;
+color: #005AA0;
+outline: 0;
+}
+.bigComboTab li{
+float: left;
+clear: none;
+height: 23px;
+padding: 1px 1px 0;
+border: 1px solid #ddd;
+border-bottom: 0;
+margin-right: 3px;
+background-color: #fff;
+line-height: 22px;
+text-decoration: none;
+}
+.bigComboTab li, .bigComboTab a {
+cursor: pointer;
+float: left;
+text-align: center;
+}
+.bigComboTab .curr {
+height: 25px;
+padding: 0;
+border: 2px solid #edd28b;
+border-bottom: 0;
+}
+.bigComboTab a i {
+position: absolute;
+right: 5px;
+top: 10px;
+display: block;
+width: 7px;
+height: 5px;
+overflow: hidden;
+background: url(../../images/20130606B.png) no-repeat -76px -34px;
+opacity: .5;
+filter: alpha(opacity=50);
+}
+.bigComboTab .curr i, .bigComboTab a:hover i {
+opacity: 1;
+filter: alpha(opacity=100);
+}

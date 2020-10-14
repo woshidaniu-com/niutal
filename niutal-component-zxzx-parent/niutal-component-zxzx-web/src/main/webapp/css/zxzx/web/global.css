@@ -1,0 +1,57 @@
+﻿@charset "utf-8";
+/*
+文件名:global.css
+描述:常用样式集合,根据需要可不断添加
+作者:chinesefeng
+创建日期:20120214
+注意:后期修改需在修改处注明修改日期\修改人\修改原因
+=======================================================*/
+/*内容居左*/
+.t-left { text-align: left }
+/*内容居右*/
+.t-right { text-align: right }
+/*内容居中*/
+.t-center { text-align: center }
+/*浮动左边*/
+.f-left { float: left }
+/*浮动右边*/
+.f-right { float: right }
+/*字体加粗*/
+.t-bold { font-weight: bold }
+/*字体正常*/
+.t-normal { font-weight: normal }
+/*指针手型*/
+.cur-pointer { cursor: pointer }
+/*指针正常*/
+.cur-default { cursor: default }
+/*下划线*/
+.line-und { text-decoration: underline }
+/*无下划线*/
+.line-no { text-decoration: none }
+/*字体黑色*/
+.t-black { color:black }
+/*不换行*/
+.t-nowrap { white-space: nowrap }
+/*换行*/
+.t-break { word-wrap: break-word; word-break: break-all }
+/*不激活输入法*/
+.no-ime { ime-mode: disabled }
+/*隐藏*/
+.hid { display: none }
+/*按钮*/
+button { cursor:pointer }
+/*清除浮动*/
+.clear-after:after {display:block;clear:both;height:0;visibility:hidden;content:".";}
+/*红色字*/
+.t-red { color:red }
+.red{color:red;}
+/*顶端对齐*/
+.v-top { vertical-align:top }
+/*绿色文字*/
+.t-green { color:green }
+/*灰色文字*/
+.t-gray { color:#bfbfbf }
+/*橙色文字*/
+.t-orange { color:#ff7e00 }
+.big{cursor: url("../images/cursor_zoom.cur"),pointer;}
+.small{cursor: url("../images/cursor_minify.cur"),pointer!important}

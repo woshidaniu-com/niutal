@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+	<!-- 编辑器 -->
+	<package name="editor" namespace="/editor" extends="configuration">
+		
+		<interceptors>
+			
+			<!-- Kindeditor文件上传和访问拦截器 -->
+			<interceptor name="kindeditorInterceptor" class="com.woshidaniu.editor.interceptor.KindeditorInterceptor"></interceptor>
+			
+			<interceptor-stack name="KindeditorStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="kindeditorInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<!-- 将自定义拦截器栈设置为默认拦截器 -->
+		<default-interceptor-ref name="KindeditorStack" />
+		
+		<action name="kindeditor_*" class="com.woshidaniu.editor.action.KindeditorFileAction" method="{1}">
+			<result name="fileUpload">/WEB-INF/pages/globalweb/comm/upload/fileUpload.jsp</result>
+		</action>
+		
+		<!-- 富头像上传action -->
+		<action name="fullAvatar_*" class="com.woshidaniu.editor.action.FullAvatarEditorAction" method="{1}">
+			<result name="success">/WEB-INF/pages/globalweb/comm/upload/fullAvatarUpload.jsp</result>
+		</action>
+		
+	</package> 
+	
+	<!-- 编辑器插件HTML文件跳转 -->
+	<package name="js/editor/plugins" extends="configuration" namespace="/js/editor/plugins/baidumap">
+		<default-interceptor-ref name="defaultStack"/>
+		<action name="map" class="com.woshidaniu.editor.action.KindeditorPluginsAction" method="plugins">
+			<result name="success">/js/editor/plugins/baidumap/map.html</result>
+		</action>
+	</package> 
+	
+	<!-- 编辑器插件HTML文件跳转 -->
+	<package name="js/editor/plugins/template/html" extends="configuration" namespace="/js/editor/plugins/template/html">
+		<default-interceptor-ref name="defaultStack"/>
+		<action name="*" class="com.woshidaniu.editor.action.KindeditorPluginsAction" method="plugins">
+			<result name="success">/js/editor/plugins/template/html/{1}.html</result>
+		</action>
+	</package> 
+	
+</struts>

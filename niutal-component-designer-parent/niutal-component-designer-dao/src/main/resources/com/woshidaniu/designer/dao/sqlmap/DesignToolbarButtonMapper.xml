@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignToolbarButtonDao" >
+
+	<!-- 查询按钮 组，方便页面扩展-->
+    <select id="getToolbarButtonList" parameterType="com.woshidaniu.designer.dao.entities.DesignToolbarButtonModel" resultType="com.woshidaniu.designer.dao.entities.DesignToolbarButtonModel">
+   		 <![CDATA[
+  		select a.gnmkdm as func_code,
+  			   b.czdm as opt_code,
+  			   'btn_' || c.czdm as button_id,
+		       'btn_' || c.czdm as button_name,
+		        decode(#{localeKey},'en_US',nvl(nvl(b.ywmc, c.ywmc),nvl(b.czmc, c.czmc)),nvl(b.czmc, c.czmc)) as button_text,
+		       'btn_' || c.czdm as button_class,
+		       c.anys as button_icon_class,
+		       a.dyym button_href,
+		       nvl(b.sfxs, '1') button_visible,
+		       rownum as button_ordinal
+		  from niutal_xtgl_jsgnmkdmb a, 
+		       niutal_xtgl_gnmkczb   b, 
+		       niutal_xtgl_czdmb     c 
+		 where a.gnmkdm = b.gnmkdm
+		   and b.czdm = c.czdm
+		   and a.gnmkdm = #{func_code}
+		   and exists (select 'x'
+		          from niutal_xtgl_jsgnmkczb m, niutal_xtgl_yhjsb n
+		         where m.jsdm = n.jsdm
+		           and n.yhm = #{user.yhm}
+		           and n.jsdm = #{user.jsdm}
+		           and m.gnmkdm = a.gnmkdm
+		           and m.czdm = b.czdm
+		       )
+		 order by to_number(c.xssx)
+		 ]]>
+    </select>
+    
+    <!-- 查询按钮 组，方便页面扩展-->
+    <select id="getReportButtonList" parameterType="com.woshidaniu.designer.dao.entities.DesignToolbarButtonModel" resultType="com.woshidaniu.designer.dao.entities.DesignToolbarButtonModel">
+   		 <![CDATA[
+  		select a.gnmkdm as func_code,
+  			   b.czdm as opt_code,
+  			   'btn_' || c.czdm as button_id,
+		       'btn_' || c.czdm as button_name,
+		       decode(#{localeKey},'en_US',nvl(nvl(b.ywmc, c.ywmc),nvl(b.czmc, c.czmc)),nvl(b.czmc, c.czmc)) as button_text,
+		       'btn_' || c.czdm as button_class,
+		       c.anys as button_icon_class,
+		       a.dyym button_href,
+		       nvl(b.sfxs, '1') button_visible,
+		       rownum as button_ordinal
+		  from niutal_xtgl_jsgnmkdmb a, 
+		       niutal_xtgl_gnmkczb   b, 
+		       niutal_xtgl_czdmb     c 
+		 where a.gnmkdm = b.gnmkdm
+		   and b.czdm = c.czdm
+		   and a.gnmkdm = #{func_code}
+		   and instr(b.czdm, 'report_') > 0
+		   and b.sfxs	= '0'
+		   and exists (select 'x'
+		          from niutal_xtgl_jsgnmkczb m, niutal_xtgl_yhjsb n
+		         where m.jsdm = n.jsdm
+		           and n.yhm = #{user.yhm}
+		           and n.jsdm = #{user.jsdm}
+		           and m.gnmkdm = a.gnmkdm
+		           and m.czdm = b.czdm
+		       )
+		 order by to_number(c.xssx)
+		 ]]>
+    </select>
+    
+</mapper>

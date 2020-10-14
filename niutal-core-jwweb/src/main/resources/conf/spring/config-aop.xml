@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+ 	<!-- 启动对@AspectJ注解的支持  --> 
+ 	<!-- 
+    	proxy-target-class="true" 与proxy-target-class="false"的区别：
+        proxy-target-class属性值决定是基于接口的还是基于类的代理被创建。如果proxy-target-class 属性值被设置为true，那么基于类的代理将起作用（这时需要cglib库）。
+ 		如果proxy-target-class属值被设置为false或者这个属性被省略，那么标准的JDK 基于接口的代理
+     --> 
+    <aop:aspectj-autoproxy proxy-target-class="true"/>  
+    
+	<!-- 注入代理后的bean到bean自身的BeanPostProcessor... --> 
+	<bean class="org.springframework.enhanced.aop.InjectBeanSelfProcessor"></bean>   
+
+	<!--默认公共的日志记录切面回调-->
+	<bean id="commonLogAspect" class="com.woshidaniu.service.common.aspect.CommonLogAspect">
+   		<property name="dataSourceDao" ref="securityDataSourceDao"></property>
+	</bean>
+	
+	<!--默认公共的日志记录切面回调
+	<bean id="commonLogAspect2" class="com.woshidaniu.service.common.aspect.CommonLogAspect2">
+		<property name="logService" ref="logService"></property>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="securitySessionFactory" ref="securitySessionFactory"></property>
+		
+		
+		 Map注入方式  
+		<property name="targetSqlSessionFactorys">  
+            <map key-type="java.lang.String">  
+                <entry key="db1" value-ref="sqlSessionFactory" />  
+                <entry key="db2" value-ref="securitySessionFactory" />  
+            </map>  
+        </property> 
+	</bean>
+
+	-->
+	<!--公共的方法切面-->
+	<bean id="logMethodAspect" class="com.woshidaniu.common.aop.MethodAspectInterceptor"></bean>
+	<bean id="datarangeAspect" class="DatarangeAspectInterceptor"></bean>
+	
+	<!-- 调用spring的DebugInterceptor记录日志,以确定方法是否被AOP增强 -->  
+	<!-- <bean id="debugInterceptor" class="org.springframework.aop.interceptor.DebugInterceptor" />  -->
+
+	<!-- Spring AOP config -->
+	<aop:config expose-proxy="true" proxy-target-class="true">
+        <!--  * *..service*..*(..))  -->
+        <!-- 将 datarangeAspect 转换成切面 Bean, 切面 Bean 的新名称为：datarangeAspect，指定该切面的优先级为1 -->  
+        <aop:aspect id="datarangeAspect" ref="datarangeAspect" order="1" >  
+        	<aop:pointcut id="datarangePointcut" expression=" execution(* com.woshidaniu.service.impl.JsglServiceImpl.*(..)) or execution(* com.woshidaniu.service.impl.YhglServiceImpl.*(..)) "/>
+        	 <!-- 定义个Around增强处理，使用datarangePointcut 切入点，以切面 Bean 中的 doAround() 方法作为增强处理方法 -->  
+        	 <aop:around pointcut-ref="datarangePointcut" method="around" />  
+        </aop:aspect> 
+        <!-- 将 logMethodAspect 转换成切面 Bean, 切面 Bean 的新名称为：serviceAspect，指定该切面的优先级为2 -->  
+        <aop:aspect id="serviceAspect" ref="logMethodAspect" order="2" >  
+        	<aop:pointcut id="servicePointcut" expression=" execution(* com.woshidaniu..service..*.*(..)) and @annotation(com.woshidaniu.common.aop.annotations.Comment) "/>
+			<!--
+			<aop:pointcut id="servicePointcut" expression="
+			(execution(* com.woshidaniu..service..*.insert*(..))) or 
+			(execution(* com.woshidaniu..service..*.update*(..))) or
+			(execution(* com.woshidaniu..service..*.delete*(..))) or
+			(execution(* com.woshidaniu..service..*.batchDelete*(..))) or
+			(execution(* com.woshidaniu..service..*.batchUpdate*(..))) or
+			(execution(* com.woshidaniu..service..*.bc*(..))) or
+			(execution(* com.woshidaniu..service..*.zj*(..))) or
+			(execution(* com.woshidaniu..service..*.add*(..))) or
+			(execution(* com.woshidaniu..service..*.sc*(..))) or
+			(execution(* com.woshidaniu..service..*.delete*(..))) or
+			(execution(* com.woshidaniu..service..*.xg*(..))) or
+			(execution(* com.woshidaniu..service..*.gx*(..))) or
+			(execution(* com.woshidaniu..service..*.sh*(..)))"/>
+			-->
+			<!-- 定义个Before增强处理，使用servicePointcut 切入点，以切面 Bean 中的 before() 方法作为增强处理方法 -->
+            <aop:before pointcut-ref="servicePointcut" method="before"/>
+            <!-- 定义个AfterReturning增强处理，使用servicePointcut 切入点，以切面 Bean 中的 afterReturning() 方法作为增强处理方法 -->    
+            <aop:after-returning pointcut-ref="servicePointcut" method="afterReturning"  returning="returnValue" /> 
+            <!-- 定义个AfterThrowing增强处理，使用servicePointcut 切入点，以切面 Bean 中的 afterThrowing() 方法作为增强处理方法 -->  
+            <aop:after-throwing pointcut-ref="servicePointcut" method="afterThrowing" throwing="ex"/>  
+        </aop:aspect>
+    </aop:config>  
+    
+    
+</beans>

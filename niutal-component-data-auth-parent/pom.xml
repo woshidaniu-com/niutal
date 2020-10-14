@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-component-data-auth-parent</artifactId>
+	<packaging>pom</packaging>
+	<description>niutal框架-数据权限</description>
+	
+	<modules>
+		<module>niutal-component-data-auth-controller</module>
+		<module>niutal-component-data-auth-ext</module>
+		<module>niutal-component-data-auth-web</module>
+		<module>niutal-component-data-auth-doc</module>
+	</modules>
+	
+</project>

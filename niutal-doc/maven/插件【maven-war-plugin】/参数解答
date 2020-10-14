@@ -1,0 +1,24 @@
+1.	configuration/archiveClasses:是否把当前项目WEB-INF/classes下的内容打包成jar包形式，这样WEB-INF/classes目录被删除，
+	默认是：false；
+	
+2.	configuration/attachClasses:是否把当前项目WEB-INF/classes下的内容生成一个和本项目绑定的额外一个artifact，
+	maven默认指定的classifier是‘classes’，可同通过指定configuration/classesClassifier属性参数指定其他的名称,
+	生成的jar包名称为：【项目名称】-【你指定的classifier】.jar，那么其他项目就可以通过这个引用到war包项目的class文件，
+	举例：
+	<dependency>
+	  <groupId>myGroup</groupId>
+	  <artifactId>myArtifact</artifactId>
+	  <version>myVersion</myVersion>
+	  <classifier>【configuration/classesClassifier的值，默认是classes】</classifier>
+	</dependency>
+	默认是：false；
+	
+3.	configuration/classesClassifier: 请看第二点；
+
+4.	configuration/failOnMissingWebXml: maven在打包war包是默认是需要有web.xml文件存在的前提，如果不存在会报错，
+	设置这个为false就高速maven在打包war包项目是可以不检查项目中是否存在web.xml文件，
+	默认是：true；
+	
+5.	configuration/warName: 打包项目的名称，默认是：${project.build.finalName};
+
+6. configuration/warSourceDirectory: 静态文件存放的路径，默认是:${basedir}/src/main/webapp；

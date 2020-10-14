@@ -1,0 +1,72 @@
+<web-fragment version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
+
+	<!-- 会话,性能监控模块  -->
+	<name>niutal-monitor</name>
+    
+	<!-- Druid Web监控 -->
+	
+	<filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.woshidaniu.web.monitor.DruidWebStatFilter</filter-class>
+		<!-- 经常需要排除一些不必要的url，比如*.js,/jslib/*等等。配置在init-param中。 -->
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+		<!-- 缺省sessionStatMaxCount是1000个。你可以按需要进行配置 -->
+		<init-param>
+			<param-name>sessionStatMaxCount</param-name>
+			<param-value>1500</param-value>
+		</init-param>
+		<!-- 你可以关闭session统计功能，比如： -->
+		<init-param>
+			<param-name>sessionStatEnable</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 你可以配置principalSessionName，使得druid能够知道当前的session的用户是谁。比如： 根据需要，把其中的xxx.user修改为你user信息保存在session中的sessionName。 
+			注意：如果你session中保存的是非string类型的对象，需要重载toString方法。 -->
+		<init-param>
+			<param-name>principalSessionName</param-name>
+			<param-value>user</param-value>
+		</init-param>
+		<!-- 如果你的user信息保存在cookie中，你可以配置principalCookieName，使得druid知道当前的user是谁。 
+			根据需要，把其中的xxx.user修改为你user信息保存在cookie中的cookieName -->
+		<init-param>
+			<param-name>principalCookieName</param-name>
+			<param-value>niutal.user</param-value>
+		</init-param>
+		<!-- druid 0.2.7版本开始支持profile，配置profileEnable能够监控单个url调用的sql列表。 -->
+		<init-param>
+			<param-name>profileEnable</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.woshidaniu.web.monitor.DruidStatViewServlet</servlet-class>
+		<!-- <init-param>
+			<param-name>allow</param-name>
+			<param-value>*.*.*.*</param-value>
+		</init-param> -->
+		<init-param>
+			<param-name>resetEnable</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>druid-user</param-name>
+			<param-value>user</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+	
+</web-fragment> 

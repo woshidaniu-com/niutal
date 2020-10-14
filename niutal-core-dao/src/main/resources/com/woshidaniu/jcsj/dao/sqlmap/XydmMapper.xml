@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.jcsj.dao.daointerface.IXydmDao">
+
+	<!-- 查询学院列表 -->
+	<select id="getPagedList" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel"
+			resultType="com.woshidaniu.jcsj.dao.entities.XydmModel">
+			select * from (
+			select t.*,rownum r from (
+				select a.bmdm_id,a.bmmc, a.cydm_id_bmlb bmlx, b.mc bmlxmc from niutal_xtgl_bmdmb a left join niutal_xtgl_jcsjb b on a.cydm_id_bmlb = b.dm and b.lx = 'bmlx'
+				<where>
+					1=1
+		    		<if test="bmdm_id != null and bmdm_id !=''">
+		    			and bmdm_id like '%'||#{bmdm_id}||'%'
+		    		</if>
+		    		<if test="bmmc != null and bmmc !=''">
+		    			and bmmc like '%'||#{bmmc}||'%'
+		    		</if>
+		    		<if test="bmlx != null and bmlx !=''">
+		    			and cydm_id_bmlb = #{bmlx}
+		    		</if>
+		    		<if test="queryModel.sortName != null and queryModel.sortName !='' ">
+		    			order by ${queryModel.sortName} ${queryModel.sortOrder}
+		    		</if>
+		   		</where>
+	   		) t  where rownum &lt;=#{queryModel.showCount}+#{queryModel.currentResult}
+   		) where r &gt; #{queryModel.currentResult} 	
+	</select>
+
+		<!-- 查询学院列表 -->
+	<select id="getQueryResult" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel"
+			resultType="com.woshidaniu.jcsj.dao.entities.XydmModel">
+		select * from (
+			select t.*,rownum r from (
+				select a.bmdm_id,a.bmmc,a.cydm_id_bmlb bmlx, b.mc bmlxmc from niutal_xtgl_bmdmb a left join niutal_xtgl_jcsjb b on a.cydm_id_bmlb = b.dm and b.lx = 'bmlx'
+				<where>
+					1=1
+		    		<if test="bmdm_id != null and bmdm_id !=''">
+		    			and bmdm_id like '%'||#{bmdm_id}||'%'
+		    		</if>
+		    		<if test="bmmc != null and bmmc !=''">
+		    			and bmmc like '%'||#{bmmc}||'%'
+		    		</if>
+		    		<if test="bmlx != null and bmlx !=''">
+		    			and cydm_id_bmlb = #{bmlx}
+		    		</if>
+		    		<if test="queryModel.sortName != null and queryModel.sortName !='' ">
+		    			order by ${queryModel.sortName} ${queryModel.sortOrder}
+		    		</if>
+		   		</where>
+	   		) t  where rownum &lt;=#{queryModel.showCount}+#{queryModel.currentResult}
+   		) where r &gt; #{queryModel.currentResult} 
+	</select>
+	
+	<select id="getQueryCount" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel" resultType="int">
+		select count(1) count from niutal_xtgl_bmdmb a 
+		<where>
+			1=1
+    		<if test="bmdm_id != null and bmdm_id !=''">
+    			and bmdm_id like '%'||#{bmdm_id}||'%'
+    		</if>
+    		<if test="bmmc != null and bmmc !=''">
+    			and bmmc like '%'||#{bmmc}||'%'
+    		</if>
+    		<if test="bmlx != null and bmlx !=''">
+    			and cydm_id_bmlb = #{bmlx}
+    		</if>
+   		</where>
+	</select>
+	
+	
+	
+	
+	
+	 <!-- 保存信息 -->
+    <insert id="insert" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel">
+    	insert into niutal_xtgl_bmdmb (bmdm_id,bmmc,cydm_id_bmlb) values (#{bmdm_id},#{bmmc},#{bmlx})
+    </insert>
+	
+	 <select id="getModel" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel" resultType="com.woshidaniu.jcsj.dao.entities.XydmModel">
+    	select a.bmdm_id,a.bmmc,a.cydm_id_bmlb bmlx, b.mc bmlxmc from niutal_xtgl_bmdmb a left join niutal_xtgl_jcsjb b on a.cydm_id_bmlb = b.dm and b.lx = 'bmlx' where bmdm_id = #{bmdm_id}
+    </select>
+    	
+    <!-- 修改学院代码 -->
+    <update id="update" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel">
+    	update niutal_xtgl_bmdmb 
+    	<set>
+    		<if test="bmmc != null and bmmc != ''">
+    			bmmc = #{bmmc},
+    		</if>
+    		<if test="bmlx != null and bmlx != ''">
+    			cydm_id_bmlb = #{bmlx}
+    		</if>
+    	</set> 
+    	where bmdm_id=#{bmdm_id} 
+    </update>
+    
+    <!-- 删除部门代码 -->
+	<delete id="batchDelete" parameterType="java.util.Map">
+		delete from niutal_xtgl_bmdmb a where (
+		<foreach collection="bmdm_id" item="item" index="index"
+				separator=" OR">
+			   a.bmdm_id = #{item} 
+		</foreach>
+		)and not exists(select 1 from niutal_xtgl_zydmb b where a.bmdm_id = b.bmdm_id_lsbm)
+	</delete>	
+    	
+    
+     <!-- 查询部门列表 -->
+	<select id="cxXydmList" parameterType="com.woshidaniu.jcsj.dao.entities.XydmModel" resultType="com.woshidaniu.jcsj.dao.entities.XydmModel">
+		select bmdm_id,bmmc,cydm_id_bmlb from niutal_xtgl_bmdmb
+	</select>	
+</mapper>

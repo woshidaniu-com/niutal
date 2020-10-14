@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.engine.extend.persistence.entity.ProcessCategoryEntity">
+
+  <resultMap id="processCategoryResultMap" type="org.activiti.engine.extend.persistence.entity.ProcessCategoryEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="name" column="NAME_" jdbcType="VARCHAR" />
+    <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- INFO SELECT -->
+
+  <select id="selectProcessCategory" parameterType="string" resultMap="processCategoryResultMap">
+    select * from ${prefix}ACT_RE_PROCAT where ID_ = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAllProcessCategories" resultMap="processCategoryResultMap">
+    select * from ${prefix}ACT_RE_PROCAT order by NAME_ ASC
+  </select>
+  
+  
+  <!-- INFO UPDATE -->
+  <insert id="insertProcessCategory" parameterType="org.activiti.engine.extend.persistence.entity.ProcessCategoryEntity">
+    insert into ${prefix}ACT_RE_PROCAT (ID_, NAME_, DESCRIPTION_)
+    values (
+      #{id ,jdbcType=VARCHAR},
+      #{name ,jdbcType=VARCHAR},
+      #{description ,jdbcType=VARCHAR}
+    )
+  </insert>
+  
+  <update id="updateProcessCategory" parameterType="org.activiti.engine.extend.persistence.entity.ProcessCategoryEntity">
+    update ${prefix}ACT_RE_PROCAT 
+    set NAME_ = #{name ,jdbcType=VARCHAR},
+        DESCRIPTION_ = #{description ,jdbcType=VARCHAR}
+    where ID_ = #{id}
+  </update>
+  
+  <delete id="deleteProcessCategory" parameterType="org.activiti.engine.extend.persistence.entity.ProcessCategoryEntity">
+    delete from ${prefix}ACT_RE_PROCAT where ID_ = #{id}
+  </delete>
+  
+</mapper>

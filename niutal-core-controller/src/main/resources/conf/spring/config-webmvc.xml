@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<description>Spring MVC Configuration</description>
+	
+	<!-- ###########Spring MVC 请求和响应处理########### -->
+	
+	<!-- 
+		
+		HttpMessageConverter请求信息转换器简介：
+ 
+	　　	HttpMessageConverter接口指定了一个可以把Http request信息和Http response信息进行格式转换的转换器。通常实现HttpMessageConverter接口的转换器有以下几种：
+		
+		1、ByteArrayHttpMessageConverter			：   负责读取二进制格式的数据和写出二进制格式的数据；
+		2、StringHttpMessageConverter			：   负责读取字符串格式的数据和写出二进制格式的数据；
+		3、ResourceHttpMessageConverter			：   负责读取资源文件和写出资源文件数据； 
+		4、FormHttpMessageConverter				：   负责读取form提交的数据（能读取的数据格式为 application/x-www-form-urlencoded，不能读取multipart/form-data格式数据）；负责写入application/x-www-from-urlencoded和multipart/form-data格式的数据；
+		5、MappingJacksonHttpMessageConverter	：   负责读取和写入json格式的数据；
+		6、SourceHttpMessageConverter			：   负责读取和写入 xml 中javax.xml.transform.Source定义的数据；
+		7、Jaxb2RootElementHttpMessageConverter	：   负责读取和写入xml 标签格式的数据；
+		8、AtomFeedHttpMessageConverter			：   负责读取和写入Atom格式的数据；
+		9、RssChannelHttpMessageConverter		：   负责读取和写入RSS格式的数据； 
+		
+	 -->
+	 
+	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter" >
+		<property name = "supportedMediaTypes">    
+			<list>    
+				<value>text/plain;charset=UTF-8</value>    
+			</list>    
+		</property>  
+    </bean>
+    
+    <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+    <bean id="jsonHttpMessageConverter"  class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  
+        <property name="supportedMediaTypes">  
+            <list>  
+                <value>application/json</value>  
+            </list>  
+        </property>  
+    </bean>
+    
+	<!-- 采用SpringMVC自带的JSON转换工具，支持@ResponseBody注解 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="stringHttpMessageConverter" />
+                <ref bean="jsonHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 文件上传支持 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="maxInMemorySize" value="40960" />
+		<!--resolveLazily属性启用是为了推迟文件解析，以便在UploadAction 中捕获文件大小异常  
+        <property name="resolveLazily" value="true"/> -->
+	</bean>
+    
+    <!-- ###########Spring MVC 视图解析########### -->
+	
+	<!-- FreeMarker视图解析配置 -->
+	<bean class="com.woshidaniu.common.freemarker.ZFFreeMarkerConfigurationFactory">
+		<property name="preLoadTaglibUris">
+			<util:list>
+				<value>/niutal-search-tags</value>
+				<value>http://shiro.apache.org/tags</value>
+			</util:list>
+		</property>
+		<property name="templateLoaderPaths" value="/WEB-INF/pages/" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="defaultEncoding">UTF-8</prop>
+				<prop key="number_format">#</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="template_update_delay">1</prop>
+				<prop key="tag_syntax">auto_detect</prop>
+				<prop key="whitespace_stripping">true</prop>
+				<prop key="classic_compatible">true</prop>
+				<prop key="object_wrapper">freemarker.ext.beans.BeansWrapper</prop>
+				<!-- 设置：Freemarker自动导入Spring.ftl宏。不用在每个ftl里面定义这个宏 -->
+				<prop key="auto_import">localization/spring.ftl as spring</prop>
+			</props>
+		</property>		
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="base" value="#{servletContext.contextPath}" />
+				<entry key="messageUtil" value-ref="messageMethod" />
+				<entry key="buttonsUtil" value-ref="buttonsDirective" />
+				<entry key="rv" value-ref="runtimeVariablesTemplateMethod"/>
+				<entry key="evaluateUtil" value-ref="evaluateMethod"/>
+				
+				<!-- <entry key="layout" value-ref="freemarkerLayoutDirectives" /> -->
+			</map>
+		</property>
+	</bean>
+	<!-- Freemarker视图解析器 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="suffix" value=".ftl" />
+		<property name="cache" value="false" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="order" value="1" />
+	</bean>
+	
+	<!-- SpringMVC模板过滤器 -->
+	<bean id="sitemeshMVCFilter" name="sitemeshMVCFilter" class="com.woshidaniu.common.filter.ZFParamConfigurableSiteMeshFilter" scope="singleton"/>
+	
+	<!-- runtime变量的读取方法定义 -->
+	<bean id="runtimeVariablesTemplateMethod" class="com.woshidaniu.common.freemarker.RuntimeVariablesTemplateMethod"></bean>
+	
+</beans>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       ">
+
+	<!-- 	<bean id="configDao" class="org.mybatis.spring.mapper.MapperFactoryBean" -->
+	<!-- 		scope="singleton"> -->
+	<!-- 		<property name="mapperInterface" -->
+	<!-- 			value="com.woshidaniu.search.dao.daointerface.IConfigDao" /> -->
+	<!-- 		<property name="sqlSessionFactory" ref="sqlSessionFactory" /> -->
+	<!-- 	</bean> -->
+
+	<!-- 	<bean id="superSearchDao" name="superSearchDao" -->
+	<!-- 		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton"> -->
+	<!-- 		<property name="mapperInterface" -->
+	<!-- 			value="com.woshidaniu.search.dao.daointerface.ISearchDao" /> -->
+	<!-- 		<property name="sqlSessionFactory" ref="sqlSessionFactory" /> -->
+	<!-- 	</bean> -->
+
+	<!-- 	<bean id="searchDataDao" class="org.mybatis.spring.mapper.MapperFactoryBean" -->
+	<!-- 		scope="singleton"> -->
+	<!-- 		<property name="mapperInterface" value="com.woshidaniu.search.dao.daointerface.IDataDao" /> -->
+	<!-- 		<property name="sqlSessionFactory" ref="sqlSessionFactory" /> -->
+	<!-- 	</bean> -->
+
+	<!-- 	<bean id="configService" class="com.woshidaniu.search.service.impl.ConfigServiceImpl"> -->
+	<!-- 		<property name="configDao" ref="configDao"></property> -->
+	<!-- 	</bean> -->
+
+	<bean id="searchConfigCache" class="com.woshidaniu.search.service.SearchConfigCache" init-method="init">
+		<constructor-arg>
+			<value>all</value>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<value>jcsj_xsxx</value>
+			</list>
+		</constructor-arg>
+		<property name="configService" ref="configService"></property>
+		<!-- 需要数据范围控制的表名或者视图 -->
+		<property name="dataScopeControl">
+			<list>
+				<value>niutal_xtgl_bmdmb</value><!-- 学院代码表 -->
+				<value>niutal_view_xtgl_bmdmb</value>
+				<value>niutal_xtgl_zydmb</value><!-- 专业代码表 -->
+				<value>niutal_xtgl_bjdmb</value><!-- 班级代码表 -->
+				<value>niutal_xtgl_njdmb</value><!-- 年级代码表 -->
+			</list>
+		</property>
+	</bean>
+
+	<!-- 	<bean id="superSearchService" name="superSearchService" -->
+	<!-- 		class="com.woshidaniu.search.service.impl.SearchServiceImpl" scope="singleton"> -->
+	<!-- 		<property name="searchDao" ref="superSearchDao" /> -->
+	<!-- 	</bean> -->
+
+		<bean id="superSearchDataQueryService" name="superSearchDataQueryService"
+			class="com.woshidaniu.search.service.impl.DataQueryServiceImpl" scope="singleton">
+			<property name="searchDataDao" ref="searchDataDao" />
+			<property name="configCache" ref="searchConfigCache" />
+		</bean>
+
+	<bean id="searchAction" name="searchAction" class="com.woshidaniu.search.action.SearchAction" scope="prototype">
+		<property name="searchService" ref="superSearchService" />
+		<property name="searchConfigCache" ref="searchConfigCache"></property>
+		<property name="searchDataQueryService" ref="superSearchDataQueryService"></property>
+	</bean>
+</beans>

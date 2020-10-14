@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	
+	<!-- 问卷调查 -->
+	<package name="zfxg/wjdc" extends="configuration" namespace="/zfxg/wjdc">
+		<!-- 问卷管理-->
+		<action name="wjgl_*" class="wjglAction" method="{1}">
+			<result name="cxWjxx">/WEB-INF/pages/wjdc/cxWjxx.jsp</result>
+			<result name="zjWjxx">/WEB-INF/pages/wjdc/zjWjxx.jsp</result>
+			<result name="xgWjxx">/WEB-INF/pages/wjdc/xgWjxx.jsp</result>
+			<result name="ckWjxx">/WEB-INF/pages/wjdc/ckWjxx.jsp</result>
+			<result name="llWjxx">/WEB-INF/pages/wjdc/llWjxx.jsp</result>
+			<result name="updateWjzt">/WEB-INF/pages/wjdc/updateWjzt.jsp</result>
+			<result name="wjgnys">/WEB-INF/pages/wjdc/wjgnys/wjgnys.jsp</result>
+		</action>
+		
+		<!-- 试题管理-->
+		<action name="stgl_*" class="stglAction" method="{1}">
+			<result name="editStxx">/WEB-INF/pages/wjdc/editStxx.jsp</result>
+			<result name="showStxx">/WEB-INF/pages/wjdc/showStxx.jsp</result>
+		</action>
+		
+		<!-- 试题管理 (移动端)-->
+		<action name="ydstgl_*" class="stglAction" method="{1}">
+			<result name="showStxx">/WEB-INF/pages/wjdc/ydyx/showStxx.jsp</result>
+		</action>
+		<!-- 用户答卷管理 (移动端)-->
+		<action name="ydyhdjgl_*" class="yhdjglAction" method="{1}">
+			<result name="success">/WEB-INF/pages/wjdc/ydyx/cxYhdjxx.jsp</result>
+		</action>
+		
+		<action name="nmwj_*" class="stglAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<result name="showStxx">/WEB-INF/pages/wjdc/showNmStxx.jsp</result>
+		</action>
+		
+		<!-- 问卷数据源配置-->
+		<action name="wjpz_*" class="wjpzAction" method="{1}">
+			<result name="wjpz">/WEB-INF/pages/wjdc/wjpz.jsp</result>
+		</action>
+
+		<!-- 问卷分发管理 -->
+		<action name="wjffgl_*" class="wjffglAction" method="{1}">
+			<result name="success">/WEB-INF/pages/wjdc/wjffgl/{1}.jsp</result>
+		</action>
+		
+		<!-- 问卷BASE管理 -->
+		<action name="wjbase_*" class="wjBaseAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		</action>
+		
+		<!-- 用户答卷管理 -->
+		<action name="yhdjgl_*" class="yhdjglAction" method="{1}">
+			<result name="success">/WEB-INF/pages/wjdc/yhdjgl/{1}.jsp</result>
+		</action>
+		
+		<!-- 问卷统计-->
+		<action name="wjtj_*" class="wjtjAction" method="{1}">
+			<result name="success">/WEB-INF/pages/wjdc/wjtj/{1}.jsp</result>
+			<!-- 查询问卷统计 -->
+			<result name="cxWjtj">/WEB-INF/pages/wjdc/wjtj/cxWjtj.jsp</result>
+			<!-- 答题情况统计（多数据源） -->
+			<result name="dtqktjAll">/WEB-INF/pages/wjdc/wjtj/dtqktjAll.jsp</result>
+			<!-- 答题情况统计（单数据源） -->
+			<result name="djtj">/WEB-INF/pages/wjdc/wjtj/djtj.jsp</result>
+			<result name="djtjNmwj">/WEB-INF/pages/wjdc/wjtj/nmwj/djtj.jsp</result>
+			<!-- 答题详情 -->
+			<result name="djxq">/WEB-INF/pages/wjdc/wjtj/djxq.jsp</result>
+			<result name="djxqNmwj">/WEB-INF/pages/wjdc/wjtj/nmwj/djxq.jsp</result>
+			
+			<!-- 试题统计 -->
+			<result name="sttj">/WEB-INF/pages/wjdc/wjtj/sttj.jsp</result>
+			<!-- 交叉统计 -->
+			<result name="jctj">/WEB-INF/pages/wjdc/wjtj/jctj.jsp</result>
+			<result name="jctjnNmwj">/WEB-INF/pages/wjdc/wjtj/nmwj/jctj.jsp</result>
+			<!-- 交叉统计参数配置 -->
+			<result name="jctjcspz">/WEB-INF/pages/wjdc/wjtj/jctjcspz.jsp</result>
+			<result name="jctjcspzNmwj">/WEB-INF/pages/wjdc/wjtj/nmwj/jctjcspz.jsp</result>
+		</action>
+		
+		<!-- 问卷功能约束-->
+		<action name="wjgnys_*" class="wjgnysAction" method="{1}">
+			<result name="cxWjxx">/WEB-INF/pages/wjdc/wjgnys/cxWjxx.jsp</result>
+			<result name="zjWjxx">/WEB-INF/pages/wjdc/wjgnys/zjWjxx.jsp</result>
+		</action>
+		
+	</package>
+	
+	<package name="wjdc" extends="configuration" namespace="/wjdc">
+	  <!-- 单点登录ACTION -->
+	  <action name="out_*" class="wjdcOutAction" method="{1}">
+	  	 <interceptor-ref name="defaultStack" />
+	     <result name="success" type="redirect">/xtgl/index_initMenu.html</result>
+	     <result name="wjgl" type="redirect">/zfxg/wjdc/wjgl_cxWjxx.html</result>
+	     <result name="wjpz" type="redirect">/zfxg/wjdc/wjpz_wjpz.html</result>
+	     <result name="wjffgl" type="redirect">/zfxg/wjdc/wjffgl_cxWjffxx.html</result>
+	     <result name="wjtj" type="redirect">/zfxg/wjdc/wjtj_cxWjtj.html</result>
+	     <result name="yhdjgl" type="redirect">/zfxg/wjdc/yhdjgl_cxYhdjxx.html</result>
+	     <result name="yhdj" type="redirect" >/zfxg/wjdc/stgl_yhdj.html?wjModel.wjid=${wjid}</result>
+	     <!-- 移动迎新调用 -->
+	     <result name="ydyhdjgl" type="redirect">/zfxg/wjdc/ydyhdjgl_cxYhdjxx.html</result>
+	     <!-- 移动迎新调用 -->
+	  </action>		
+	</package>
+
+</struts>

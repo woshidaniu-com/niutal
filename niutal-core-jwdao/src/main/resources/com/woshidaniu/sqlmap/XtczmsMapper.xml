@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IXtczmsDao">
+
+	<update id="update" parameterType="XtczmsModel" flushCache="true" statementType="PREPARED" timeout="20000">
+		update niutal_xtgl_xtczmsb t
+		   set t.czms   = #{czms},
+		   	   t.sfsy 	= #{sfsy}
+		 where t.xtczms_id = #{xtczms_id}
+	</update>
+	
+	<select id="getModel" resultType="XtczmsModel" parameterType="XtczmsModel" >
+		select t.xtczms_id,
+		       t.gnmkdm,
+		       decode(t.gnmkdm,'Login',decode(#{localeKey},'en_US','System login','系统登录'),decode(#{localeKey},'en_US',nvl(a.gnmkywmc,a.gnmkmc),a.gnmkmc)) gnmkmc,
+		       a.dyym,
+		       t.czdm,
+		       decode(t.czdm,'xs',decode(#{localeKey},'en_US','Student Login','学生登录'),
+		       			'js',decode('zh_CN', 'en_US', 'Teacher Login', '教师登录'),
+		       			nvl(decode(#{localeKey},'en_US',nvl(nvl(b.ywmc,c.ywmc),nvl(b.czmc,c.czmc)),
+		       			nvl(b.czmc,c.czmc)), decode(#{localeKey},'en_US','Function HOME','功能主页'))) czmc,
+		       t.czms,
+		       t.bz,
+		       t.sfsy
+		  from niutal_xtgl_xtczmsb   t,   
+		       niutal_xtgl_jsgnmkdmb a, 
+		       niutal_xtgl_gnmkczb   b, 
+		       niutal_xtgl_czdmb     c
+		 where t.gnmkdm = a.gnmkdm(+)
+		   and t.gnmkdm = b.gnmkdm(+)
+		   and t.czdm = b.czdm(+)
+		   and b.czdm = c.czdm(+)
+			<if test="xtczms_id != null and xtczms_id != ''">
+				and t.xtczms_id = #{xtczms_id}
+	   		</if>
+	   		<if test="gndm != null and gndm != ''">
+				and t.gnmkdm = #{gndm}
+	   		</if>
+	   		<if test="czdm != null and czdm != ''">
+				and t.czdm = #{czdm}
+	   		</if>
+	</select>
+	
+	<select id="getPagedList" resultType="XtczmsModel" parameterType="XtczmsModel" >
+			select t.xtczms_id,
+			       t.gnmkdm,
+			       decode(#{localeKey},
+			              'en_US',
+			              decode(t.czdm,
+			                     'xs',
+			                     'Student',
+			                     'js',
+			                     'Teacher',
+			                     nvl(p.gnmkywmc, p.gnmkmc)),
+			              decode(t.czdm, 'xs', '学生', 'js', '教师', p.gnmkmc)) || ' - ' ||
+			       decode(t.gnmkdm,
+			              'Login',
+			              decode(#{localeKey}, 'en_US', 'System login', '系统登录'),
+			              decode(#{localeKey}, 'en_US', nvl(a.gnmkywmc, a.gnmkmc), a.gnmkmc)) gnmkmc,
+			       a.dyym,
+			       t.czdm,
+			       decode(t.czdm,
+			              'xs',
+			              decode(#{localeKey}, 'en_US', 'Student Login', '学生登录'),
+			              'js',
+			              decode(#{localeKey}, 'en_US', 'Teacher Login', '教师登录'),
+			              nvl(decode(#{localeKey},
+			                         'en_US',
+			                         nvl(nvl(b.ywmc, c.ywmc), nvl(b.czmc, c.czmc)),
+			                         nvl(b.czmc, c.czmc)),
+			                  decode(#{localeKey}, 'en_US', 'Function HOME', '功能主页'))) czmc,
+			       t.czms,
+			       t.bz,
+			       t.sfsy
+			  from niutal_xtgl_xtczmsb   t,
+			       niutal_xtgl_jsgnmkdmb a,
+			       niutal_xtgl_jsgnmkdmb p,
+			       niutal_xtgl_gnmkczb   b,
+			       niutal_xtgl_czdmb     c
+			 where t.gnmkdm = a.gnmkdm(+)
+			   and t.gnmkdm = b.gnmkdm(+)
+			   and a.fjgndm = p.gnmkdm(+)
+			   and t.czdm = b.czdm(+)
+			   and b.czdm = c.czdm(+)
+	   		<if test="gndm != null and gndm != ''">
+				and t.gnmkdm = #{gndm}
+	   		</if>
+	   		<if test="czdm != null and czdm != ''">
+				and t.czdm = #{czdm}
+	   		</if>
+	   		 order by a.gnmkdm
+	</select>
+ 	
+ 	<!-- 获得【系统操作描述表】中所有进行不重复处理后的功能模块代码信息List<PairModel>集合 -->
+ 	<select id="getGnmkdmPairList" parameterType="string" resultType="com.woshidaniu.entities.PairModel" >
+		select distinct key, value
+		  from (select a.gnmkdm as key,
+		               decode(#{localeKey},
+		                      'en_US',
+		                      decode(a.gnmkdm,
+		                             'Login',
+		                             '用户',
+		                             nvl(p.gnmkywmc, p.gnmkmc)),
+		                      decode(a.gnmkdm, 'Login', '用户', p.gnmkmc)) || ' - ' ||
+		               decode(a.gnmkdm,
+		                      'Login',
+		                      decode(#{localeKey}, 'en_US', 'System login', '系统登录'),
+		                      decode(#{localeKey}, 'en_US', nvl(b.gnmkywmc, b.gnmkmc), b.gnmkmc)) as value
+		          from (select distinct t.gnmkdm, t.czdm from niutal_xtgl_xtczmsb t) a,
+		               niutal_xtgl_jsgnmkdmb b,
+		               niutal_xtgl_jsgnmkdmb p
+		         where a.gnmkdm = b.gnmkdm(+)
+		           and b.fjgndm = p.gnmkdm(+)) e
+		 order by e.key asc
+	</select>
+	
+	<!-- 获得【系统操作描述表】中所有进行不重复处理后的操作代码信息List<PairModel>集合 -->
+	<select id="getCzdmPairList" parameterType="string" resultType="com.woshidaniu.entities.PairModel" >
+		select distinct a.czdm as key,
+		                decode(a.czdm,
+		                       'xs',
+		                       decode(#{localeKey}, 'en_US', 'Student Login', '学生登录'),
+		                       'js',
+		                       decode(#{localeKey}, 'en_US', 'Teacher Login', '教师登录'),
+		                       nvl(decode(#{localeKey},
+		                                  'en_US',
+		                                  nvl(nvl(b.ywmc, c.ywmc),
+		                                      nvl(b.czmc, c.czmc)),
+		                                  nvl(b.czmc, c.czmc)),
+		                           decode(#{localeKey},
+		                                  'en_US',
+		                                  'Function HOME',
+		                                  '功能主页'))) as value
+		  from (select distinct t.czdm from niutal_xtgl_xtczmsb t) a,
+		       niutal_xtgl_gnmkczb b,
+		       niutal_xtgl_czdmb c
+		 where a.czdm = b.czdm(+)
+		   and a.czdm = c.czdm(+)
+
+	</select>
+	
+	<!-- 得到所有系统操作描述的 功能模块代码+操作代码  集合 -->
+	<select id="getXtczmsList" resultType="string" >
+	   select distinct t.gnmkdm || t.czdm from niutal_xtgl_xtczmsb t where t.sfsy = '1'
+	</select>
+	
+</mapper>

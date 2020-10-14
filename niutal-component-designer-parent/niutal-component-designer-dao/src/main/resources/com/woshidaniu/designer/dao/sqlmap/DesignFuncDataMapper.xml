@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignFuncDataDao" >
+
+	<!-- 分页查询【功能数据】信息-->
+	<select id="getPagedFuncDataByScope" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+		${data_sql}
+	</select>
+	
+	<!-- 查询【功能数据】信息-->
+	<select id="getFuncDataByScope" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+	 	${data_sql}
+	</select>
+    
+</mapper>

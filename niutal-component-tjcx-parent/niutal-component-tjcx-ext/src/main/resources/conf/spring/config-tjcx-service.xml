@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- 统计项目 -->
+	<bean id="tjxmService" name="tjxmService" class="com.woshidaniu.tjcx.service.impl.TjxmServiceImpl" scope="prototype">
+   		<property name="dao" ref="tjxmDao"/>
+    </bean>
+ 	
+	<!-- 统计报表 -->
+	<bean id="tjbbService" name="tjbbService" class="com.woshidaniu.tjcx.service.impl.TjbbServiceImpl" scope="prototype">
+   		<property name="dao" ref="tjbbDao"/>
+     	<property name="tjcxBaseDao" ref="tjcxBaseDao"/>
+    	<property name="ysjDao" ref="ysjDao"/>
+     	<property name="cxzdDao" ref="cxzdDao"/>
+     	<property name="kzszDao" ref="kzszDao"/>
+     	<property name="bbldyDao" ref="bbldyDao"/>
+     	<property name="tsxdyDao" ref="tsxdyDao"/>
+     	<property name="tjcxCommon" ref="tjcxCommon"/>
+    </bean>
+  	
+	<!-- 统计报表详情-->
+	<bean id="tjbbXqService" name="tjbbXqService" class="com.woshidaniu.tjcx.service.impl.TjbbXqServiceImpl" scope="prototype">
+     	<property name="tjcxBaseDao" ref="tjcxBaseDao"/>
+    	<property name="ysjDao" ref="ysjDao"/>
+     	<property name="tjcxCommon" ref="tjcxCommon"/>
+      	<property name="cxzdDao" ref="cxzdDao"/>
+    </bean>
+ 		
+	<!-- 统计查询 -->
+	<bean id="tjcxService" name="tjcxService" class="com.woshidaniu.tjcx.service.impl.TjcxServiceImpl" scope="prototype">
+    	<property name="dao" ref="tjcxDao"/>
+     	<property name="tjcxBaseDao" ref="tjcxBaseDao"/>
+    	<property name="ysjDao" ref="ysjDao"/>
+    	<property name="tjcxCommon" ref="tjcxCommon"/>
+   </bean>
+
+	<!-- 查询字段 -->
+	<bean id="cxzdService" name="cxzdService" class="com.woshidaniu.tjcx.service.impl.CxzdServiceImpl" scope="prototype">
+   		<property name="dao" ref="cxzdDao"/>
+     	<property name="tjcxCommon" ref="tjcxCommon"/>
+    </bean>      
+      	
+	<!-- 快照设置 -->
+	<bean id="kzszService" name="kzszService" class="com.woshidaniu.tjcx.service.impl.KzszServiceImpl" scope="prototype">
+   		<property name="dao" ref="kzszDao"/>
+    </bean>    
+      	
+	<!-- 通用方法设置 -->
+	<bean id="tjcxCommon" name="tjcxCommon" class="com.woshidaniu.tjcx.service.impl.TjcxCommon" scope="prototype">
+     	<property name="tjcxBaseDao" ref="tjcxBaseDao"/>
+    	<property name="ysjDao" ref="ysjDao"/>
+    	<property name="exportDao" ref="exportDao"/>
+     	<property name="cxzdDao" ref="cxzdDao"/>
+    </bean>
+      
+</beans>

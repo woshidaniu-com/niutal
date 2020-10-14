@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="niutal_xtgl_zydmb_config" map-class="java.util.HashMap">
+		<entry key="table_name" value="专业信息维护"/>
+		<entry key="table_sortname" value="zyh_id"/>
+		<entry key="table_sortorder" value="asc"/>
+		<entry key="width" value="550"/>
+		<entry key="height" value="350"/>
+		<entry key="queryWhere">
+	       <value>
+				<![CDATA[ dlbs<>'dl']]>
+	       </value>
+		</entry>
+	</util:map>
+  	<util:list id="niutal_xtgl_zydmb_list" list-class="java.util.ArrayList" >
+		 <map>
+			<entry key="column_name" value="zyh_id"/>
+			<entry key="comments" value="专业号id"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="primary_key" value="true"/>
+			<entry key="hidden" value="true"/>
+			<entry key="type" value="hidden"/>
+			<!--说明：字段不可为空  -->
+			<entry key="Nullable" value="false"/>
+			<!--说明：字段唯一验证必须加上表主键ID  -->
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where zyh_id='${zyh_id}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="zyh"/>
+			<entry key="comments" value="专业代码"/>
+			<entry key="maxLength" value="10"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where zyh='${zyh}'"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="10"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="chrnum" value="true"/>
+				 </map>
+			</entry>
+		</map>
+	    <map>
+			<entry key="column_name" value="zymc"/>
+			<entry key="comments" value="专业名称"/>
+			<entry key="maxLength" value="60"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="200"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where zymc='${zymc}'"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="60"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="zyjc"/>
+			<entry key="comments" value="专业简称"/>
+			<entry key="maxLength" value="20"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="width" value="200"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where zyjc='${zyjc}'"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="20"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="zyywmc"/>
+			<entry key="comments" value="专业英文名称"/>
+			<entry key="maxLength" value="100"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="300"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where zyywmc='${zyywmc}'"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="100"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="bzkzym"/>
+			<entry key="comments" value="本专科专业码"/>
+			<entry key="maxLength" value="28"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="width" value="100"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where bzkzym='${bzkzym}'"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="28"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="yjszym"/>
+			<entry key="comments" value="研究生专业码"/>
+			<entry key="maxLength" value="10"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="width" value="100"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select zyh_id from niutal_xtgl_zydmb where yjszym='${yjszym}'"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="10"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="xz"/>
+			<entry key="comments" value="学制"/>
+			<entry key="maxLength" value="10"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="80"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="2"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="positiveIntegerFloat" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="jg_id"/>
+			<entry key="comments" value="所属学院"/>
+			<entry key="maxLength" value="32"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="align" value="center"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="type" value="select"/>
+			<entry key="QuerySql" value="select jg_id id,jgmc mc from niutal_xtgl_jgdmb"/>
+			<entry key="listKey" value="jg_id"/>
+			<entry key="listValue" value="jgmc"/>
+			<entry key="listTable" value="niutal_xtgl_jgdmb"/>
+			<entry key="width" value="150"/>
+		</map>
+		<map>
+			<entry key="column_name" value="sfty"/>
+			<entry key="comments" value="是否停用"/>
+			<entry key="align" value="center"/>
+			<entry key="transform" value="isNot"/>
+			<entry key="type" value="radio"/>
+			<entry key="width" value="250"/>
+		</map>
+		<map>
+			<entry key="column_name" value="bz"/>
+			<entry key="comments" value="备注"/>
+			<entry key="align" value="rigth"/>
+			<entry key="type" value="textarea"/>
+			<entry key="maxLength" value="100"/>
+			<entry key="width" value="300"/>
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="100"/>
+				 </map>
+			</entry>
+		</map>
+	</util:list>
+</beans>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IBaseWidgetParameterDao" >
+
+	<!-- 分页查询【功能js组件初始化参数】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel">
+		select t.widget_name,
+		       a.param_guid,
+		       a.param_name,
+		       a.param_default,
+		       a.param_desc
+		  from niutal_widget_details   t, 
+		       niutal_widget_parameters a
+		 where t.widget_guid = a.widget_guid
+     	 <if test=" widget_name != null and widget_name != '' ">
+     		and t.widget_name like '%'||#{widget_name}||'%' 
+     	 </if>
+	</select>
+	
+	
+	<!-- 根据功能组件ID查询该【功能js组件初始化参数】信息-->
+	<select id="getWidgetParameterList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel">
+		select a.param_guid,
+		       a.param_name,
+		       a.param_default,
+		       a.param_desc
+		  from niutal_widget_details   t, 
+		       niutal_widget_parameters a
+		 where t.widget_guid = a.widget_guid 
+	       and t.widget_guid = #{widget_guid}
+	</select>
+	
+	
+	<!-- 查询【功能js组件初始化参数】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel" resultType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel">
+		select t.widget_name,
+		       a.param_guid,
+		       a.param_name,
+		       a.param_default,
+		       a.param_desc
+		  from niutal_widget_details   t, 
+		       niutal_widget_parameters a
+		 where t.widget_guid = a.widget_guid 
+	       and a.param_guid = #{param_guid}
+	</select>
+	
+	<!-- 添加【功能js组件初始化参数】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel" >
+	insert into niutal_widget_parameters(
+				widget_guid,
+				param_name,
+				param_default,
+				param_desc)
+	values(		#{widget_guid},
+				#{param_name,jdbcType=VARCHAR},
+				#{param_default,jdbcType=VARCHAR},
+				#{param_desc,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 删除【功能js组件初始化参数】信息-->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetDetailModel">
+	<![CDATA[
+		delete niutal_widget_parameters t where t.param_guid = #{param_guid}
+	]]>
+	</delete>
+	
+	<!-- 更新【功能js组件初始化参数】信息-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.BaseWidgetParameterModel">
+	 update niutal_widget_parameters t
+		set t.param_name 		= #{param_name,jdbcType=VARCHAR},
+			t.param_desc 		= #{param_desc,jdbcType=VARCHAR},
+			t.param_default 	= #{param_default,jdbcType=VARCHAR}
+	  where t.param_guid = #{param_guid}
+	</update>
+    
+</mapper>

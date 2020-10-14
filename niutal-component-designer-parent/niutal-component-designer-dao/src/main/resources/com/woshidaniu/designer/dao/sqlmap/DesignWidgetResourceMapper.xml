@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignWidgetResourceDao" >
+
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.DesignWidgetResourceModel">
+	<![CDATA[
+	declare
+	begin
+		insert into niutal_designer_func_resources(func_guid,widget_guid,auto_insert,resource_type,resource_name,resource_text)
+		values(#{func_guid},#{widget_guid,jdbcType=VARCHAR},0,#{resource_type,jdbcType=VARCHAR},#{resource_name,jdbcType=VARCHAR},#{resource_text,jdbcType=VARCHAR});
+	end;
+	]]>		
+	</insert>
+	
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.DesignWidgetResourceModel">
+	 	delete niutal_designer_func_resources t where t.resource_guid = #{resource_guid}
+	</delete>
+	
+	<!-- 根据功能ID查询引用的组件和自定义资源信息 -->
+    <select id="getFuncResourceList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.designer.dao.entities.DesignWidgetResourceModel">
+   		 <![CDATA[
+  		select distinct a.resource_guid,
+		                a.auto_insert,
+		                nvl(b.widget_name, a.resource_name) as resource_name
+		  from niutal_designer_func           t,
+		       niutal_designer_func_resources a,
+		       niutal_widget_details          b
+		 where t.func_guid = a.func_guid
+		   and (a.widget_guid is not null or a.resource_text is not null)
+		   and a.widget_guid = b.widget_guid(+)
+		   and t.func_guid = #{func_guid}
+		 order by a.resource_guid asc
+		 ]]>
+    </select>
+
+	<!-- 根据功能ID查询引用组件关联的js、css资源 -->
+    <select id="getFuncWidgetResourceList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultType="com.woshidaniu.designer.dao.entities.DesignWidgetResourceModel">
+   		 <![CDATA[
+  		select distinct a.func_guid,
+		                a.resource_guid,
+		                b.widget_guid,
+		                b.widget_name,
+		                c.resource_guid,
+		                c.resource_desc,
+		                c.resource_href,
+		                c.resource_from,
+		                c.resource_ordinal
+		  from niutal_designer_func           t,
+		       niutal_designer_func_resources a,
+		       niutal_widget_details          b,
+		       niutal_widget_resources        c
+		 where t.func_guid = a.func_guid
+		   and a.widget_guid = b.widget_guid
+		   and b.widget_guid = c.widget_guid
+		   and t.func_guid = #{func_guid}
+		 order by b.widget_guid, c.resource_ordinal asc
+		 ]]>
+    </select>
+    
+    
+	<resultMap type="com.woshidaniu.designer.dao.entities.DesignWidgetResourceModel" id="resourceMap">  
+		<result property="resource_guid" column="resource_guid" />
+		<result property="resource_type" column="resource_type" />
+		<result property="func_guid" column="func_guid" />
+		<result property="auto_insert" column="auto_insert" />
+		<result property="resource_name" column="resource_name" />
+        <result property="resource_text" column="resource_text"  javaType="java.lang.String" jdbcType="CLOB" typeHandler="org.apache.ibatis.type.ClobTypeHandler" />
+		<result property="resource_ordinal" column="resource_ordinal" />
+    </resultMap>
+    
+    <!-- 根据功能ID查询引用的自定义资源信息 -->
+    <select id="getFuncFileResourceList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncModel" resultMap="resourceMap">
+   		 <![CDATA[
+  		 select a.resource_guid,
+				a.resource_type,
+                a.func_guid,
+                a.auto_insert,
+                a.resource_name,
+                a.resource_text,
+                a.resource_ordinal
+		  from niutal_designer_func t, niutal_designer_func_resources a
+		 where t.func_guid = a.func_guid
+		   and a.widget_guid is null
+		   and a.resource_text is not null
+		   and t.func_guid = #{func_guid}
+		 order by a.resource_ordinal asc
+		 ]]>
+    </select>
+    
+</mapper>

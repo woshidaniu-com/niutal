@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.engine.extend.persistence.entity.BizFieldEntity">
+
+  <resultMap id="bizFieldResultMap" type="org.activiti.engine.extend.persistence.entity.BizFieldEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="name" column="NAME_" jdbcType="VARCHAR" />
+    <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR" />
+    <result property="label" column="LABEL_" jdbcType="VARCHAR" />
+    <result property="type" column="TYPE_" jdbcType="VARCHAR"/>
+    <result property="valuesBytes" column="VALUES_" jdbcType="BLOB" />
+    <result property="required" column="REQUIRED_" jdbcType="INTEGER" />
+    <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR"/>
+    <result property="bizId" column="BIZ_ID_" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <!-- INFO SELECT -->
+
+  <select id="selectBizField" parameterType="string" resultMap="bizFieldResultMap">
+    select * from ${prefix}ACT_RE_BIZFIELD where ID_ = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectBizFieldEntitiesByBizId" parameterType="map" resultMap="bizFieldResultMap">
+    select * from ${prefix}ACT_RE_BIZFIELD where BIZ_ID_ = #{bizId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.engine.extend.persistence.entity.BizEntity">
+
+  <resultMap id="bizResultMap" type="org.activiti.engine.extend.persistence.entity.BizEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="name" column="NAME_" jdbcType="VARCHAR" />
+    <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- INFO SELECT -->
+
+  <select id="selectBiz" parameterType="string" resultMap="bizResultMap">
+    select * from ${prefix}ACT_RE_BIZ where ID_ = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAllBizEntities" resultMap="bizResultMap">
+    select * from ${prefix}ACT_RE_BIZ order by NAME_ ASC
+  </select>
+
+</mapper>

@@ -1,0 +1,3 @@
+<!-- Tagsinput 插件 -->
+<link rel="stylesheet" type="text/css" href="${messageUtil("system.stylePath")}/assets/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css?ver=${messageUtil("niutal.cssVersion")}" />
+<script type="text/javascript" src="${messageUtil("system.stylePath")}/assets/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js?ver=${messageUtil("niutal.jsVersion")}" charset="utf-8"></script>

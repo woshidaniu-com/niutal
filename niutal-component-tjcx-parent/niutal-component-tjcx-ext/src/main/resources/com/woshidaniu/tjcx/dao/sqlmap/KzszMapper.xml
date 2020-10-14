@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.tjcx.dao.daointerface.IKzszDao">
+
+	<select id="getModel" parameterType="com.woshidaniu.tjcx.dao.entites.KzszModel" resultType="com.woshidaniu.tjcx.dao.entites.KzszModel">
+		select * from ZFXG_TJCX_KZSZB where kzszid=#{kzszid}
+	</select>
+
+	<!-- 根据项目代码查所有快照设置 -->
+	<select id="getModelList" parameterType="com.woshidaniu.tjcx.dao.entites.KzszModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.KzszModel">
+		select * from
+		ZFXG_TJCX_KZSZB where ( (czy=#{czy}) or (sfgy='1' and kzjsr is null ) or ( sfgy='1' and kzjsr is not null and instr(','||kzjsr||',',','||#{czy}||',')>0)) 
+		<if test="xmdm != null">
+			and xmdm = #{xmdm} 
+	    </if>
+	    <if test="kzlx != null">
+			 and kzlx=#{kzlx}
+	    </if>
+		
+		order by sfgy,tjsj desc
+	</select>
+
+
+	<!-- 根据项目代码查所有快照设置 分页-->
+	<select id="getPagedList" parameterType="com.woshidaniu.tjcx.dao.entites.KzszModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.KzszModel">
+		select * from
+		ZFXG_TJCX_KZSZB where ( (czy=#{czy}) or (sfgy='1' and kzjsr is null ) or ( sfgy='1' and kzjsr is not null and instr(','||kzjsr||',',','||#{czy}||',')>0)) 
+		<if test="xmdm != null">
+			and xmdm = #{xmdm} 
+	    </if>
+	    <if test="kzlx != null">
+			 and kzlx=#{kzlx}
+	    </if>		
+	</select>
+
+
+	<insert id="insert" parameterType="com.woshidaniu.tjcx.dao.entites.KzszModel" useGeneratedKeys="true" keyProperty="kzszid">
+		<![CDATA[
+		insert into ZFXG_TJCX_KZSZB
+		(kzszid,xmdm,szmc,gltj,bbhxl,bbzxl,tsx,czy,tjsj,kzlx,sfgy,kzjsr,kzms)
+		values(#{kzszid},#{xmdm},#{szmc},#{gltj},#{bbhxl},#{bbzxl},#{tsx},#{czy},#{tjsj},#{kzlx},#{sfgy},#{kzjsr},#{kzms})
+		]]>		
+		<selectKey resultType="java.lang.String" order="BEFORE" keyProperty="kzszid">
+			<![CDATA[
+			SELECT SYS_GUID() kzszid FROM DUAL
+			]]>
+		</selectKey>
+	</insert>
+	
+   <update id="update" parameterType="com.woshidaniu.tjcx.dao.entites.KzszModel">
+    	update ZFXG_TJCX_KZSZB
+    	<set>
+    		<if test="szmc != null">
+    			szmc = #{szmc},
+    		</if>
+    		<if test="czy != null">
+    			czy = #{czy},
+    		</if>
+    		<if test="tjsj != null">
+    			tjsj = #{tjsj},
+    		</if>
+    		<if test="sfgy != null">
+    			sfgy = #{sfgy},
+    		</if>
+    		<if test="kzjsr != null">
+    			kzjsr = #{kzjsr}
+    		</if>
+    		<if test="kzms != null">
+    			kzms = #{kzms}
+    		</if>
+    	</set> 
+    	where kzszid=#{kzszid} 
+    </update>	
+	
+	<delete id="deleteCxkz" parameterType="com.woshidaniu.tjcx.dao.entites.KzszModel">
+		delete from ZFXG_TJCX_KZSZB where kzszid=#{kzszid}
+	 </delete>
+	
+</mapper>
+	

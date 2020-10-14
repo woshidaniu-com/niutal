@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ILogDao">
+
+	<insert id="insert" parameterType="com.woshidaniu.common.log.BusinessLogModel"
+		flushCache="false" statementType="PREPARED" timeout="20000">
+		insert into
+		niutal_xtgl_czrzb ( czbh,
+		czr,
+		czmk,
+		ywmc,
+		czlx,
+		czms,
+		ipdz,
+		zjm
+		)
+		values
+		(sys_guid() , #{czr},
+		#{czmk},#{ywmc},
+		#{czlx},
+		#{czms}, #{ipdz},
+		#{zjm})
+		 
+    </insert>
+
+	<insert id="batchInsert" parameterType="java.util.List" >
+		insert into niutal_xtgl_czrzb (czbh,czr,czmk,ywmc,czlx,czms,ipdz,zjm,czrq)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union" > 
+			select
+					 sys_guid(),
+					 #{item.czr,jdbcType=VARCHAR},#{item.czmk,jdbcType=VARCHAR},
+					 #{item.ywmc,jdbcType=VARCHAR},#{item.czlx,jdbcType=VARCHAR},
+					 #{item.czms,jdbcType=VARCHAR},#{item.ipdz,jdbcType=VARCHAR},
+					 #{item.zjm,jdbcType=VARCHAR},#{item.czrq,jdbcType=VARCHAR}
+			from dual 
+		</foreach>
+    </insert>
+
+</mapper>

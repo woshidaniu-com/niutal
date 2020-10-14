@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.woshidaniu.zxzx.dao.daointerface.IYhbkDao" >
+  <resultMap id="BaseResultMap" type="com.woshidaniu.zxzx.dao.entities.YhbkModel" >
+   	<result column="BKDM" property="bkdm" jdbcType="VARCHAR" />
+    <result column="BKMC" property="bkmc" jdbcType="VARCHAR" />
+    <result column="YHS" property="yhs" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Cxyh_Where_Clause">
+      <if test="zgh != null and zgh != ''" >
+        and zgh like '%'||#{zgh,jdbcType=VARCHAR}||'%'
+      </if>
+      <if test="jgdm != null and jgdm != ''" >
+        and jgdm = #{jgdm,jdbcType=VARCHAR}
+      </if>
+      <if test="xm != null and xm != ''" >
+        and xm like '%'||#{xm,jdbcType=VARCHAR}||'%'
+      </if>
+  </sql>
+  
+  <select id="getModel" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT * FROM (SELECT a.bkdm,
+    		a.bkmc, 
+    		NVL(b.yhs,'0') yhs 
+    		FROM niutal_zxzx_bkxxb a 
+    		LEFT JOIN 
+    		(SELECT bkdm, COUNT(zgh) yhs FROM niutal_zxzx_bkyhb t GROUP BY t.bkdm) b 
+    		ON a.bkdm = b.bkdm)
+    WHERE bkdm=#{bkdm,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getPagedList" resultMap="BaseResultMap" parameterType="com.woshidaniu.zxzx.dao.entities.YhbkModel">
+  	SELECT * FROM (SELECT a.bkdm,
+    		a.bkmc, 
+    		NVL(b.yhs,'0') yhs 
+    		FROM niutal_zxzx_bkxxb a 
+    		LEFT JOIN 
+    		(SELECT bkdm, COUNT(zgh) yhs FROM niutal_zxzx_bkyhb t GROUP BY t.bkdm) b 
+    		ON a.bkdm = b.bkdm)
+    <where>
+  	  <trim prefixOverrides="and" >
+	      <if test="bkmc != null and bkmc != ''" >
+	        and bkmc = #{bkmc,jdbcType=VARCHAR}
+	      </if>
+      </trim>
+  	</where>
+  </select>
+ 
+  <!-- 获取用户版块代码列表 -->
+  <select id="getYhbkdmList" resultType="string" parameterType="string">
+  	SELECT distinct BKDM FROM niutal_zxzx_bkyhb WHERE zgh = #{_parameter,jdbcType=VARCHAR}
+  </select>
+ 
+ <select id="getYhbkList" resultMap="BaseResultMap" parameterType="java.lang.String">
+ 	SELECT A.ZGH, B.BKDM, B.BKMC, B.SFQY
+	  FROM niutal_ZXZX_BKXXB B
+	  LEFT JOIN niutal_ZXZX_BKYHB A ON A.BKDM = B.BKDM
+	 WHERE B.SFQY = '1' 
+	 	<if test="_parameter != 'admin'">
+	 		AND A.ZGH = #{_parameter,JDBCTYPE=VARCHAR}
+	 	</if>
+ </select>
+ 
+ 	<!-- 批量删除-->
+   <delete id="batchDelete" parameterType="java.util.List">
+  		delete from niutal_zxzx_bkyhb
+  		<where>
+  			<trim prefixOverrides="or" >
+            	<foreach collection="list" item="item" >
+              		or (bkdm = #{item.bkdm,jdbcType=VARCHAR} and zgh = #{item.zgh,jdbcType=VARCHAR})
+            	</foreach>
+          	</trim>
+  		</where>
+   </delete>	
+ 	
+  <!-- 批量插入 -->
+  <insert id="batchInsert" parameterType="java.util.List">
+	INSERT INTO niutal_zxzx_bkyhb (bkdm, zgh)
+ 	<foreach collection="list" item="item" index="index" separator=" union all ">
+	   select #{item.bkdm,jdbcType=VARCHAR}, #{item.zgh,jdbcType=VARCHAR} from dual  
+	</foreach>
+   </insert>
+ 
+  <!-- 查询已分配用户信息列表 -->
+  <select id="getPagedListYfpYhxx" parameterType="com.woshidaniu.zxzx.dao.entities.YhbkModel" resultType="com.woshidaniu.zxzx.dao.entities.ZxzxYhglModel">
+  		SELECT * FROM (SELECT a.bkdm, b.zgh, b.xm, b.lxdh, c.bmdm_id as jgdm, c.bmmc as jgmc 
+					   FROM niutal_zxzx_bkyhb a LEFT JOIN niutal_xtgl_yhb b on a.zgh = b.zgh 
+					   LEFT JOIN niutal_xtgl_bmdmb c ON b.jgdm=c.bmdm_id)
+		WHERE bkdm = #{bkdm,jdbcType=VARCHAR}
+		<include refid="Cxyh_Where_Clause"></include>
+		<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+		and ${searchModel.querySQL}
+		</if>
+  </select>
+  
+  <!-- 查询未分配用户信息列表 -->
+  <select id="getPagedListWfpYhxx" parameterType="com.woshidaniu.zxzx.dao.entities.YhbkModel" resultType="com.woshidaniu.zxzx.dao.entities.ZxzxYhglModel">
+		SELECT * FROM (SELECT a.zgh, a.xm, a.lxdh, b.bmdm_id as jgdm, b.bmmc as jgmc 
+					   FROM niutal_xtgl_yhb a LEFT JOIN niutal_xtgl_bmdmb b ON a.jgdm = b.bmdm_id 
+					   WHERE a.zgh != 'admin' and a.sfqy = '1')
+		WHERE zgh NOT IN (SELECT zgh FROM niutal_zxzx_bkyhb WHERE bkdm = #{bkdm,jdbcType=VARCHAR})
+		<include refid="Cxyh_Where_Clause"></include>
+		<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+		and ${searchModel.querySQL}
+		</if>
+  </select>
+ 
+</mapper>

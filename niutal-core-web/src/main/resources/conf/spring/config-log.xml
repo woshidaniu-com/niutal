@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+<!-- 	<bean id="businessLogAspect" class="com.woshidaniu.common.log.BusinessLogAspect"> -->
+<!-- 	</bean> -->
+
+<!-- 	<aop:config> -->
+<!-- 		<aop:pointcut id="logPointcut"  expression="execution(* com.woshidaniu..action.*.*(..)) and @annotation(com.woshidaniu.common.log.BusinessLog) and @annotation(businessLog)" /> -->
+<!-- 		<aop:aspect id="logAspect" ref="businessLogAspect"> -->
+<!-- 			<aop:after-returning method="afterReturing"  pointcut-ref="logPointcut" /> -->
+<!-- 		</aop:aspect> -->
+<!-- 	</aop:config> -->
+	
+</beans>

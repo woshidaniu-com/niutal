@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.engine.extend.persistence.entity.CommonMessageEntity">
+
+  <resultMap id="commonMessageResultMap" type="org.activiti.engine.extend.persistence.entity.CommonMessageEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="userId" column="USER_ID_" jdbcType="VARCHAR" />
+    <result property="messageValueBytes" column="COMMON_MSG_" jdbcType="BLOB" />
+  </resultMap>
+  
+  <!-- INFO UPDATE -->
+  <insert id="insertCommonMessage" parameterType="org.activiti.engine.extend.persistence.entity.CommonMessageEntity">
+    insert into ${prefix}ACT_RE_COMMON_MSG (ID_, USER_ID_, COMMON_MSG_)
+    values (
+      #{id ,jdbcType=VARCHAR},
+      #{userId ,jdbcType=VARCHAR},
+      #{messageValueBytes ,jdbcType=BLOB}
+    )
+  </insert>
+  
+  <update id="updateCommonMessage" parameterType="org.activiti.engine.extend.persistence.entity.CommonMessageEntity">
+    update ${prefix}ACT_RE_COMMON_MSG 
+    set USER_ID_ = #{userId ,jdbcType=VARCHAR},
+        COMMON_MSG_ = #{messageValueBytes ,jdbcType=BLOB}
+    where ID_ = #{id}
+  </update>
+  
+  <delete id="deleteCommonMessage" parameterType="org.activiti.engine.extend.persistence.entity.CommonMessageEntity">
+    delete from ${prefix}ACT_RE_COMMON_MSG 
+    where ID_ = #{id}
+  </delete>
+  
+  <!-- INFO SELECT -->
+
+  <select id="selectCommonMessage" parameterType="string" resultMap="commonMessageResultMap">
+    select * from ${prefix}ACT_RE_COMMON_MSG where ID_ = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCommonMessagesByUserId" parameterType="map" resultMap="commonMessageResultMap">
+    select * from ${prefix}ACT_RE_COMMON_MSG where USER_ID_ = #{userId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

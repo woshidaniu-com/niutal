@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="sitemash3.xsd">
+	
+	<!--
+    By default, SiteMesh will only intercept responses that set the Content-Type HTTP header to text/html
+    This can be altered to allow SiteMesh to intercept responses for other types.
+    默认 SiteMesh 只对HTTP响应头中Content-Type为 text/html 的类型进行拦截和装饰，若需要处理其它mime类型需要自行添加配置
+    -->
+    <mime-type>text/html</mime-type>
+    <!--
+    Map default decorator. This shall be applied to all paths if no other paths match.
+    配置装饰器，仅设置decorator参数时表示为默认的装饰器，当没有任何路径被匹配时会使用默认装饰器装配
+     -->
+<!--     <mapping decorator="/layouts/default.ftl" /> -->
+    <!--对不同的路径指定特定的装饰器-->
+<!--     <mapping path="/xtgl/xtsz/*" decorator="/layouts/default.ftl"/> -->
+    <mapping path="*/slogin.zf" decorator="/layouts/indexLayout.ftl"/>
+<!--     <mapping path="*/initMenu.zf" decorator="/layouts/indexLayout.ftl"/> -->
+    <!--
+    Alternative convention. This is more verbose but allows multiple decorators to be applied to a single path.
+    对同一路径可以同时使用多个装饰器
+    -->
+<!--     <mapping> -->
+<!--         <path>/category/*</path> -->
+<!--         <decorator>/WEB-INF/decorators/common-decorator.ftl</decorator> -->
+<!--         <decorator>/WEB-INF/decorators/menu-decorator.ftl</decorator> -->
+<!--         <decorator>/WEB-INF/decorators/category-decorator.ftl</decorator> -->
+<!--     </mapping> -->
+    <!--
+    Exclude path from decoration.
+    排除路径，只需将exclue设置为true即可
+    -->
+<!--     <mapping path="/static/*" exclue="true"/> -->
+<!--     <mapping path="/static/*" exclue="true"/> -->
+<!--     <mapping path="/static/*" exclue="true"/> -->
+    <!--
+    An advanced feature of SiteMesh is the ability to define custom rules that manipulate tags on a page.
+    These are classes that implement org.sitemesh.content.tagrules.TagRuleBundle.
+    默认SiteMesh仅支持title、head、meta、body等tag,可以自定义tag，实现TagRuleBundle接口即可
+    -->
+    <content-processor>
+    </content-processor>
+
+</sitemesh>

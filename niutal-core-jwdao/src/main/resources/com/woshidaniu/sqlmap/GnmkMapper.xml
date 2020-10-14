@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IGnmkDao" >
+	<!-- 查询功能的包含那些操作权限 -->
+	<select id="cxUrlqx" parameterType="GnmkModel" resultType="GnmkModel">
+		select c.czdm,c.jsdm from niutal_xtgl_jsgnmkczb c, niutal_xtgl_jsgnmkdmb d where 
+		c.gnmkdm = d.gnmkdm and instr(d.dyym,#{dyym})>0  and c.jsdm=#{jsdm}
+	</select>
+</mapper>

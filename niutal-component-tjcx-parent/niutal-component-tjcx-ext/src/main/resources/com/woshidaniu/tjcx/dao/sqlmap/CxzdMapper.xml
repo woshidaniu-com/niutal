@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.tjcx.dao.daointerface.ICxzdDao">
+
+	<!-- 根据项目代码查所有字段 -->
+	<select id="getModelList" parameterType="com.woshidaniu.tjcx.dao.entites.CxzdModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.CxzdModel">
+		select * from ZFXG_TJCX_CXZDB
+		where 1=1 
+		<if test="xmdm != null">
+			and xmdm = #{xmdm}
+	    </if>
+	    <if test="zdxsms != null">
+			and (zdxsms = #{zdxsms} or zdxsms is null or zdxsms='0')
+	    </if>
+		order by xssx
+	</select>
+	
+	<!-- 根据父类字段名称查所有子类字段 -->
+	<select id="getChildrenList" parameterType="com.woshidaniu.tjcx.dao.entites.CxzdModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.CxzdModel">
+		select * from ZFXG_TJCX_CXZDB
+		where 1=1
+		and xmdm = #{xmdm}
+		and zdmc!=#{zdmc}
+		connect by  flzdmc=prior  zdmc  start with flzdmc=#{zdmc}
+	</select>
+	
+	<!-- 获取单条记录 -->
+	<select id="getModel" parameterType="com.woshidaniu.tjcx.dao.entites.CxzdModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.CxzdModel">
+		select * from ZFXG_TJCX_CXZDB
+		where zdmc = #{zdmc} and xmdm = #{xmdm}
+	</select>
+
+	<!-- 获取某运算符组下的运算符 -->
+	<select id="getYsf" parameterType="com.woshidaniu.tjcx.dao.entites.CxzdModel"
+		resultType="com.woshidaniu.tjcx.dao.entites.YsfModel">
+		select ysfdm,ysfmc from ZFXG_TJCX_YSFB
+		where ysfdm in(select ysfdm from ZFXG_TJCX_ZDYSFGXB where ysfzdm=#{ysfzdm})
+	</select>
+
+	<!-- 获取所有运算符 -->
+	<select id="getAllYsf"
+		resultType="com.woshidaniu.tjcx.dao.entites.YsfModel">
+		select ysfdm,ysfmc from ZFXG_TJCX_YSFB
+	</select>
+
+</mapper>
+

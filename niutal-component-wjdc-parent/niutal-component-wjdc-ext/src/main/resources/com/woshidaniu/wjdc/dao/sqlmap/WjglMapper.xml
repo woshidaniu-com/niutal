@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IWjglDao">
+
+	<select id="getModelList" resultType="com.woshidaniu.wjdc.dao.entites.WjglModel">
+		select * from niutal_WJDC_WJXXB
+	</select>
+	
+	<select id="getPagedList" parameterType="WjglModel"	resultType="WjglModel">
+			select * from (
+				select wjid,
+				       wjmc,
+				       wjzt,
+				       jsy,
+				       jwy,
+				       wjzf,
+				       cjr,
+				       to_char(to_date(cjsj,'yyyymmdd'),'yyyy-mm-dd') cjsj,
+				       to_char(to_date(gqsj,'yyyymmdd'),'yyyy-mm-dd') gqsj,
+				       fblx,
+				       b.xm cjrmc,
+				       case when exists (select 1 from niutal_wjdc_wjffmxb c where a.wjid=c.wjid) then 1 else 0 end ffzt
+				  from niutal_WJDC_WJXXB a
+				  left join niutal_xtgl_yhb b  on a.cjr = b.zgh
+			) a
+		<where>
+			<if test="cjr != null and cjr !=''">
+				and a.cjr =  #{cjr}
+			</if>
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insert" parameterType="WjglModel">
+		insert into niutal_WJDC_WJXXB(wjid,wjmc,wjlx,wjzt,jsy,jwy,wjzf,cjr,fblx,gqsj,wjyxj) 
+		values(#{wjid},
+			   #{wjmc},
+			   #{wjlx},
+			   #{wjzt},
+			   #{jsy},
+			   #{jwy},
+			   #{wjzf},
+			   #{cjr},
+			   #{fblx},
+			   #{gqsj},
+			   #{wjyxj})
+	</insert>
+	
+	<sql id="getModelBase">
+		select 
+			wjid,
+			wjmc,
+			wjlx,
+			wjzt,
+			jsy,
+			jwy,
+			wjzf,
+			cjr,
+			wjyxj,
+			to_char(to_date(cjsj,'yyyymmdd'),'yyyy-mm-dd') cjsj,
+		    to_char(to_date(gqsj,'yyyymmdd'),'yyyy-mm-dd') gqsj,
+			fblx 
+		from niutal_WJDC_WJXXB
+	</sql>
+	
+	<select id="getModelsByWjids" resultType="com.woshidaniu.wjdc.dao.entites.WjglModel">
+		<include refid="getModelBase"></include>
+		where wjid in
+		<foreach collection="wjids" open="(" separator="," close=")" index="i" item="item">
+			#{item}
+		</foreach>
+		order by to_number(wjyxj)
+	</select>
+	
+	<select id="getModel" parameterType="WjglModel" resultType="WjglModel">
+		<include refid="getModelBase"></include>
+	     where wjid=#{wjid}
+	</select>
+	
+	<update id="update" parameterType="WjglModel">
+		update niutal_WJDC_WJXXB 
+		<set>
+			<if test="wjmc != null ">
+    			wjmc = #{wjmc},
+    		</if>
+    		<if test="wjlx != null ">
+    			wjlx = #{wjlx},
+    		</if>
+    		<if test="jsy != null ">
+    			jsy = #{jsy},
+    		</if>
+    		<if test="jwy != null ">
+    			jwy = #{jwy},
+    		</if>
+    		<if test="fblx != null ">
+    			fblx = #{fblx},
+    		</if>
+    		<if test="gqsj != null ">
+    			gqsj = #{gqsj},
+    		</if>
+    		<if test="wjzt != null ">
+    			wjzt = #{wjzt},
+    		</if>
+    		<if test="wjyxj != null ">
+    			wjyxj = #{wjyxj},
+    		</if>
+		</set>
+		where wjid=#{wjid}
+	</update>
+	
+	<delete id="delete" parameterType="WjglModel">
+		delete from niutal_WJDC_WJXXB where wjid=#{wjid}
+	</delete>
+	
+	<resultMap id="wjMap" type="WjglModel">  
+	    <result property="wjid" column="wjid"/>  
+	    <result property="wjmc" column="wjmc"/>  
+	    <result property="cjsj" column="cjsj"/>  
+	    <result property="gqsj" column="gqsj"/>  
+	    <result property="wjzt" column="wjzt"/>  
+	    <result property="djzt" column="djzt"/>
+	    <result property="wjyxj" column="wjyxj"/>
+	    <collection property="ffmxList"  ofType="FfmxModel">  
+	    	<result property="ffdx" column="ffdx"/> 
+	    	<result property="dxtj" column="dxtj"/>
+	    	<result property="tjz" column="tjz"/>
+	    </collection>  
+	</resultMap>
+	
+	<select id="getFfwjList" resultMap="wjMap">
+	  select 
+	   	t1.wjid,
+       	t1.wjmc,
+       	t1.wjzt,
+       	t1.cjsj,
+       	t1.gqsj,
+       	t4.ffdx,
+       	t4.dxtj,
+       	t4.tjz,
+       	case
+        	when not exists (select 1 from niutal_wjdc_wjhdb t3 where t1.wjid = t3.wjid and djrid = #{djrid}) --不存在答卷信息，说明未答卷 
+        	then  0    --未答卷状态
+        	when exists (select 1 from niutal_wjdc_djrffb where niutal_wjdc_djrffb.wjid = t1.wjid and niutal_wjdc_djrffb.zjz = #{djrid} and niutal_wjdc_djrffb.djzt = '答卷中' and niutal_wjdc_djrffb.lxid = t4.ffdx )--存在答卷中记录且存在答卷分发记录且是答卷中
+        	then  1    --答卷中状态
+        	when exists (select 1 from niutal_wjdc_djrffb where niutal_wjdc_djrffb.wjid = t1.wjid and niutal_wjdc_djrffb.zjz = #{djrid} and niutal_wjdc_djrffb.djzt = '完成' and niutal_wjdc_djrffb.lxid = t4.ffdx )--存在答卷中记录且存在答卷分发记录且是完成
+        	then  2    --完成答卷状态
+        	else  -1   --未定义状态
+       end djzt
+	  from 
+	  	niutal_wjdc_wjxxb t1
+	  	left join niutal_wjdc_wjffmxb t4 on t1.wjid = t4.wjid
+	  where exists (select 1 from niutal_wjdc_wjffmxb t2 where t1.wjid = t2.wjid)
+	</select>
+	
+	<!-- 保存用户答卷一次提交多条 -->
+	<insert id="saveYhdj" parameterType="java.util.Map">
+		insert into niutal_wjdc_wjhdb (djrid,wjid,stid,xxid,txnr,hdsx) 
+		<foreach collection="paramsList" item="item" index="index" separator="union all">
+            select #{item.djrid},#{item.wjid},#{item.stid},#{item.xxid},#{item.txnr},#{item.hdsx} from dual
+        </foreach>
+	</insert>
+	
+	<!-- 保存用户答卷一次提交一条 -->
+	<insert id="saveYhdjOneRecord">
+		insert into niutal_wjdc_wjhdb(djrid,wjid,stid,xxid,txnr,hdsx)values(#{djrid},#{wjid},#{stid},#{xxid},#{txnr},#{hdsx})
+	</insert>
+	
+	<delete id="deleteYhdj">
+		delete from niutal_wjdc_wjhdb where wjid = #{wjid}
+	</delete>
+	
+	<insert id="updateDxstSort" parameterType="java.util.Map">
+		update niutal_wjdc_wjhdb set hdsx = #{sortParam.hdsx} where wjid = #{sortParam.wjid} and stid = #{sortParam.stid} and xxid = #{sortParam.xxid} and djrid = #{sortParam.djrid}
+	</insert>
+
+	<delete id="deleteBatchYhdjStxx">
+		delete from niutal_wjdc_wjhdb 
+		where 
+	    djrid = #{djrid}
+	    and wjid = #{wjid}
+	    and (
+	    <foreach collection="stids" item="item" open="(" close=")" separator="or">
+	    	 stid = #{item}
+	    </foreach>
+	    )
+	</delete>
+	
+	<select id="getWjffList" resultType="map">
+		select 
+			t.WJID,
+			t.FFDX,
+			t.DXTJ,
+			t.TJZ 
+		from 
+			niutal_wjdc_wjffmxb t 
+		where wjid=#{wjid}
+	</select>
+	
+	<select id="getWjgnList" resultType="string">
+		select gnid from niutal_wjdc_ywgnbdb where wjid=#{wjid}
+	</select>
+	
+	<delete id="deleteWjff" parameterType="string">
+		delete from niutal_wjdc_wjffmxb where wjid=#{wjid}
+	</delete>
+	
+	<insert id="saveWjff">
+		insert into niutal_wjdc_wjffmxb (wjid,ffdx,dxtj,tjz) 
+		<foreach collection="list" item="item" index="index" separator="union all">
+            select #{wjid},#{item.ffdx},#{item.dxtj},#{item.tjz} from dual
+        </foreach>
+	</insert>
+	
+	<delete id="deleteYwbd" parameterType="string">
+		delete from niutal_wjdc_ywgnbdb where wjid=#{wjid}
+	</delete>
+	
+	<insert id="saveYwbd">
+		insert into niutal_wjdc_ywgnbdb (wjid,clsx,gnid)
+		<foreach collection="gnids" item="item" index="index" separator="union all">
+            select #{wjid},#{clsx},#{item} from dual
+        </foreach>
+	</insert>
+	
+	<update id="updateYwbdWjClsx">
+		update niutal_wjdc_ywgnbdb set clsx = #{clsx} where wjid = #{wjid}
+	</update>
+	
+	<select id="getFfrs" parameterType="map" resultType="string">
+		${sql}
+	</select>
+	
+	<select id="getFfrsCount" parameterType="map" resultType="int">
+		${sql}
+	</select>
+	
+	<!-- 答题详情 -->
+	 <select id="getDtxqList" parameterType="string" resultType="map">
+		 	select t1.djrid,t1.stid,t1.xxid,t2.xxmc,t1.txnr,t1.hdsx,t2.xssx,t3.xm,t4.bmmc from niutal_WJDC_WJHDB t1
+			left join niutal_WJDC_WJSTXXB t2 on t1.wjid=t2.wjid and t1.stid=t2.stid and t1.xxid=t2.xxid
+			left join (
+			     select zgh,xm,jgdm from niutal_xtgl_yhb
+			     union all
+			     select xh,xm,bmdm_id from niutal_xtgl_xsxxb
+			) t3 on t1.djrid=t3.zgh
+			left join niutal_xtgl_bmdmb t4 on t3.jgdm=t4.bmdm_id
+			where t1.wjid=#{wjid}  
+			order by 
+				t1.djrid asc 
+				,to_number(REPLACE(t1.stid,'stid_','')) asc 
+				,to_number(t1.hdsx) asc
+				,to_number(substr(t1.xxid,instr(t1.xxid,'xxid_')+5,length(t1.xxid))) asc
+	 </select>
+	 
+	 <!-- 单选、多选统计 -->
+	 <select id="getWjtjList" parameterType="string" resultType="map">
+			with wj as
+			(
+			--问卷
+			     select #{wjid} from dual
+			)
+			,temp_group as
+			(
+			--获得这个问卷的试题，选项聚合数据
+			select stid ,xxid , count(*) count_xxid from niutal_WJDC_WJHDB a where a.xxid is not null and wjid = (select * from wj) group by (wjid , stid ,xxid)
+			)
+			,temp as
+			(
+			--计算需要选择的个数和选择的个数
+			select a.wjid,
+			       a.stid,
+			       a.xxid,
+			       a.xxmc,
+			       (select sum(b.count_xxid)from temp_group b where a.stid = b.stid and a.xxid = b.xxid) choose_count,
+			       (select sum(b.count_xxid) from temp_group b where a.stid = b.stid) need_choose_count
+			  from niutal_WJDC_WJSTXXB a
+			 where a.wjid = (select * from wj)
+			)
+			--关联名称和计算比率
+			select temp.wjid wjid,
+			       temp.stid stid,
+			       temp.xxid xxid,
+			       temp.xxmc,
+			       NVL(temp.choose_count,0) hds,
+			       (case when temp.need_choose_count != 0 then ROUND(NVL(temp.choose_count, 0) / temp.need_choose_count * 100, 2)
+			         else 0 end) as hdl
+			from temp
+			order by 
+				to_number(REPLACE(temp.stid,'stid_','')) asc 
+				,to_number(substr(temp.xxid,instr(temp.xxid,'xxid_')+5,length(temp.xxid))) asc
+	 </select>
+	 
+	 <select id="getWjffmx" resultType="com.woshidaniu.wjdc.dao.entites.WjffmxModel">
+	 	select * from niutal_wjdc_wjffmxb where wjid = #{wjid}
+	 </select>
+	 
+	 <select id="getPagedMapList" resultType="map">
+	 	select * from 
+	 	(
+	 	${sql}
+		)
+		<where>
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	 </select>
+	 
+	 <select id="getStringList" resultType="string">
+	 	${sql}
+	 </select>
+</mapper>
+	

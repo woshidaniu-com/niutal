@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 自定义表单 -->
+	<package name="zfxg/zdybd" extends="configuration" namespace="/zfxg/zdybd">
+
+		<!-- 字段定义-->
+		<action name="zddy_*" class="zddyAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="cxzd">/WEB-INF/pages/tjcx/export.jsp</result>
+		</action>
+
+		<!-- 分类设置-->
+		<action name="flsz_*" class="flszAction" method="{1}">
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">message</param>
+			</result>
+			<result name="cxzd">/WEB-INF/pages/tjcx/export.jsp</result>
+		</action>
+				
+	</package>
+
+</struts>

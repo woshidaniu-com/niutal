@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IXwglDao">
+<!-- 	<cache type="org.mybatis.caches.ehcache.EhcacheCache"></cache> -->
+
+	<insert id="insert" parameterType="XwglModel"
+		flushCache="false" statementType="PREPARED" timeout="20000">
+		insert into
+		niutal_XTGL_XWFBB ( xwbh,
+		xwbt,
+		fbsj,
+		fbr,
+		fbdx,
+		ydqx,
+		fbnr,
+		sffb,
+		sfzd,
+		sfzy
+		)
+		values
+		(sys_guid() , #{xwbt},
+		#{fbsj},#{fbr},
+		#{fbdx},
+		#{ydqx},
+		#{fbnr}, #{sffb},
+		#{sfzd},
+		#{sfzy})   
+       
+       
+    </insert>
+	<update id="update" parameterType="XwglModel"
+		flushCache="true" statementType="PREPARED" timeout="20000">
+		update niutal_XTGL_XWFBB
+		<set>
+			<if test="xwbt != null">
+				xwbt = #{xwbt},
+    		</if>
+			<if test="fbsj != null">
+				fbsj = #{fbsj},
+    		</if>
+			<if test="fbdx != null">
+				fbdx = #{fbdx},
+    		</if>
+    		<if test="ydqx != null">
+				ydqx = #{ydqx},
+    		</if>
+			<if test="fbr != null">
+				fbr = #{fbr},
+    		</if>
+			<if test="sffb != null">
+				sffb = #{sffb},
+    		</if>
+			<if test="sfzd != null">
+				sfzd = #{sfzd},
+    		</if>
+    		<if test="sfzy != null">
+				sfzy = #{sfzy},
+    		</if>
+			<if test="fbnr != null">
+				fbnr = #{fbnr}
+    		</if>
+		</set>
+		where xwbh=#{xwbh}
+	</update>
+	<update id="batchUpdate" parameterType="hashMap" flushCache="true"
+		statementType="PREPARED" timeout="20000">
+		update niutal_XTGL_XWFBB
+		<set>
+			<if test="sffb != null">
+				sffb = #{sffb}
+    		</if>
+			<if test="sfzd != null">
+				sfzd = #{sfzd}
+    		</if>
+    		<if test="sfzy != null">
+				sfzy = #{sfzy}
+    		</if>
+		</set>
+		<where>
+			<foreach collection="list" item="item" index="index"
+				separator=" OR">
+			   xwbh = #{item.xwbh} 
+			</foreach>
+		</where>
+	</update>
+
+	
+	<delete id="batchDelete" parameterType="hashMap"
+		flushCache="false" statementType="PREPARED" timeout="20000">
+		delete from niutal_XTGL_XWFBB
+		<where>
+			<foreach collection="list" item="item" index="index"
+				separator=" OR">
+			   xwbh = #{item.xwbh} 
+			</foreach>
+		</where>
+	</delete>
+
+	<select id="getModel" parameterType="string"
+		resultType="XwglModel" useCache="false"
+		resultSetType="FORWARD_ONLY" flushCache="false" statementType="PREPARED"
+		timeout="20000">
+		select t1.*,t2.xm fbrxm,REPLACE(REPLACE(t1.fbdx,'tea','全体教师'),'stu','全体学生') fbdxmcs
+		from niutal_XTGL_XWFBB t1 left join niutal_XTGL_yhb t2 on t1.fbr=t2.zgh where t1.xwbh=#{xwbh}
+    </select>
+    
+    
+    <select id="getPagedList" parameterType="XwglModel"
+		resultType="XwglModel">
+		select t1.xwbh,t1.xwbt,fbsj,t2.xm fbr,t1.fbdx,t1.ydqx,
+	           REPLACE(REPLACE(t1.fbdx,'tea','全体教师'),'stu','全体学生') fbdxmcs,
+	           REPLACE(REPLACE(t1.ydqx,'public','公开'),'auth','登录') ydqxmc,
+	           case when t1.sffb='1' then '是' else '否' end sffb,
+	           case when t1.sfzd='1' then '是' else '否' end sfzd,
+	           case when t1.sfzy='1' then '是' else '否' end sfzy
+	    from niutal_XTGL_XWFBB t1
+	    left join niutal_XTGL_yhb t2 on t1.fbr=t2.zgh
+		<where>
+			1=1 
+			<if test="xwbt != null and xwbt !=''">
+				and t1.xwbt like '%'||#{xwbt}||'%'
+			</if>
+			<if test="sffb != null and sffb !=''">
+				and t1.sffb = #{sffb}
+			</if>
+			<if test="sfzd != null and sfzd !=''">
+				and t1.sfzd = #{sfzd}
+			</if>
+			<if test="sfzy != null and sfzy !=''">
+				and t1.sfzy = #{sfzy}
+			</if>
+			<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+    </select>
+    
+	<!--<select id="cxDtxw" parameterType="hashMap"
+		resultType="com.woshidaniu.comp.xtgl.xwgl.model.XwglModel" useCache="false"
+		resultSetType="FORWARD_ONLY" flushCache="false" statementType="PREPARED"
+		timeout="20000">
+		select *
+		from XG_XTGL_XWFBB
+		<where>
+			<if test="condition != null">${condition}</if>
+		</where>
+
+	</select>
+--></mapper>

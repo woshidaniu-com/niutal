@@ -1,0 +1,115 @@
+
+<div class="modal" ng-controller="KisBpmMultiinstanceConditionPopupCtrl">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true" ng-click="close()">&times;</button>
+				<h2 translate>PROPERTY.MULTIINSTANCE_CONDITION.TITLE</h2>
+			</div>
+			<div class="modal-body">
+				
+				<blockquote>
+				  <p class="text-warning">{{'PROPERTY.MULTIINSTANCE_CONDITION.TOOLTIP' |
+									translate}}</p>
+				</blockquote>
+
+				<div class="detail-group clearfix">
+					<form name="multiinstanceConditionForm">
+					<div class="form-group clearfix">
+						<div class="col-xs-12">
+								<label class="radio-inline"> <input
+									ng-model="multiinstanceCondition.type" type="radio"
+									name="condition-type" id="condition-type-default" value="default">
+									<span class="label label-primary"">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.DEFAULT' |
+									translate}}</span>
+									
+								</label>
+								
+								<label class="radio-inline"> <input
+									ng-model="multiinstanceCondition.type" type="radio"
+									name="condition-type" id="condition-type-number" value="number">
+									<span class="label label-success"">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.NUMBER' |
+									translate}}</span>
+									
+								</label>
+								
+								<label class="radio-inline"> <input
+									ng-model="multiinstanceCondition.type" type="radio"
+									name="condition-type" id="condition-type-percentage" value="percentage">
+									<span class="label label-danger"">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.PERCENTAGE' |
+									translate}}</span>
+									
+								</label>
+								
+								<label class="radio-inline"> <input
+									ng-model="multiinstanceCondition.type" type="radio"
+									name="condition-type" id="condition-type-custom" value="custom">
+									<span class="label label-warning"">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.CUSTOM' |
+									translate}}</span>
+									
+								</label>
+						</div>
+					</div>
+         			
+         			<div class="form-group clearfix" ng-if="multiinstanceCondition.type == 'number'">
+        			   	<div class="col-xs-4">
+        			   		<div class="input-group">
+							  <input id="value1" name="conditionTypeNumberValue" class="form-control" type="number" required ng-model="multiinstanceCondition.value"  min="1"/>
+							  <span class="input-group-addon"><strong>{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.NUMBER.UNIT' | translate}}</strong></span>
+							</div>
+         				</div>
+         				<div class="col-xs-12">
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypeNumberValue.$error.required">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.REQUIRED' | translate}}</p>
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypeNumberValue.$error.number">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.FORMAT' | translate}}</p>
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypeNumberValue.$error.min">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.DATA' | translate}}</p>
+         				</div>
+         			</div>
+         			
+					<div class="form-group clearfix" ng-if="multiinstanceCondition.type == 'percentage'">
+        			   	<div class="col-xs-4">
+        			   		<div class="input-group">
+							  <input id="value2" class="form-control" name="conditionTypePercentageValue" type="number" required ng-model="multiinstanceCondition.value"  min="1" max="100" />
+							  <span class="input-group-addon"><strong>{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.PERCENTAGE.UNIT' | translate}}</strong></span>
+							</div>
+         				</div>
+         				<div class="col-xs-12">
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypePercentageValue.$error.required">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.REQUIRED' | translate}}</p>
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypePercentageValue.$error.number">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.FORMAT' | translate}}</p>
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypePercentageValue.$error.min">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.DATA' | translate}}</p>
+         					 <p class="text-danger" ng-if="multiinstanceConditionForm.conditionTypePercentageValue.$error.max">{{'PROPERTY.MULTIINSTANCE_CONDITION.VALIDATION.DATA' | translate}}</p>
+         				</div>
+         			</div>
+         			
+         			<div class="form-group clearfix" ng-if="multiinstanceCondition.type == 'custom'">
+        			   	<div class="col-xs-12">
+							 <textarea class="form-control"
+										ng-model="multiinstanceCondition.value"
+										style="width: 100%; height: 100%; max-width: 100%; max-height: 100%; min-height: 100px" />
+         				</div>
+         			</div>
+         			
+         			<div class="well" ng-if="multiinstanceCondition.type == 'default'">
+         				 <p class="text-success">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.DEFAULT.TOOLTIP' |
+									translate}}</p>
+         			</div>
+         			
+         			<div class="well" ng-if="multiinstanceCondition.type == 'number'">
+         				 <p class="text-success">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.NUMBER.TOOLTIP' |
+									translate}}</p>
+         			</div>
+         			
+         			<div class="well" ng-if="multiinstanceCondition.type == 'percentage'">
+         				 <p class="text-success">{{'PROPERTY.MULTIINSTANCE_CONDITION.TYPE.PERCENTAGE.TOOLTIP' |
+									translate}}</p>
+         			</div>
+         			</form>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button ng-click="close()" class="btn btn-primary" translate>ACTION.CANCEL</button>
+				<button ng-click="save()" class="btn btn-primary" translate>ACTION.SAVE</button>
+			</div>
+		</div>
+	</div>
+</div>

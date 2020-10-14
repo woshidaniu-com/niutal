@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" 
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!--学院代码  -->
+	<package name="zfxg/xydm" extends="configuration" namespace="/zfxg/xydm">
+		<action name="*" class="xydmAction" method="{1}">
+			<result name="{1}">/WEB-INF/pages/zfxg/plugins/xydm/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<!--专业代码  -->
+	<package name="zfxg/zydm" extends="configuration" namespace="/zfxg/zydm">
+		<action name="*" class="zydmAction" method="{1}">
+			<result name="{1}">/WEB-INF/pages/zfxg/plugins/zydm/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<!--班级代码  -->
+	<package name="zfxg/bjdm" extends="configuration" namespace="/zfxg/bjdm">
+		<action name="*" class="bjdmAction" method="{1}">
+			<result name="{1}">/WEB-INF/pages/zfxg/plugins/bjdm/{1}.jsp</result>
+		</action>
+	</package>
+	
+		<!--学生信息  -->
+	<package name="zfxg/xsxxgl" extends="configuration" namespace="/zfxg/xsxxgl">
+		<action name="*" class="xsxxglAction" method="{1}">
+			<result name="{1}">/WEB-INF/pages/zfxg/plugins/xsxxgl/{1}.jsp</result>
+		</action>
+	</package>
+</struts>

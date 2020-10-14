@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 统计项目 -->
+	<bean id="tjxmAction" name="tjxmAction" class="com.woshidaniu.tjcx.action.TjxmAction"
+		scope="prototype">
+		<property name="service" ref="tjxmService" />
+	</bean>
+
+	<!-- 统计报表 -->
+	<bean id="tjbbAction" name="tjbbAction" class="com.woshidaniu.tjcx.action.TjbbAction"
+		scope="prototype">
+		<property name="service" ref="tjbbService" />
+		<property name="tjxmService" ref="tjxmService" />
+		<property name="kzszService" ref="kzszService" />
+	</bean>
+
+	<!-- 统计报表详情 -->
+	<bean id="tjbbXqAction" name="tjbbXqAction" class="com.woshidaniu.tjcx.action.TjbbXqAction"
+		scope="prototype">
+		<property name="service" ref="tjbbXqService" />
+		<property name="tjcxCommon" ref="tjcxCommon" />
+		<property name="cxzdService" ref="cxzdService" />
+	</bean>
+
+	<!-- 统计查询 -->
+	<bean id="tjcxAction" name="tjcxAction" class="com.woshidaniu.tjcx.action.TjcxAction"
+		scope="prototype" >
+		<property name="service" ref="tjcxService" />
+		<property name="exportService" ref="exportExcel" />
+		<property name="exportServicePOI" ref="exportExcelPOI"  />
+		<property name="tjcxCommon" ref="tjcxCommon" />
+		<property name="kzszService" ref="kzszService" />
+		<property name="tjxmService" ref="tjxmService" />
+	</bean>
+
+	<!-- 查询字段 -->
+	<bean id="cxzdAction" name="cxzdAction" class="com.woshidaniu.tjcx.action.CxzdAction"
+		scope="prototype">
+		<property name="service" ref="cxzdService" />
+	</bean>
+
+	<!-- 快照设置 -->
+	<bean id="kzszAction" name="kzszAction" class="com.woshidaniu.tjcx.action.KzszAction"
+		scope="prototype">
+		<property name="service" ref="kzszService" />
+	</bean>
+
+	<!-- 统计图表 -->
+	<bean id="tjtbAction" name="tjtbAction" class="com.woshidaniu.tjcx.action.TjtbAction"
+		scope="prototype">
+	</bean>
+
+	<bean id="tjcxOutAction" class="com.woshidaniu.tjcx.action.OutAction" scope="prototype">
+	</bean>
+
+
+
+	<!-- 接入 示例 -->
+	<!-- 统计报表 示例 -->
+	<bean id="tmptjbbAction" name="tmptjbbAction"
+		class="com.woshidaniu.tjcx.action.TmptjbbAction" scope="prototype">
+	</bean>
+
+	<!-- 统计查询 示例 -->
+	<bean id="tmptjcxAction" name="tmptjcxAction"
+		class="com.woshidaniu.tjcx.action.TmptjcxAction" scope="prototype">
+	</bean>
+
+</beans>

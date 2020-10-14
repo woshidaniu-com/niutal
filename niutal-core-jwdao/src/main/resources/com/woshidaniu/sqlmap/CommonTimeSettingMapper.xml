@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.ICommonTimeSettingDao" >
+
+	<!-- 查询可设置时间的功能模块列表 -->
+	<select id="getModelList" parameterType="com.woshidaniu.entities.TimeSettingModel" resultType="com.woshidaniu.entities.TimeSettingModel">
+		select czsj.gnmkdm,
+		       czsj.czdm,
+		       czsj.kssj,
+		       czsj.jssj,
+		       czsj.sfsy,
+		       czsj.tsxx,
+		       czsj.bz,
+		       decode(#{localeKey},'en_US',nvl(mkdm.gnmkywmc,mkdm.gnmkmc),mkdm.gnmkmc) as gnmkmc,
+		       decode(#{localeKey},'en_US',nvl(nvl(c.ywmc, czb.ywmc),nvl(c.czmc, czb.czmc)),nvl(c.czmc, czb.czmc)) czmc
+		from niutal_xtgl_gnczsjkzb czsj,
+		     <if test="jsdm != null and jsdm != 'admin'">
+		       (select distinct t.gnmkdm
+		          from niutal_xtgl_jsgnmkdmb t, niutal_xtgl_jsgnmkczb c
+		         where c.gnmkdm like t.gnmkdm || '%'
+		           and c.jsdm = #{jsdm}
+		       ) b,
+		       </if>
+		     niutal_xtgl_gnmkczb c,
+		     niutal_xtgl_czdmb czb,
+		     niutal_xtgl_jsgnmkdmb mkdm
+		where czsj.gnmkdm = mkdm.gnmkdm
+		  and czsj.gnmkdm = c.gnmkdm
+		  and czsj.czdm = c.czdm
+		  and czsj.czdm = czb.czdm
+		<if test="gnmkmc != null and gnmkmc != ''">
+			and	decode(#{localeKey},'en_US',nvl(mkdm.gnmkywmc,mkdm.gnmkmc),mkdm.gnmkmc) like '%'||#{gnmkmc}||'%'
+		</if>
+		 <if test="jsdm != null and jsdm != 'admin'">
+		    and a.gnmkdm = b.gnmkdm
+		 </if>
+    </select>
+
+	<!--  更新 时间设置 表格形式-->
+	<update id="updateSettingTime" parameterType="com.woshidaniu.entities.TimeSettingModel">
+	  update niutal_xtgl_gnczsjkzb sjkz
+	     set sjkz.kssj = #{kssj},
+	     	 sjkz.jssj = #{jssj},
+	     	 sjkz.sfsy = #{sfsy},
+	     	 sjkz.tsxx = #{tsxx}
+	   where sjkz.gnmkdm = #{gnmkdm}
+	     and sjkz.czdm = #{czdm}
+	</update>
+	
+	<!--  更新 指定功能代码+操作代码对应的功能的 使用状态 信息 -->
+	<update id="updateStatus" parameterType="com.woshidaniu.entities.TimeSettingModel">
+	  update niutal_xtgl_gnczsjkzb t
+	     set t.sfsy = #{sfsy,jdbcType=VARCHAR},
+	   where t.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+	     and t.czdm = #{czdm,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 新增或更新 指定功能代码+操作代码对应的功能的开放时间信息 -->
+	<update id="updateTimeSetting" parameterType="com.woshidaniu.entities.TimeSettingModel">
+		declare
+		  v_count integer(2);
+		begin
+		
+		  select count(1)
+		    into v_count
+		    from niutal_xtgl_gnczsjkzb a
+		   where a.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+		     and a.czdm = #{czdm,jdbcType=VARCHAR};
+		
+		  if v_count > 0 then
+		  
+		     update niutal_xtgl_gnczsjkzb t
+			     set t.kssj = #{kssj,jdbcType=VARCHAR},
+			         t.jssj = #{jssj,jdbcType=VARCHAR},
+			         t.sfsy = #{sfsy,jdbcType=VARCHAR},
+			         t.tsxx = #{tsxx,jdbcType=VARCHAR},
+			         t.bz   = #{bz,jdbcType=VARCHAR}
+			   where t.gnmkdm = #{gnmkdm,jdbcType=VARCHAR}
+			     and t.czdm = #{czdm,jdbcType=VARCHAR};
+			     
+			else
+			  
+			   insert into niutal_xtgl_gnczsjkzb(gnmkdm,czdm,kssj,jssj,sfsy,tsxx,bz)
+			   values(#{gnmkdm,jdbcType=VARCHAR},#{czdm,jdbcType=VARCHAR},#{kssj,jdbcType=VARCHAR},
+			          #{jssj,jdbcType=VARCHAR},#{sfsy,jdbcType=VARCHAR},#{tsxx,jdbcType=VARCHAR},#{bz,jdbcType=VARCHAR});
+			  
+			end if;
+		end;
+	</update>
+	 
+ 	<!-- 查询指定功能代码+操作代码对应的功能的开放时间信息 -->
+    <select id="getModel" parameterType="com.woshidaniu.entities.TimeSettingModel" resultType="com.woshidaniu.entities.TimeSettingModel">
+    select t.gnmkdm, t.czdm, t.kssj, t.jssj, t.sfsy, t.tsxx, t.bz
+	  from niutal_xtgl_gnczsjkzb t
+	 where t.gnmkdm = #{gnmkdm}
+	   and t.czdm = #{czdm}
+    </select>
+    
+    <!-- 获取系统的   功能代码+操作代码 对应的功能的开放时间信息 -->
+    <select id="getTreeGridModelList" parameterType="com.woshidaniu.entities.TimeSettingModel" resultType="com.woshidaniu.entities.TimeSettingModel">
+      	select a.gnmkdm,
+		       decode(#{localeKey},'en_US',nvl(a.gnmkywmc,a.gnmkmc),a.gnmkmc) as gnmkmc,
+		       a.fjgndm,
+		       a.cdjb,
+		       a.xssx,
+		       c.czdm,
+		       c.czmc,
+		       d.kssj,
+		       d.jssj,
+		       d.sfsy,
+		       d.tsxx,
+		       d.bz,
+		       (case when c.czdm is not null then 'true' else 'false' end) leafStr 
+		  from niutal_xtgl_jsgnmkdmb a,
+		  	   <if test="jsdm != null and jsdm != 'admin'">
+		       (select distinct t.gnmkdm
+		          from niutal_xtgl_jsgnmkdmb t, niutal_xtgl_jsgnmkczb c
+		         where c.gnmkdm like t.gnmkdm || '%'
+		           and c.jsdm = #{jsdm}
+		       ) b,
+		       </if>
+		       (select a.gnmkdm, a.czdm, decode(#{localeKey},'en_US',nvl(nvl(a.ywmc, b.ywmc),nvl(a.czmc, b.czmc)),nvl(a.czmc, b.czmc)) czmc
+		          from niutal_xtgl_gnmkczb a, niutal_xtgl_czdmb b
+		         where a.czdm = b.czdm
+		       ) c,
+		       niutal_xtgl_gnczsjkzb d
+		 where <if test="jsdm != null and jsdm != 'admin'">
+		 		a.gnmkdm = b.gnmkdm
+		   and</if>a.gnmkdm = c.gnmkdm(+)
+		   and c.gnmkdm = d.gnmkdm(+)
+		   and c.czdm = d.czdm(+)
+		 start with a.fjgndm = 'N'
+		connect by prior a.gnmkdm = a.fjgndm
+    </select>
+    
+	<!-- 得到受到控制的功能模块代码+操作代码的组合集合 -->
+	<select id="getTimeControlList" resultType="string" >
+	   select distinct t.gnmkdm||t.czdm  from niutal_xtgl_gnczsjkzb t where t.sfsy = '1'
+	</select>
+	
+</mapper>

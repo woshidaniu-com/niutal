@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.pwdmgr.dao.daointerface.UserAccountDao" >
+
+	<!-- 根据用户ID和密码查询用户可否登录，角色数量等信息  -->
+	<select id="getAccountStatus" parameterType="java.lang.String" resultType="hashmap">
+	     select (select to_char(count('1')) from niutal_xtgl_yhb a where a.zgh = #{username}) num_1,
+		        (select to_char(count('1')) from niutal_xtgl_xsxxb a where a.xh = #{username}) num_2
+		  from dual
+    </select>
+     
+    <!-- 根据email查询用户可否登录，角色数量等信息  -->
+	<select id="getAccountStatusByEmail" parameterType="java.lang.String" resultType="hashmap">
+	     select (select to_char(count('1')) from niutal_xtgl_yhb a where a.dzyx = #{email}) num_1,
+		        (select to_char(count('1')) from niutal_xtgl_xsxxb a where a.email = #{email}) num_2
+		  from dual
+    </select>
+    
+    <!-- 根据手机号码查询用户可否登录，角色数量等信息  -->
+	<select id="getAccountStatusByPhone" parameterType="java.lang.String" resultType="hashmap">
+	     select (select to_char(count('1')) from niutal_xtgl_yhb a where a.lxdh = #{phone}) num_1,
+		        (select to_char(count('1')) from niutal_xtgl_xsxxb a where a.sjhm = #{phone}) num_2
+		  from dual
+    </select>
+    
+    <!-- 根据用户名获得用户信息 -->
+	<select id="getUserAccount" parameterType="map" resultType="com.woshidaniu.basemodel.BaseMap">
+		<!-- 管理账号 -->
+		<if test="usertype == 1 ">
+		select * from niutal_xtgl_yhb a where a.zgh = #{username}
+		</if>
+		<!-- 学生账号 -->
+		<if test="usertype == 0 ">
+		select * from niutal_xtgl_xsxxb a where a.xh = #{username}
+		</if>
+	</select>
+	
+	<!-- 根据email获得用户信息 -->
+	<select id="getUserAccountByEmail" parameterType="map" resultType="com.woshidaniu.basemodel.BaseMap">
+		<!-- 管理账号 -->
+		<if test="usertype == 1 ">
+		select * from niutal_xtgl_yhb a where a.dzyx = #{email}
+		</if>
+		<!-- 学生账号 -->
+		<if test="usertype == 0 ">
+		select * from niutal_xtgl_xsxxb a where a.email = #{email}
+		</if>
+	</select>
+	
+	<!-- 根据email获得用户信息 -->
+	<select id="getUserAccountByPhone" parameterType="map" resultType="com.woshidaniu.basemodel.BaseMap">
+		<!-- 管理账号 -->
+		<if test="usertype == 1 ">
+		select * from niutal_xtgl_yhb a where a.lxdh = #{phone}
+		</if>
+		<!-- 学生账号 -->
+		<if test="usertype == 0 ">
+		select * from niutal_xtgl_xsxxb a where a.sjhm = #{phone}
+		</if>
+	</select>
+	
+	<!-- 修改用户信息 -->
+	<update id="updateAccount" parameterType="com.woshidaniu.basemodel.BaseMap" >
+		<!-- 管理账号 -->
+		<if test="usertype == 1 ">
+			update niutal_xtgl_yhb a set a.mm = #{newpassword} where a.zgh = #{username}
+		</if>
+		<!-- 学生账号 -->
+		<if test="usertype == 0 ">
+			update niutal_xtgl_xsmmb a set a.mm = #{newpassword} where a.xh = #{username}
+		</if>
+	</update>
+    
+</mapper>

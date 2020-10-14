@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IExportAuthDao" >
+
+	<select id="getPagedExportConfigVoModelList" resultType="com.woshidaniu.dao.entities.ExportConfigVoModel">
+		SELECT * FROM (
+			SELECT
+			A.DCCLBH,
+			A.DCCLMC,
+			A.ZD,
+			A.ZDMC,
+			A.XSSX,
+			A.ZGH,
+			A.SFMRZD,
+			A.ZT 
+			FROM
+			niutal_GTGL_DCZDPZB A order by A.DCCLBH asc,to_number(A.XSSX) asc
+		) WHERE 1=1
+		<if test="searchModel != null and searchModel.querySQL != null and searchModel.querySQL !=''">
+			 AND ${searchModel.querySQL}
+		</if>
+	</select>
+	
+	<insert id="insertExportConfigModel" parameterType="com.woshidaniu.dao.entities.ExportConfigModel">
+		INSERT INTO niutal_GTGL_DCZDPZB(DCCLBH,DCCLMC,ZD,ZDMC,XSSX,ZGH,SFMRZD,ZT)
+		values(#{dcclbh},#{dcclmc},#{zd},#{zdmc},#{xssx},#{zgh},#{sfmrzd},#{zt})
+	</insert>
+	
+	<delete id="deleteExportConfigModel" parameterType="com.woshidaniu.dao.entities.ExportConfigModel">
+		DELETE niutal_GTGL_DCZDPZB WHERE DCCLBH=#{dcclbh} AND SQZ=#{sqz} AND ZD =#{zd}
+	</delete>
+	
+	<update id="updateExportConfigModel" parameterType="com.woshidaniu.dao.entities.ExportConfigModel">
+		UPDATE niutal_GTGL_DCZDPZB
+		set 
+		DCCLBH = #{dcclbh},
+		DCCLMC = #{dcclmc},
+		ZD = #{zd},
+		ZDMC = #{zdmc},
+		XSSX = #{xssx},
+		ZGH = #{zgh},
+		SFMRZD = #{sfmrzd},
+		ZT = #{zt}
+	</update>
+
+	<select id="getExportAuthZdList" resultType="java.lang.String">
+		SELECT ZD FROM niutal_GTGL_DCZDPZB_AUTH WHERE DCCLBH=#{dcclbh} AND SQZ=#{sqz}
+	</select>
+	
+	<select id="getExportConfigVoModel" resultType="com.woshidaniu.dao.entities.ExportConfigVoModel">
+		SELECT
+			A.DCCLBH,
+			A.DCCLMC,
+			A.ZD,
+			A.ZDMC,
+			A.XSSX,
+			A.ZGH,
+			A.SFMRZD,
+			A.ZT 
+			FROM
+		niutal_GTGL_DCZDPZB A WHERE A.DCCLBH=#{dcclbh} AND A.ZD=#{zd}
+	</select>
+	
+	<select id="getExportAuthSqzList" resultType="java.lang.String">
+		SELECT SQZ FROM niutal_GTGL_DCZDPZB_AUTH WHERE DCCLBH=#{dcclbh} AND ZD =#{zd} ORDER BY SQZ
+	</select>
+	
+	<delete id="deleteExportAuth">
+		DELETE niutal_GTGL_DCZDPZB_AUTH WHERE DCCLBH=#{dcclbh} AND ZD =#{zd}
+	</delete>
+	
+	<insert id="insertExportAuth">
+		INSERT INTO niutal_GTGL_DCZDPZB_AUTH(DCCLBH,SQZ,ZD) VALUES(#{dcclbh},#{sqz},#{zd})
+	</insert>
+	
+</mapper>

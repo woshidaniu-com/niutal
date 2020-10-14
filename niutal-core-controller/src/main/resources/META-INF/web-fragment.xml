@@ -1,0 +1,117 @@
+<web-fragment version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
+
+	<!-- 通过<name>元素来指定当前模块的名称 -->
+	<name>niutal-basic</name>
+	
+	<ordering>
+		<after>
+			<name>niutal-init</name>
+		</after>
+	</ordering>
+	
+    <!-- Spring代理的过滤器，该过滤器指向 config-filter.xml文件中的 woshidaniuFilter -->
+	<filter>
+		<filter-name>woshidaniuFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>woshidaniuFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+    
+	<!-- Shiro权限过滤器 -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- 基于sitemesh3的网页布局过滤器 -->
+	<filter>
+		<filter-name>sitemeshMVCFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 是否每个请求都重新加载配置文件：默认 true,当值为true且配置文件有改动则会重新加载配置文件 -->
+		<init-param>
+			<param-name>autoReload</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 基于XML的配置文件路径 -->
+	    <init-param>
+	    	<param-name>configFile</param-name>
+	    	<param-value>/WEB-INF/sitemesh3.xml</param-value>
+	    </init-param>
+		<!-- 用于获取装饰器名称参数的取值Key -->
+		<init-param>
+			<param-name>request.decorator.name</param-name>
+			<param-value>layout</param-value>
+		</init-param>
+		<!-- 不同参数对应的装饰页信息 -->
+	    <init-param>
+	    	<param-name>request.decorator.path</param-name>
+	    	<param-value>/layouts/%s.ftl</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>sitemeshMVCFilter</filter-name>
+		<url-pattern>*.zf</url-pattern>
+	</filter-mapping>
+	
+	<!-- Freemarker渲染过滤器 -->
+	<filter>
+		<filter-name>freemarkerFilter</filter-name>
+		<filter-class>com.woshidaniu.spring.web.filter.FreemarkerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>freemarkerFilter</filter-name>
+		<url-pattern>*.ftl</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
+	<!-- SpringMVC请求分发器 -->
+	<servlet>
+		<servlet-name>springMVC</servlet-name>
+		<servlet-class>com.woshidaniu.spring.web.servlet.ZFSpringmvcDispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:conf/spring/springmvc-servlet.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springMVC</servlet-name>
+		<url-pattern>*.zf</url-pattern>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 验证码 -->
+	<servlet>
+		<servlet-name>kaptcha</servlet-name>
+		<servlet-class>com.woshidaniu.globalweb.servlet.woshidaniuKaptchaServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>kaptcha</servlet-name>
+		<url-pattern>/kaptcha</url-pattern>
+	</servlet-mapping>
+	<!-- 验证码 -->
+	
+	
+</web-fragment> 

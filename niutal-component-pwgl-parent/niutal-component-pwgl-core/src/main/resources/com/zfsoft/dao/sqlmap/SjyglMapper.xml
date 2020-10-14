@@ -1,0 +1,72 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ISjyglDao">
+
+	<sql id="cols">
+		a.mkdm, a.mkmc, a.sjy, b.id, b.col, b.com, b.key, b.zt, b.xssx, b.filename, b.br
+	</sql>
+
+	<sql id="tabs">
+		zs_pwgl_sjypzb a, zs_pwgl_zdpzb b where b.mkdm = a.mkdm
+	</sql>
+
+	<select id="getPagedList" parameterType="com.woshidaniu.dao.entities.PWModel" resultType="com.woshidaniu.dao.entities.PWModel">
+		select * from (select <include refid="cols" /> from <include refid="tabs" /> ) where 1 = 1
+		<if test="searchModel != null and searchModel.querySQL != null and searchModel.querySQL != ''">
+			and ${searchModel.querySQL}
+		</if>
+	</select>
+
+	<select id="getRestColsList" parameterType="com.woshidaniu.dao.entities.PWModel" resultType="com.woshidaniu.dao.entities.PWModel">
+		select a.column_name col, nvl(b.comments, a.column_name) com from user_tab_columns a, user_col_comments b
+		where a.table_name = b.table_name and a.column_name = b.column_name and a.table_name = upper(#{sjy})
+				and not exists (select 1 from zs_pwgl_zdpzb z where z.mkdm = #{mkdm} and z.col = a.column_name)
+		order by a.column_id
+	</select>
+
+	<select id="getModel" parameterType="com.woshidaniu.dao.entities.PWModel" resultType="com.woshidaniu.dao.entities.PWModel">
+		select <include refid="cols" /> from <include refid="tabs" /> and b.id = #{id}
+	</select>
+	
+	<select id="getValue" parameterType="string" resultType="string">
+		select sjy from zs_pwgl_sjypzb where mkdm = #{key}
+	</select>
+
+	<insert id="insert" parameterType="com.woshidaniu.dao.entities.PWModel">
+		insert into zs_pwgl_zdpzb (mkdm, col, com, key, zt, xssx, filename, br)
+		values (#{mkdm}, #{col}, #{com}, #{key}, #{zt}, #{xssx}, #{filename}, #{br})
+	</insert>
+
+	<update id="update" parameterType="com.woshidaniu.dao.entities.PWModel">
+		update zs_pwgl_zdpzb set com = #{com}, key = #{key}, zt = #{zt}, xssx = #{xssx}
+			, filename = #{filename}, br = #{br} where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="com.woshidaniu.dao.entities.PWModel">
+		delete from zs_pwgl_zdpzb <foreach collection="pks" item="item" open="where id in (" separator="," close=")">#{item}</foreach>
+	</delete>
+	
+	<select id="getSjyList" resultType="com.woshidaniu.dao.entities.SjbzModel">
+		select mkdm dm, mkmc mc from zs_pwgl_sjypzb
+	</select>
+	
+	<resultMap type="com.woshidaniu.dao.entities.PWModel" id="exportModel">
+		<id property="mkdm" column="mkdm"/>
+		<result property="mkmc" column="mkmc"/>
+		<result property="sjy" column="sjy"/>
+		<collection property="modelList" ofType="com.woshidaniu.dao.entities.PWModel">
+			<id property="id" column="id"/>
+			<result property="col" column="col"/>
+			<result property="com" column="com"/>
+			<result property="key" column="key"/>
+			<result property="filename" column="filename"/>
+			<result property="xssx" column="xssx"/>
+			<result property="br" column="br"/>
+		</collection>
+	</resultMap>
+	
+	<select id="getModelByMkdm" parameterType="com.woshidaniu.dao.entities.PWModel" resultMap="exportModel">
+		select <include refid="cols" /> from <include refid="tabs" /> and a.mkdm = #{mkdm} and b.zt = '1' order by b.xssx
+	</select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IMbglDao">
+
+	<sql id="cols">
+		a.id, a.mkdm, a.drmbmc, a.drpath, b.mkmc, b.sjy
+	</sql>
+
+	<sql id="tabs">
+		zs_pwgl_drmbb a, zs_pwgl_sjypzb b where a.mkdm = b.mkdm
+	</sql>
+
+	<select id="getPagedList" parameterType="com.woshidaniu.dao.entities.PWModel" resultType="com.woshidaniu.dao.entities.PWModel">
+		select * from (select <include refid="cols"/> from <include refid="tabs"/>) where 1 = 1
+		<if test="searchModel != null and searchModel.querySQL != null and searchModel.querySQL != ''">
+			and ${searchModel.querySQL}
+		</if>
+	</select>
+	
+	<select id="getModel" parameterType="com.woshidaniu.dao.entities.PWModel" resultType="com.woshidaniu.dao.entities.PWModel">
+		select <include refid="cols"/> from <include refid="tabs"/> and a.id = #{id}
+	</select>
+	
+	<insert id="insert" parameterType="com.woshidaniu.dao.entities.PWModel">
+		insert into zs_pwgl_drmbb (mkdm, drmbmc, drpath) values (#{mkdm}, #{drmbmc}, #{drpath})
+	</insert>
+	
+	<update id="update" parameterType="com.woshidaniu.dao.entities.PWModel">
+		update zs_pwgl_drmbb set mkdm = #{mkdm}, drmbmc = #{drmbmc}
+		<if test="drpath != null and drpath != ''">, drpath = #{drpath}</if>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete zs_pwgl_drmbb <foreach collection="pks" item="item" open="where id in (" separator="," close=")">#{item}</foreach>
+	</delete>
+	
+	<select id="getValue" parameterType="string" resultType="string">
+		select drpath from zs_pwgl_drmbb where id = #{key}
+	</select>
+	
+	<select id="getList" resultType="com.woshidaniu.dao.entities.PWModel">
+		select <include refid="cols"/> from <include refid="tabs"/>
+	</select>
+</mapper>

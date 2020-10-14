@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.drdcsj.drsj.dao.daointerface.IImportDao">
+	
+	<!-- 查询导入配置 -->
+	<select id="getDrPzxxList" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrpzModel">
+		select * from zfxg_drsj_drpz where gnmk=#{gnmk}
+	</select>
+	
+	<!-- 查询导入配置 -->
+	<select id="getDrPzxx" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrpzModel">
+		select * from zfxg_drsj_drpz where drmkdm=#{drmkdm}
+	</select>
+	
+	<select id="getLPzxx" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrlpzModel">
+		select * from zfxg_drsj_drlpz where drmkdm=#{drmkdm} order by to_number(xsxx)
+	</select>
+	<select id="getDrlpzModel" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrlpzModel">
+		select * from zfxg_drsj_drlpz where drlpzid=#{drlpzid}
+	</select>
+	<select id="getDrlpzModelList" resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrlpzModel">
+		select * from zfxg_drsj_drlpz where drlpzid in 
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")"> 
+            #{id} 
+        </foreach> 
+         order by to_number(xsxx)
+	</select>
+	<select id="getCrpzModel" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.CrpzModel">
+		select * from zfxg_drsj_crpz
+		where drmkdm=#{drmkdm}
+	</select>
+	
+	<!-- 关联的字段修改为drl和drmkdm，原先的drlpzid废弃，存在BUG -->
+	<select id="getLyzgzdz" parameterType="com.woshidaniu.drdcsj.drsj.dao.entities.DrlpzModel"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.LyzgzdzModel">
+		select * from zfxg_drsj_lyzgzdz
+		where drl=#{drl} and drmkdm=#{drmkdm}
+	</select>
+	
+	<select id="getLPzRule" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.YzgzModel">
+		select * from zfxg_drsj_yzgz
+		where yzgzid=#{yzgzid}
+	</select>
+	<insert id="batchInsertData" parameterType="hashMap">
+		insert into ${tableName}(
+		<foreach collection="columnList" item="itemColumn" index="index"
+			open="" separator=" , " close=" ">
+			${itemColumn}
+			</foreach>
+		)
+		<foreach collection="dataList" item="itemData" index="index"
+			separator=" from dual union all select" open="select" close=" from dual">
+			<foreach collection="itemData" item="data" index="index"
+				open="" separator=" , " close=" ">
+				#{data,jdbcType=VARCHAR}
+			</foreach>
+		</foreach>
+	</insert>
+	<update id="batchUpdate" parameterType="hashMap">
+		update ${tableName} a
+		<set>
+			(<foreach collection="columnList" item="itemColumn" index="indexColume" open="" separator="," close=" ">${itemColumn}</foreach>)
+		</set>=(select * from (
+		<foreach collection="dataList" item="itemData" index="indexDataList"
+			open="select" separator=" from dual union all select" close=" from dual">
+			<foreach collection="itemData" item="data" index="indexData"
+				open="" separator=" , " close=" ">
+				#{data,jdbcType=VARCHAR} as ${columnList[indexData]}
+			</foreach>
+		</foreach>) b where
+		<foreach collection="pk" item="p" index="indexp" open=""
+			separator=" and " close="">
+			a.${p} = b.${p}
+		</foreach>) where
+		<foreach collection="pkv" item="pv" index="indexv" open="" separator=" or " close="">
+			<foreach collection="pk" item="p" index="indexp" open="(" separator=" and " close=")">
+				a.${p} ='${pv[indexp]}'
+			</foreach>
+		</foreach>
+	</update>
+	<select id="getColumn" parameterType="string" resultType="int">
+		select count(*) from ${tableName} a where
+		<foreach collection="pk" item="p" index="indexPk" open=""
+			separator=" and " close="">
+			a.${p} = ${v[indexPk]}
+		</foreach>
+	</select>
+	<select id="getColumnOne" parameterType="string" resultType="int">
+		select count(*) from ${tableName} a where ${p}='${pk}'
+	</select>
+	<select id="getCrpz" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.CrpzModel">
+		select * from zfxg_drsj_crpz where drmkdm=#{drmkdm}
+	</select>
+	
+	
+	<select id="getCompositeIds" parameterType="map"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrlpzModel">
+		select * from zfxg_drsj_drlpz
+		where drmkdm= #{drmkdm} and drl in 
+		<foreach collection="lhyzdrl" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+   		</foreach> 
+	</select>
+	
+	<select id="getPrimary" parameterType="map" resultType="string">
+		select
+		${primary} from ${tableName}
+	</select>
+	
+	<select id="getValues" parameterType="map" resultType="string">
+		select ${zd} from ${tableName}
+	</select>
+	
+	<select id="getFomartData" parameterType="string" resultType="map">
+		${_parameter}
+	</select>
+	
+	<select id="getDrFzModelList" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.DrFzModel">
+		select * from zfxg_drsj_fzb where drmkdm=#{drmkdm}
+	</select>
+	
+	<select id="getPluginModelList" parameterType="string"
+		resultType="com.woshidaniu.drdcsj.drsj.dao.entities.PluginModel">
+		select * from ZFXG_DRSJ_DLYZB where sfqy = '1' and drmkdm=#{drmkdm} 
+	</select>
+	
+	<resultMap id="columnDefResultMap" type="com.woshidaniu.drdcsj.drsj.dao.entities.ColumnDef">
+		<result property="tableName" column="TABLE_NAME" />
+		<result property="columnName" column="COLUMN_NAME"/>
+		<result property="dataType" column="DATA_TYPE"/>
+		<result property="dataLength" column="DATA_LENGTH"/>
+	</resultMap>
+	
+	<select id="getColumnDefList" parameterType="string" resultMap="columnDefResultMap">
+		select *　from user_tab_columns where table_name = UPPER(#{tableName})
+	</select>
+	
+</mapper>

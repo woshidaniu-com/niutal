@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ICommonValidationDao" >
+
+ 	<!-- 查询记录数 -->
+    <select id="getMultiCount" parameterType="ValidationModel" resultType="int">
+    	 select count('1') from ${table} t
+    	 <!-- 多个字段确定是否唯一-->
+		 <if test="filed_list != null and filed_list.size() > 0 ">
+			<foreach collection="filed_list" item="item" index="index" open=" where " separator=" and ">
+	            <if test="item.value != null and item.value != ''">
+				   t.${item.key} = #{item.value}
+				</if>
+	        </foreach>
+		 </if>
+		 <if test="old_filed_list !=null and old_filed_list.size() > 0 ">
+		 	and 
+    	  	<foreach collection="old_filed_list" item="item" index="index" separator="||">
+	            <if test="item.value != null and item.value != ''">
+				   t.${item.key}
+				</if>
+	        </foreach>
+	         !=
+	        <foreach collection="old_filed_list" item="item" index="index" separator="||">
+	            <if test="item.value != null and item.value != ''">
+				  #{item.value}
+				</if>
+	        </foreach>
+    	 </if>
+    </select>
+    
+    <!-- 查询记录数 -->
+    <select id="getCount" parameterType="ValidationModel" resultType="int">
+    	 select count('1') from ${table} t where t.${filed_name} = #{filed_value}
+    	 <!-- 多个字段确定是否唯一-->
+		 <if test="filed_list != null and filed_list.size() > 0 ">
+			<foreach collection="filed_list" item="item" index="index" >
+	            <if test="item.value != null and item.value != ''">
+				   and t.${item.key} = #{item.value}
+				</if>
+	        </foreach>
+		 </if>
+    	 <if test="old_filed_value !=null and old_filed_value != '' ">
+    	  and t.${filed_name} != #{old_filed_value}
+    	 </if>
+    </select>
+	
+	
+</mapper>

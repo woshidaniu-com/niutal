@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.INjdmDao" >
+
+    <select id="getModelList" parameterType="com.woshidaniu.entities.NjdmModel" resultType="com.woshidaniu.entities.NjdmModel">
+     select  a.njdm_id,
+		  	  a.njdm,
+		      a.njmc
+		from niutal_xtgl_njdmb  a
+    </select>
+</mapper>

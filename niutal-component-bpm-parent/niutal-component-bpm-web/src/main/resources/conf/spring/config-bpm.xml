@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 流程引擎配置 -->
+	<bean id="processEngineConfiguration"
+		class="org.activiti.engine.extend.cfg.ExtendSpringProcessEnginConfiguration">
+		<property name="dataSource" ref="dataSource" />						<!-- 流程引擎配置【数据源】 -->
+		<property name="transactionManager" ref="transactionManager" />		<!-- 流程引擎配置【事务】 -->
+		<property name="databaseType" value="oracle" />						<!-- 流程引擎配置 【数据库厂商】 -->
+		<property name="databaseSchemaUpdate" value="true" />				<!-- 流程引擎配置 【更新策略】 -->
+		<property name="dbIdentityUsed" value="false" />					<!-- 流程引擎配置 【数据库主键】 -->
+		<property name="jobExecutorActivate" value="false" />				<!-- 流程引擎配置 【】 -->
+		<property name="asyncExecutorEnabled" value="true" />				<!-- 流程引擎配置 【】 -->
+		<property name="asyncExecutorActivate" value="false" />				<!-- 流程引擎配置 【】 -->
+		<property name="history" value="full" />							<!-- 流程引擎配置 【日志记录级别】 -->
+		<property name="activityFontName" value="宋体" />					<!-- 流程引擎配置 -->
+		<property name="labelFontName" value="宋体" />						<!-- 流程引擎配置 -->
+		<property name="processDiagramGenerator" ref="processDiagramGenerator" />		<!-- 流程引擎配置 -->
+		<property name="customPostCommandInterceptors">						<!-- 流程引擎配置【自定义命令执行拦截器】 -->
+			<list>
+				<bean
+					class="org.activiti.engine.extend.impl.interceptor.ExtContextInterceptor"></bean>
+			</list>
+		</property>
+		<property name="decisionHandlerConfig">								<!-- 流程引擎配置 -->
+			<bean class="org.activiti.engine.extend.impl.cfg.DecisionHandlerConfig">
+				<property name="decisionTypes">
+					<list>
+						<bean class="org.activiti.engine.extend.task.PASSDecisionType"></bean>
+						<bean class="org.activiti.engine.extend.task.NOPASSDecisionType"></bean>
+						<bean class="org.activiti.engine.extend.task.FALLBACKDecisionType"></bean>
+						<bean
+							class="org.activiti.engine.extend.task.AuditorRevocationFallbackDecsionType"></bean>
+					</list>
+				</property>
+				<property name="decisionHandlerInvocationFactory">
+					<bean
+						class="org.activiti.engine.extend.task.impl.DefaultDecisionHandlerInvocationFactoryImpl"></bean>
+				</property>
+				<property name="decisionHandlers">
+					<list>
+						<bean
+							class="org.activiti.engine.extend.cmd.tasksubmit.PASSDecisionHandler"></bean>
+						<bean
+							class="org.activiti.engine.extend.cmd.tasksubmit.NOPASSDecisionHandler"></bean>
+						<bean
+							class="org.activiti.engine.extend.cmd.tasksubmit.FALLBACKDecisionHandler">
+							<!-- 设置退回的都不记录日志 -->
+							<property name="persistence" value="true"></property>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="customSessionFactories">							<!-- 流程引擎配置 -->
+			<list>
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.AssignmentEntityManager"></constructor-arg>
+				</bean>
+
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.BizEntityManager"></constructor-arg>
+				</bean>
+
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.BizFieldEntityManager"></constructor-arg>
+				</bean>
+
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.CommonMessageEntityManager"></constructor-arg>
+				</bean>
+
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.ProcessCategoryEntityManager"></constructor-arg>
+				</bean>
+
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.SimulationActivityEntityManager"></constructor-arg>
+				</bean>
+
+				<bean class="org.activiti.engine.impl.persistence.GenericManagerFactory">
+					<constructor-arg index="0" type="java.lang.Class"
+						value="org.activiti.engine.extend.persistence.entity.FormDefinitionEntityManager"></constructor-arg>
+				</bean>
+			</list>
+		</property>
+		<property name="customFormTypes">									<!-- 流程引擎配置 -->
+			<list>
+				<bean name="textarea" class="org.activiti.engine.extend.form.TextareaFormType"></bean>
+			</list>
+		</property>
+		<property name="customFormEngines">									<!-- 流程引擎配置 -->
+			<list>
+				<bean name="alpacaJSONFormEngine"
+					class="org.activiti.engine.extend.form.AlpacaJSONFormEngine"></bean>
+			</list>
+		</property>
+		<property name="processLoggerManager">								<!-- 流程引擎配置 -->
+			<bean
+				class="org.activiti.engine.extend.log.impl.DefaultProcessLoggerManager">
+				<property name="processLoggers">
+					<list>
+						<bean class="org.activiti.engine.extend.log.impl.SimpleWorkflowLogger"></bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<!-- 是否允许结束的流程实例重新被激活 -->
+		<property name="allowProcessInstanceReboot" value="true"></property>
+		<!-- process definition cache 需要和ehcache集成 -->
+		<!-- <property name="processDefinitionCacheLimit" value="10" /> -->
+		<!-- <property name="processDefinitionCache"> -->
+		<!-- <bean class="org.activiti.MyCache" /> -->
+		<!-- </property> -->
+	</bean>
+
+	<bean id="processDiagramGenerator"
+		class="org.activiti.engine.extend.diagram.CustomProcessDiagramGenerator">
+		<property name="activityFontName" value="宋体" />
+		<property name="labelFontName" value="宋体" />
+		<property name="annotationFontName" value="宋体" />
+	</bean>
+
+	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
+	</bean>
+
+	<bean id="repositoryService" factory-bean="processEngine"
+		factory-method="getRepositoryService" />
+	<bean id="runtimeService" factory-bean="processEngine"
+		factory-method="getRuntimeService" />
+	<bean id="taskService" factory-bean="processEngine"
+		factory-method="getTaskService" />
+	<bean id="historyService" factory-bean="processEngine"
+		factory-method="getHistoryService" />
+	<bean id="managementService" factory-bean="processEngine"
+		factory-method="getManagementService" />
+	<bean id="identityService" factory-bean="processEngine"
+		factory-method="getIdentityService" />
+	<bean id="dynamicBpmnService" factory-bean="processEngine"
+		factory-method="getDynamicBpmnService" />
+	<bean id="formService" factory-bean="processEngine"
+		factory-method="getFormService" />
+	<bean id="extendService" factory-bean="processEngineConfiguration"
+		factory-method="getExtendService" />
+	<bean id="multiInstanceService" factory-bean="processEngineConfiguration"
+		factory-method="getMultiInstanceService" />
+	<bean id="extendFormService" factory-bean="processEngineConfiguration"
+		factory-method="getExtendFormService" />
+	<bean id="idGenerator" factory-bean="processEngineConfiguration"
+		factory-method="getIdGenerator" />
+
+	<bean id="bpmService"
+		class="com.woshidaniu.component.bpm.service.impl.DefaultBPMServiceImpl">
+		<property name="dynamicBpmnService" ref="dynamicBpmnService"></property>
+		<property name="formService" ref="formService"></property>
+		<property name="historyService" ref="historyService"></property>
+		<property name="identityService" ref="identityService"></property>
+		<property name="managementService" ref="managementService"></property>
+		<property name="processEngine" ref="processEngine"></property>
+		<property name="repositoryService" ref="repositoryService"></property>
+		<property name="runtimeService" ref="runtimeService"></property>
+		<property name="taskService" ref="taskService"></property>
+	</bean>
+
+	<bean id="stencilService"
+		class="org.activiti.engine.extend.service.impl.StencilServiceImpl">
+		<property name="events">
+			<list>
+				<value>CUSTOM</value>
+				<value>PROCESS_STARTED</value>
+				<value>PROCESS_COMPLETED</value>
+				<value>PROCESS_COMPLETED_WITH_ERROR_END_EVENT</value>
+				<value>PROCESS_CANCELLED</value>
+				<value>TASK_CREATED</value>
+				<value>TASK_ASSIGNED</value>
+				<value>TASK_COMPLETED</value>
+			</list>
+		</property>
+		<property name="listenerClassName"
+			value="org.activiti.engine.extend.event.listener.impl.DefaultActivitiEventListener"></property>
+	</bean>
+
+	<bean id="flowConditionInvocation"
+		class="org.activiti.engine.extend.impl.DefaultFlowConditionExpressionInvocationImpl"></bean>
+</beans>

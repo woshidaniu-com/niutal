@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IXxxxDao">
+
+ 	<!-- 插入  学校设置信息 -->
+ 	<insert id="insert" parameterType="com.woshidaniu.entities.XxxxModel">
+ 	 	insert into niutal_xtgl_xxxxszb(xxdm,xxmc,xxywmc,xxdz,yzbm,xzqhm,jxny,xqr,xxbxlxm,xxjbzm,xxzgbmm,xxzgbmmc,lsyg,zcm)
+ 	 	 values(#{xxdm,jdbcType=VARCHAR},
+		 	 	#{xxmc,jdbcType=VARCHAR},
+		 	 	#{xxywmc,jdbcType=VARCHAR},
+		 	 	#{xxdz,jdbcType=VARCHAR},
+		 	 	#{yzbm,jdbcType=VARCHAR},
+		 	 	#{xzqhm,jdbcType=VARCHAR},
+		 	 	#{jxny,jdbcType=VARCHAR},
+		 	 	#{xqr,jdbcType=VARCHAR},
+		 	 	#{xxbxlxm,jdbcType=VARCHAR},
+		 	 	#{xxjbzm,jdbcType=VARCHAR},
+		 	 	#{xxzgbmm,jdbcType=VARCHAR},
+		 	 	#{xxzgbmmc,jdbcType=VARCHAR},
+		 	 	#{lsyg,jdbcType=VARCHAR},
+		 	 	#{zcm,jdbcType=VARCHAR})
+ 	</insert>
+ 	
+ 	<!-- 查询  学校设置信息 -->
+ 	<select id="getModel" resultType="com.woshidaniu.entities.XxxxModel" parameterType="com.woshidaniu.entities.XxxxModel" >
+		select t.xxdm,
+		       t.xxmc,
+		       t.xxywmc,
+		       t.xxdz,
+		       t.yzbm,
+		       t.xzqhm,
+		       t.jxny,
+		       t.xqr,
+		       t.xxbxlxm,
+		       t.xxjbzm,
+		       t.xxzgbmm,
+		       t.xxzgbmmc,
+		       t.lsyg,
+		       t.zcm
+		  from niutal_xtgl_xxxxszb t
+	</select>
+	
+	<!-- 修改 学校设置信息-->
+ 	<update id="update"  parameterType="com.woshidaniu.entities.XxxxModel">
+ 		update niutal_xtgl_xxxxszb t
+		   set t.xxdm     = #{xxdm,jdbcType=VARCHAR},
+		       t.xxmc     = #{xxmc,jdbcType=VARCHAR},
+		       t.xxywmc   = #{xxywmc,jdbcType=VARCHAR},
+		       t.xxdz     = #{xxdz,jdbcType=VARCHAR},
+		       t.yzbm     = #{yzbm,jdbcType=VARCHAR},
+		       t.xzqhm    = #{xzqhm,jdbcType=VARCHAR},
+		       t.jxny     = #{jxny,jdbcType=VARCHAR},
+		       t.xqr      = #{xqr,jdbcType=VARCHAR},
+		       t.xxbxlxm  = #{xxbxlxm,jdbcType=VARCHAR},
+		       t.xxjbzm   = #{xxjbzm,jdbcType=VARCHAR},
+		       t.xxzgbmm  = #{xxzgbmm,jdbcType=VARCHAR},
+		       t.xxzgbmmc = #{xxzgbmmc,jdbcType=VARCHAR},
+		       t.lsyg     = #{lsyg,jdbcType=VARCHAR},
+		       t.zcm      = #{zcm,jdbcType=VARCHAR}
+ 	</update>
+ 	
+ 	
+</mapper>

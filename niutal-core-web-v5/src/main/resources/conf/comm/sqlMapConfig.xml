@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--全局地禁用或启用延迟加载。禁用时，所有关联查询会被马上加载default:true-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--当启用时，使用延迟加载属性的对象在发起任何延迟属性的调用时会被完全加载。否则，每个属性在请求时就加载。default:true-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="jdbcTypeForNull" value="VARCHAR"/>
+        <!-- 全局二级缓存开关：默认是true，如果它配成false，其余各个Mapper XML文件配成支持cache也没用 -->
+        <setting name="cacheEnabled" value="true"/>
+        
+        <!--
+			日志名称前缀：该值会影响log4j对mybatis输出日志；
+			增加了该前缀后，日志的名称将会变成类似以下结构：
+			[Mybatis]com.woshidaniu.dao.daointerface.xxx.xxx
+			故如果需要输出SQL日志，配置需改为：			
+			log4j.logger.[Mybatis]com.woshidaniu = DEBUG
+		 -->
+		<setting name="logPrefix" value="[Mybatis]"/>
+		<!-- <setting name="logImpl" value="LOG4J"/> -->
+		<setting name="logImpl" value="LOG4J2" />
+    </settings>
+    
+    <typeAliases>
+    	<package name="com.woshidaniu.dao"/>
+    	<package name="com.woshidaniu.zsxt"/>
+    	<package name="com.woshidaniu.yxxt"/>
+    	<package name="com.woshidaniu.xgxt"/>
+    	<package name="com.woshidaniu.jyxt"/>
+    	<package name="com.woshidaniu.lxxt"/>
+    	<package name="com.woshidaniu.xyxt"/>
+    	<package name="com.woshidaniu.twxt"/>
+    	<package name="com.woshidaniu.wljxpt"/>
+    	<package name="com.woshidaniu.wjdc"/>
+    </typeAliases>
+    
+    <plugins>
+		<plugin interceptor="com.woshidaniu.service.common.sqlplugin.SqlPluginInterceptor">
+			<property name="pageSqlId" value=".*getPaged*.*"/>
+		</plugin>
+		<plugin interceptor="com.woshidaniu.service.common.sqlplugin.AnnotationDataRangeInterceptor"/>
+<!-- 		<plugin interceptor="com.woshidaniu.tjcx.datarange.TjcxDataRangeInterceptor"/> -->
+	</plugins>
+</configuration>  

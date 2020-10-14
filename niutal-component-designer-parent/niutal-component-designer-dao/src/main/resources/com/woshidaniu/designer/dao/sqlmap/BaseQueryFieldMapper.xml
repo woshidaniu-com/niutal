@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IBaseQueryFieldDao" >
+	
+	<!-- 根据【功能代码+模块代码】查询可用的基础查询条件集合-->
+	<select id="getFuncModelList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel">
+		 select t.field_guid,
+				t.field_id,
+				t.field_name,
+				t.field_text,
+				t.field_desc
+		     from niutal_query_fields  t 
+		    where t.field_scope = '1' or t.field_scope = #{func_code} 
+	</select>
+	
+   	<!-- 查询【基础字段】信息-->
+	<select id="getPagedList" parameterType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel" resultType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel">
+		 select t.field_guid,
+				t.field_id,
+				t.field_name,
+				t.field_text,
+				t.field_list,
+				t.field_listKey,
+				t.field_listValue,
+				t.field_headerKey,
+				t.field_headerValue,
+				(case when t.field_scope = '1' then '全局' else 
+					(select p.gnmkmc || ' - ' || decode(b.gnmkdm,'Login','系统登陆',b.gnmkmc)
+					    from niutal_xtgl_jsgnmkdmb b,
+					         niutal_xtgl_jsgnmkdmb p
+					   where b.fjgndm = p.gnmkdm(+)
+					     and b.dyym is not null
+					     and p.gnmkdm is not null
+					     and b.gnmkdm = t.field_scope)
+				end) as field_scope,
+				t.field_source,
+				t.field_class,
+				t.field_desc,
+				t.field_placeholder
+		     from niutal_query_fields  t 
+		     <where>
+		     	<if test=" field_scope != null and field_scope != '' ">
+		     		and t.field_scope = #{field_scope} 
+		     	</if>
+		     	<if test=" field_name != null and field_name != '' ">
+		     		and t.field_name like '%'||#{field_name}||'%' 
+		     	</if>
+		     	<if test=" field_text != null and field_text != '' ">
+		     		and t.field_text like '%'||#{field_text}||'%' 
+		     	</if>
+		     </where>
+	</select>
+	
+	<!-- 查询【基础字段】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel" resultType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel">
+		select t.field_guid,
+		       t.field_id,
+		       t.field_name,
+		       t.field_text,
+		       t.field_list,
+		       t.field_listKey,
+		       t.field_listValue,
+		       t.field_headerKey,
+		       t.field_headerValue,
+		       t.field_scope,
+		       nvl(t.field_source,'') as field_source, 
+		       t.field_class,
+		       t.field_desc,
+		       t.field_placeholder
+		  from niutal_query_fields t
+	     where t.field_guid = #{field_guid}
+	</select>
+	
+	<!-- 添加【基础字段】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel" >
+	insert into niutal_query_fields(field_id,
+				field_name,
+				field_text,
+				field_list,
+				field_listKey,
+				field_listValue,
+				field_headerKey,
+				field_headerValue,
+				field_scope,
+				field_source,
+				field_class,
+				field_desc,
+				field_placeholder)
+	values(		#{field_id},
+				#{field_name},
+				#{field_text},
+				#{field_list,jdbcType=VARCHAR},
+				#{field_listKey,jdbcType=VARCHAR},
+				#{field_listValue,jdbcType=VARCHAR},
+				#{field_headerKey,jdbcType=VARCHAR},
+				#{field_headerValue,jdbcType=VARCHAR},
+				#{field_scope,jdbcType=VARCHAR},
+				#{field_source,jdbcType=VARCHAR},
+				#{field_class,jdbcType=VARCHAR},
+				#{field_desc,jdbcType=VARCHAR},
+				#{field_placeholder,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 查询【基础字段】被使用次数 -->
+	<select id="getUseCount" parameterType="com.woshidaniu.designer.dao.entities.BaseAutoCompleteFieldModel" resultType="int"  >
+		<if test="deleteList!=null and deleteList.size()>0">
+			select ((select count(1) from niutal_designer_query_fields a  
+				<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+					<![CDATA[a.field_guid = #{item} ]]>
+				</foreach>) 
+		        +
+		        (select count(1) from niutal_designer_func_fields b 
+		        <foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+					<![CDATA[b.field_guid = #{item} ]]>
+				</foreach>)
+		       ) as counts
+		 from dual
+		</if>
+	</select>
+	
+	<!-- 删除可【基础字段】信息-->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.BaseAutoCompleteFieldModel">
+		<if test="deleteList!=null and deleteList.size()>0">
+			delete niutal_query_fields t  
+			<foreach collection="deleteList" item="item" index="index" open=" where ( " separator=" or " close=" ) ">
+				<![CDATA[t.field_guid = #{item} ]]>
+			</foreach>
+		</if>
+	</delete>
+	
+	<!-- 更新【基础字段】信息 -->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.BaseQueryFieldModel">
+	 update niutal_query_fields t
+		set t.field_id			= #{field_id},
+			t.field_name 		= #{field_name},
+			t.field_text 		= #{field_text},
+			t.field_list 		= #{field_list,jdbcType=VARCHAR},
+			t.field_listKey 	= #{field_listKey,jdbcType=VARCHAR},
+			t.field_listValue 	= #{field_listValue,jdbcType=VARCHAR},
+			t.field_headerKey 	= #{field_headerKey,jdbcType=VARCHAR},
+			t.field_headerValue = #{field_headerValue,jdbcType=VARCHAR},
+			t.field_scope		= #{field_scope,jdbcType=VARCHAR},
+			t.field_source 		= #{field_source,jdbcType=VARCHAR},
+			t.field_class 		= #{field_class,jdbcType=VARCHAR},
+			t.field_desc 		= #{field_desc,jdbcType=VARCHAR},
+			t.field_placeholder = #{field_placeholder,jdbcType=VARCHAR}
+	  where t.field_guid = #{field_guid}
+	</update>
+    
+</mapper>

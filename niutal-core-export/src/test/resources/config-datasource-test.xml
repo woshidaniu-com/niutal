@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:properties id="dbProps" location="classpath:db.properties" />
+	
+	<!-- 配置数据源 -->
+	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"  scope="singleton">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="#{dbProps['db.url']}"/>
+		<property name="username" value="#{dbProps['db.username']}"/>
+		<property name="password" value="#{dbProps['db.password']}"/>
+		<property name="connectionProperties" value="#{dbProps['db.connectionProperties']}" />
+	</bean>
+	<!-- 事务管理对象 -->
+	<bean name="transactionManager" id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 支持事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+	
+	<!-- 管理事务操作 -->
+	<aop:config proxy-target-class="false">
+		<aop:pointcut id="servicesPointcut" expression="execution(* com.woshidaniu..service..*.*(..))  and !execution(* com.woshidaniu.workflow.service..*(..)) " />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="servicesPointcut" />
+	</aop:config>
+	
+	<!-- 事务控制 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="zj*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="xg*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="sc*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="*" propagation="SUPPORTS" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- Session工厂  --> 
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+		<property name="mapperLocations" value="classpath*:com/woshidaniu/dao/sqlmap/**/*.xml" />
+	</bean>
+	
+	<!-- Dao接口扫描 -->
+    <bean id="mapperScannerConfigurer"  class="com.woshidaniu.orm.mybatis.spring.mapper.MybatisMapperScannerConfigurer">
+    	<!-- 记得加注解 @Repository -->
+    	<property name="annotationClass" value="org.springframework.stereotype.Repository" />
+    	<!-- 自动扫描Dao的根目录，多个使用,分割 -->
+    	<property name="basePackage" value="com.woshidaniu.dao.daointerface" />
+   	 	<!-- 在单数据源情况下的可以不写,如果要配置多数据源,必须加上 -->
+     	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="exportExcelPOI" class="com.woshidaniu.export.service.impl.ExportExcelPOIImpl"></bean>
+	<bean id="exportAuthServiceImpl" class="com.woshidaniu.export.service.impl.ExportAuthServiceImpl"></bean>
+</beans>

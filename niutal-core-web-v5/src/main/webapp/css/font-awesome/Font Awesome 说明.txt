@@ -1,0 +1,44 @@
+Font Awesome：精心打造的 Twitter Boostrap 矢量字体图标
+
+
+Font Awesome 是一套专门为 Twitter Boostrap 设计的图标字体库。这套图标字体集几乎囊括了网页中可能用到的所有图标，
+除了包括 Twitter Boostrap 的默认图标外，还有社交网络图标、Web 应用程序图标和编辑器图标等等，可以免费用于商业项目。
+
+主要特色：
+
+    ✓  一种字体，249个图标，是网页操作的象形语言；
+    ✓  纯 CSS 控制，能够轻松定义图标的颜色、大小、阴影以及任何 CSS 能够实现的效果；
+    ✓  无限缩放，矢量图标在任何尺寸下都一模一样；
+    ✓  免费使用，包括商业和非商业项目；
+    ✓  支持 Internet Explorer 7 浏览器；
+    ✓  能够在 Retina 屏幕完美呈现；
+    ✓  完全兼容 Twitter Boostrap 最新版本；
+    ✓  对设计师友好，设计师能够轻松使用；
+    ✓  和其它图标字体不同，兼容屏幕阅读器；
+
+    
+ 　使用 CSS：
+
+    拷贝 Font Awesome 字体目录到项目中；
+    拷贝 font-awesome.min.css 文件到项目中；
+    修改 font-awesome.min.css 文件中的字体路径到正确的位置；
+    在页面的 head 里引入 font-awesome.min.css 文件：
+
+1
+2
+	
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+<link rel="stylesheet" href="../css/font-awesome.min.css">
+
+ 
+使用 LESS：
+
+    拷贝 Font Awesome 字体目录到你的项目中；
+    拷贝 font-awesome.less 文件到 bootstrap/less 目录。
+    打开 bootstrap.less 文件并替换 @import "sprites.less"; 为 @import "font-awesome.less";
+    编辑 elusive-webfont.less 文件的 @FontAwesomePath 变量为字体路径：
+
+	
+@FontAwesomePath:   "../font";
+
+然后重新进行 LESS 编译就可以了。

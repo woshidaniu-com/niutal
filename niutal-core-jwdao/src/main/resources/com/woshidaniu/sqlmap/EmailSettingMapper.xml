@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IEmailSettingDao" >
+
+	<!-- 查询系统内置邮件服务配置信息列表 无分页-->
+	<select id="getEmailSettingList" parameterType="com.woshidaniu.entities.EmailFromModel" resultType="com.woshidaniu.entities.EmailFromModel">
+		select b.yjgym as root,
+			   b.yjxy as protocol,
+		       b.yjfwdz as host,
+		       b.yjfwdk as port,
+		       b.sfyz as isAuth,
+		       b.syssl as useSSL,
+		       b.cssj as timeout,
+		       b.bz as mark
+		  from niutal_xtgl_yjfwszb b
+	</select>
+	
+	<!-- 查询系统内容邮件发送账号信息列表 无分页-->
+	<select id="getModelList" parameterType="com.woshidaniu.entities.EmailFromModel" resultType="com.woshidaniu.entities.EmailFromModel">
+		select (select wm_concat(x.xxmc) from niutal_xtgl_xxxxszb x) as mailFrom,
+			   a.yjzh as username,
+		       a.yjzhmm as password
+		  from niutal_xtgl_yjfszhxxb a
+	</select>
+	
+	<!-- 获取允许的邮箱后缀集合 -->
+	<select id="getEmailPostfixList" resultType="com.woshidaniu.common.query.BaseMap">
+		select distinct yjgym from niutal_xtgl_yjfwszb order by yjgym asc
+	</select>
+	
+    
+</mapper>

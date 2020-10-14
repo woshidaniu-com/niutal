@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IAncdDao" >
+
+    <!-- 查询按钮 and nvl(b.sfxs, '1') = '1' -->
+    <select id="cxButtonsList" parameterType="AncdModel" resultType="AncdModel">
+   		 <![CDATA[
+			select '<button type="button" class="btn btn-default btn_' || c.czdm || '" href="javascript:void(0);" id="btn_' 
+					|| c.czdm || '"><i class="bigger-100 ' || c.anys || '"></i> ' || 
+					decode(#{localeKey},'en_US',nvl(nvl(b.ywmc, c.ywmc),nvl(b.czmc, c.czmc)),nvl(b.czmc,c.czmc)) || '</button>' button,
+			       substr(a.dyym, 0, instr(dyym, '_')) path,
+			       c.czdm,
+			        nvl(b.sfxs, '0') sfxs
+			  from niutal_xtgl_jsgnmkdmb a, niutal_xtgl_gnmkczb b, niutal_xtgl_czdmb c
+			 where a.gnmkdm = b.gnmkdm
+			   and b.czdm = c.czdm
+			   and a.gnmkdm = #{gnmkdm}
+			   and exists (select 'x'
+			          from niutal_xtgl_jsgnmkczb m, niutal_xtgl_yhjsb n
+			         where m.jsdm = n.jsdm
+			           and n.yhm = #{yhm}
+			           and n.jsdm = #{jsdm}
+			           and m.gnmkdm = a.gnmkdm
+			           and m.czdm = b.czdm
+			       )
+			 order by to_number(c.xssx)
+		 ]]>
+    </select>
+    
+    
+    <!-- 查询用户某个角色的按钮 and nvl(b.sfxs, '1') = '1' -->
+    <select id="cxUserRoleButtonsList" parameterType="AncdModel" resultType="AncdModel">
+   		 <![CDATA[
+			select '<button type="button" class="btn btn-default btn_' || c.czdm || '" href="javascript:void(0);" id="btn_' 
+					|| c.czdm || '"><i class="bigger-100 ' || c.anys || '"></i> ' || 
+					decode(#{localeKey},'en_US',nvl(nvl(b.ywmc, c.ywmc),nvl(b.czmc, c.czmc)),nvl(b.czmc,c.czmc)) || '</button>' button,
+			       substr(a.dyym, 0, instr(dyym, '_')) path,
+			       c.czdm,
+			        nvl(b.sfxs, '0') sfxs
+			  from niutal_xtgl_jsgnmkdmb a, niutal_xtgl_gnmkczb b, niutal_xtgl_czdmb c
+			 where a.gnmkdm = b.gnmkdm
+			   and b.czdm = c.czdm
+			   and a.gnmkdm = #{gnmkdm}
+			   and exists (select 'x'
+			          from niutal_xtgl_yhgnmkczb m, niutal_xtgl_yhjsb n
+			         where m.jsdm = n.jsdm
+	               	   and m.yhm = n.yhm
+			           and n.yhm = #{yhm}
+			           and n.jsdm = #{jsdm}
+			           and m.gnmkdm = a.gnmkdm
+			           and m.czdm = b.czdm
+			       )
+			 order by to_number(c.xssx)
+		 ]]>
+    </select>
+    
+    <!-- 查询按钮 组，方便页面扩展and nvl(b.sfxs, '1') = '1'-->
+    <select id="cxButtonGroupList" parameterType="AncdModel" resultType="AncdModel">
+   		 <![CDATA[
+			select c.anys,
+				   decode(#{localeKey},'en_US',nvl(nvl(b.ywmc, c.ywmc),nvl(b.czmc, c.czmc)),nvl(b.czmc,c.czmc)) czmc,
+			       substr(a.dyym, 0, instr(dyym, '_')) path,
+			       c.czdm,
+			       nvl(b.sfxs, '0') sfxs
+			  from niutal_xtgl_jsgnmkdmb a, niutal_xtgl_gnmkczb b, niutal_xtgl_czdmb c
+			 where a.gnmkdm = b.gnmkdm
+			   and b.czdm = c.czdm
+			   and a.gnmkdm = #{gnmkdm}
+			   and exists (select 'x'
+			          from niutal_xtgl_jsgnmkczb m, niutal_xtgl_yhjsb n
+			         where m.jsdm = n.jsdm
+			           and n.yhm = #{yhm}
+			           and n.jsdm = #{jsdm}
+			           and m.gnmkdm = a.gnmkdm
+			           and m.czdm = b.czdm
+			       )
+			 order by to_number(c.xssx)
+		 ]]>
+    </select>
+    
+    <!-- 查询菜单 -->
+    <select id="cxLinkList" parameterType="string" resultType="AncdModel">
+   		<![CDATA[
+    	select t.gnmkdm,
+    		   decode(#{localeKey},'en_US',nvl(t.gnmkywmc,t.gnmkmc),t.gnmkmc) gnmkmc,
+		       t.dyym,
+		       t.tblj
+		  from niutal_xtgl_jsgnmkdmb t
+		  ]]>
+	   	  <foreach collection="gnmkdms" item="item" index="index" open=" where (" separator="or" close=")">
+			 t.gnmkdm  = #{item} 
+		  </foreach>
+		 order by t.gnmkdm,to_number(t.xssx) 
+    </select>
+    
+     <!-- 查询角色菜单：通过指定不同的起始功能模块代码可得到不同的树形结构数据 -->
+    <select id="getTopNavMenuList" parameterType="string" resultType="string">
+    <![CDATA[
+   		 select m.gnmkdm from niutal_xtgl_xtgnmkdmb m where m.xtgnmkdm = #{xtgnmkdm}
+     ]]>
+    </select>
+    
+    <!-- 查询角色菜单：通过指定不同的起始功能模块代码可得到不同的树形结构数据 -->
+    <select id="getNavMenuTreeList" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+    <![CDATA[
+    	select t.fjgndm,
+		       t.gnmkdm,
+		       decode(#{localeKey}, 'en_US', nvl(t.gnmkywmc, t.gnmkmc), t.gnmkmc) gnmkmc,
+		       decode(#{localeKey}, 'en_US', nvl(t.gnmkywjc, t.gnmkjc), t.gnmkjc) gnmkjc,
+		       nvl(t.dyym, '#') dyym,       
+		       (case when t.gnmkdm = 'N' then
+		          '0'
+		          when t.dyym is not null then 
+		          	decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm),0,'1','0')
+		         else
+		          '0' end) sfgnym,
+	           t.tblj, 
+	           t.xslx
+		  from niutal_xtgl_jsgnmkdmb t		      
+		 where t.sfxs <> '0'
+		  start with t.fjgndm  = #{gnmkdm} connect by prior t.gnmkdm = t.fjgndm
+		  order by t.gnmkdm, to_number(t.xssx)
+    ]]>
+    </select>
+    
+    <!-- 查询用户角色菜单：通过指定不同的起始功能模块代码可得到不同的树形结构数据 -->
+    <select id="getUserNavMenuTreeList" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+    <![CDATA[
+    	select distinct
+    		   t.fjgndm,
+		       t.gnmkdm,
+		       decode(#{localeKey}, 'en_US', nvl(t.gnmkywmc, t.gnmkmc), t.gnmkmc) gnmkmc,
+		       decode(#{localeKey}, 'en_US', nvl(t.gnmkywjc, t.gnmkjc), t.gnmkjc) gnmkjc,
+		       nvl(t.dyym, '#') dyym,       
+		       (case when t.gnmkdm = 'N' then
+		          '0'
+		          when t.dyym is not null then 
+		          	decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm),0,'1','0')
+		         else
+		          '0' end) sfgnym,
+	           t.tblj, 
+	           t.xslx
+		  from niutal_xtgl_jsgnmkdmb t		      
+		 where t.sfxs <> '0'
+		  start with t.gnmkdm  in (select distinct m.gnmkdm
+	              from niutal_xtgl_jsgnmkczb m, niutal_xtgl_yhjsb n
+	             where m.jsdm = n.jsdm
+	               and n.yhm = #{yhm}
+	               and m.jsdm = #{jsdm}
+	           )
+		  connect by prior t.fjgndm = t.gnmkdm
+		  order by t.gnmkdm
+    ]]>
+    </select>
+    
+    
+    <!-- 查询用户角色个人的菜单：通过指定不同的起始功能模块代码可得到不同的树形结构数据 -->
+    <select id="getUserRoleNavMenuTreeList" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+    <![CDATA[
+    	select distinct
+    		   t.fjgndm,
+		       t.gnmkdm,
+		       decode(#{localeKey}, 'en_US', nvl(t.gnmkywmc, t.gnmkmc), t.gnmkmc) gnmkmc,
+		       decode(#{localeKey}, 'en_US', nvl(t.gnmkywjc, t.gnmkjc), t.gnmkjc) gnmkjc,
+		       nvl(t.dyym, '#') dyym,       
+		       (case when t.gnmkdm = 'N' then
+		          '0'
+		          when t.dyym is not null then 
+		          	decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm),0,'1','0')
+		         else
+		          '0' end) sfgnym,
+	           t.tblj, 
+	           t.xslx
+		  from niutal_xtgl_jsgnmkdmb t		      
+		 where t.sfxs <> '0'
+		  start with t.gnmkdm  in (select distinct m.gnmkdm
+	              from niutal_xtgl_yhgnmkczb m, niutal_xtgl_yhjsb n
+	             where m.jsdm = n.jsdm
+	               and m.yhm = n.yhm
+	               and n.yhm = #{yhm}
+	               and m.jsdm = #{jsdm}
+	           )
+		  connect by prior t.fjgndm = t.gnmkdm
+		  order by t.gnmkdm
+    ]]>
+    </select>
+    
+    
+    <!-- 查询角色菜单 
+    <select id="getJscdList" parameterType="string" resultType="hashMap">
+    <![CDATA[
+    	select decode(#{localeKey},'en_US',nvl(a.gnmkywmc,a.gnmkmc),a.gnmkmc) yjmkmc,
+		       decode(#{localeKey},'en_US',nvl(b.gnmkywmc,b.gnmkmc),b.gnmkmc) ejmkmc,
+		       decode(#{localeKey},'en_US',nvl(c.gnmkywmc,c.gnmkmc),c.gnmkmc) sjmkmc,
+		       decode(#{localeKey},'en_US',nvl(d.gnmkywmc,d.gnmkmc),d.gnmkmc) sijmkmc,
+		       nvl(a.dyym || b.dyym || c.dyym || d.dyym, '') dyym,
+		       a.gnmkdm yjmkdm,
+		       b.gnmkdm ejmkdm,
+		       c.gnmkdm sjmkdm,
+		       d.gnmkdm sijmkdm,
+	           (case when d.dyym is not null then '1'
+	           		when c.dyym is not null then 
+	           		decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = c.gnmkdm ),0,'1','0')
+	                when b.dyym is not null then
+	                decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = b.gnmkdm ),0,'1','0')
+	                when a.dyym is not null then
+	                decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = a.gnmkdm ),0,'1','0')
+	                else
+	                '0'
+	           end) sfgnym
+		  from niutal_xtgl_jsgnmkdmb a,
+		       (select x.* from niutal_xtgl_jsgnmkdmb x where x.sfxs <> '0') b,
+		       (select x.* from niutal_xtgl_jsgnmkdmb x where x.sfxs <> '0') c,
+		       (select x.* from niutal_xtgl_jsgnmkdmb x where x.sfxs <> '0') d,
+		       niutal_xtgl_xtgnmkdmb e
+		 where a.fjgndm = 'N'
+		   and a.sfxs <> '0'
+		   and a.gnmkdm = b.fjgndm(+)
+		   and b.gnmkdm = c.fjgndm(+)
+		   and c.gnmkdm = d.fjgndm(+)
+		   and a.gnmkdm = e.gnmkdm(+)
+   		   and e.xtgnmkdm = #{xtgnmkdm}
+		   and exists (select 'x'
+		          from niutal_xtgl_jsgnmkczb m, niutal_xtgl_yhjsb n
+		         where m.jsdm = n.jsdm
+		           and n.yhm = #{yhm}
+		           and m.jsdm = #{jsdm}
+		           and m.gnmkdm = nvl(d.gnmkdm, nvl(c.gnmkdm, b.gnmkdm))
+		       )
+		 order by a.gnmkdm,
+		          to_number(a.xssx),
+		          b.gnmkdm,
+		          to_number(b.xssx),
+		          c.gnmkdm,
+		          to_number(c.xssx),
+		          d.gnmkdm,
+		          to_number(d.xssx)
+	]]>
+    </select>-->
+    
+</mapper>

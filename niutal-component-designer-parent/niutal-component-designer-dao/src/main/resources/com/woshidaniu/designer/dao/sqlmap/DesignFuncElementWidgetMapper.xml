@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignFuncElementWidgetDao" >
+
+	<!-- 根据【功能代码+操作代码 】查询【功能页面组件初始化参数】信息-->
+	<select id="getFuncElementWidgetList" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel">
+	    select a.element_guid,
+	    	   a.element_id,
+		       a.element_related_guid,
+		       b.widget_guid,
+		       b.widget_name,
+		       c.func_widget_guid,
+		       c.widget_title,
+		       c.widget_desc,
+		       nvl(c.widget_params,'{}') as widget_params,
+		       nvl(c.widget_pageable,'0') as widget_pageable,
+		       nvl(c.widget_cacheable,'0') as widget_cacheable,
+		       nvl(c.widget_loadAtOnce,'0') as widget_loadAtOnce,
+		       c.widget_data_url,
+		       c.widget_sql
+		  from niutal_designer_func          t,
+		       niutal_designer_func_elements a,
+		       niutal_widget_details         b,
+		       niutal_designer_func_widgets  c
+		 where t.func_guid = a.func_guid
+		   and b.widget_guid = c.widget_guid
+		   and a.element_guid = c.element_guid
+		   and t.func_code = #{func_code}
+		   and t.opt_code = #{opt_code}
+	</select>
+	
+	<!-- 根据【功能代码+操作代码 】查询【功能页面组件初始化参数】信息-->
+	<select id="getModel" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel">
+	  	select a.element_guid,
+	  		   a.element_id,
+		       a.element_related_guid,
+		       b.widget_guid,
+		       b.widget_name,
+		       c.func_widget_guid,
+		       c.widget_title,
+		       c.widget_desc,
+		       nvl(c.widget_params,'{}') as widget_params,
+		       nvl(c.widget_pageable,'0') as widget_pageable,
+		       nvl(c.widget_cacheable,'0') as widget_cacheable,
+		       nvl(c.widget_loadAtOnce,'0') as widget_loadAtOnce,
+		       c.widget_data_url,
+		       c.widget_sql
+		  from niutal_designer_func_elements a,
+		       niutal_widget_details         b,
+		       niutal_designer_func_widgets  c
+		 where b.widget_guid = c.widget_guid
+		   and a.element_guid = c.element_guid
+		   <if test="element_guid !=null and element_guid != '' ">
+		   and a.element_guid = #{element_guid}
+		   </if>
+		   <if test="func_widget_guid !=null and func_widget_guid != '' ">
+		   and c.func_widget_guid = #{func_widget_guid}
+		   </if>
+	</select>
+	
+	<!-- 添加【功能页面组件初始化参数】信息 -->
+	<insert id="insert" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel" >
+	<![CDATA[
+		declare
+		begin
+		
+			insert into niutal_designer_func_resources(func_guid,widget_guid,auto_insert)
+			values(#{func_guid},#{widget_guid},1);
+			
+			insert into niutal_designer_func_widgets(
+					element_guid,
+					widget_guid,
+					widget_title,
+					widget_desc,
+					widget_params,
+					widget_pageable,
+					widget_cacheable,
+				    widget_loadAtOnce,
+					widget_data_url,
+			        widget_sql)
+				values( #{element_guid},
+						#{widget_guid},
+						#{widget_title,jdbcType=VARCHAR},
+						#{widget_desc,jdbcType=VARCHAR},
+						#{widget_params,jdbcType=VARCHAR},
+						#{widget_pageable,jdbcType=VARCHAR},
+						#{widget_cacheable,jdbcType=VARCHAR},
+						#{widget_loadAtOnce,jdbcType=VARCHAR},
+						#{widget_data_url,jdbcType=VARCHAR},
+						#{widget_sql,jdbcType=VARCHAR});
+		end;
+	]]>		
+	</insert>
+	
+	
+	<!-- 删除【功能页面组件初始化参数】信息 -->
+	<delete id="delete" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementModel" >
+	<![CDATA[
+		declare
+		begin
+			delete niutal_designer_jqgrid_fields t where t.func_widget_guid = #{func_widget_guid};
+			delete niutal_designer_func_widgets where t.func_widget_guid = #{func_widget_guid};
+			delete niutal_designer_func_resources a
+			 where a.func_guid = #{func_guid}
+			   and exists (select 'x'
+			          from niutal_designer_func_widgets b
+			         where a.widget_guid = b.widget_guid
+			           and b.func_widget_guid = #{func_widget_guid}
+			        );
+		end;
+	]]>
+	</delete>
+	
+	<!-- 更新【功能页面组件初始化参数】信息-->
+	<update id="update" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel">
+	 update niutal_designer_func_widgets t
+		set t.widget_title 		= #{widget_title,jdbcType=VARCHAR},
+			t.widget_desc 		= #{widget_desc,jdbcType=VARCHAR},
+			t.widget_params 	= #{widget_params,jdbcType=VARCHAR},
+			t.widget_pageable	= #{widget_pageable,jdbcType=VARCHAR},
+			t.widget_cacheable	= #{widget_cacheable,jdbcType=VARCHAR},
+			t.widget_loadAtOnce = #{widget_loadAtOnce,jdbcType=VARCHAR},
+			t.widget_data_url	= #{widget_data_url,jdbcType=VARCHAR},
+			t.widget_sql		= #{widget_sql,jdbcType=VARCHAR}
+	  where t.func_widget_guid = #{func_widget_guid}
+	</update>
+	
+	<!-- 更新【功能页面组件数据查询SQL】-->
+	<update id="updateWidgetSQL" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel">
+	 update niutal_designer_func_widgets t
+		set t.widget_sql		= #{widget_sql,jdbcType=VARCHAR}
+	  where t.func_widget_guid = #{func_widget_guid}
+	</update>
+	
+	<!-- 根据解析出的SQL中使用的查询表名称，得到不重复的字段描述信息-->
+	<select id="getSQLParserColumnList" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel" resultType="com.woshidaniu.common.query.BaseMap">
+	<if test="queryList!=null and queryList.size()>0">
+		<![CDATA[
+		select t.field_name, t.field_comment
+		  from (select distinct lower(t.column_name) as field_name,
+		                        t.comments as field_comment
+		          from user_col_comments t
+		         where lower(t.table_name) in 
+		          ]]>
+		          <foreach collection="queryList" item="item" index="index" open=" ( " separator="," close=")">
+					<![CDATA[#{item}]]>
+				 </foreach>
+		         <![CDATA[
+		       ) t
+		 order by t.field_name asc
+		 ]]>
+	 </if>
+	</select>
+    
+    <!-- 根据【功能代码+操作代码】查询 该功能下所有的JQGrid组件列信息；这里可能是多个JQGrid组件的列信息 -->
+    <select id="getJQGridColumnList"  parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignFuncWidgetJQGridColumnModel">
+	    select a.element_guid,
+		       b.widget_guid,
+		       c.func_widget_guid,
+		       c.field_guid,
+		       c.field_align,
+		       c.field_cellattr,
+		       nvl(c.field_editable,'0') as field_editable,
+		       c.field_editoptions,
+		       c.field_editrules,
+		       c.field_edittype,
+		       nvl(c.field_fixed,'0') as field_fixed,
+		       c.field_formatter,
+		       nvl(c.field_hidden,'0') as field_hidden,
+		       c.field_index,
+		       nvl(c.field_key,'0') as field_key,
+		       c.field_label,
+		       c.field_name,
+		       nvl(c.field_resizable,'1') as field_resizable,
+		       nvl(c.field_sortable,'1') as field_sortable,
+		       nvl(c.field_width,'100px') as field_width,
+		       decode(nvl(c.field_param,'0'),'0', decode(c.field_key, '1', '1', '0'),'1') as field_param,
+		       c.field_ordinal
+		  from niutal_designer_func          t,
+		       niutal_designer_func_elements a,
+		       niutal_designer_func_widgets  b,
+		       niutal_designer_jqgrid_fields c
+		 where t.func_guid = a.func_guid
+		   and a.element_guid = b.element_guid
+		   and b.func_widget_guid = c.func_widget_guid
+		   and t.func_code = #{func_code}
+		   and t.opt_code = #{opt_code}
+		 order by b.widget_guid,c.field_ordinal
+    </select>
+    
+    <!-- 根据组件model查询JQGrid组件列信息  -->
+    <select id="getFuncJQGridColumnList"  parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel" resultType="com.woshidaniu.designer.dao.entities.DesignFuncWidgetJQGridColumnModel">
+	    select a.element_guid,
+		       b.widget_guid,
+		       c.func_widget_guid,
+		       c.field_guid,
+		       c.field_align,
+		       c.field_cellattr,
+		       nvl(c.field_editable,'0') as field_editable,
+		       c.field_editoptions,
+		       c.field_editrules,
+		       c.field_edittype,
+		       nvl(c.field_fixed,'0') as field_fixed,
+		       c.field_formatter,
+		       nvl(c.field_hidden,'0') as field_hidden,
+		       c.field_index,
+		       nvl(c.field_key,'0') as field_key,
+		       c.field_label,
+		       c.field_name,
+		       nvl(c.field_resizable,'1') as field_resizable,
+		       nvl(c.field_sortable,'1') as field_sortable,
+		       nvl(c.field_width,'100px') as field_width,
+		       decode(nvl(c.field_param,'0'),'0', decode(c.field_key, '1', '1', '0'),'1') as field_param,
+		       c.field_ordinal
+		  from niutal_designer_func          t,
+		       niutal_designer_func_elements a,
+		       niutal_designer_func_widgets  b,
+		       niutal_designer_jqgrid_fields c
+		 where t.func_guid = a.func_guid
+		   and a.element_guid = b.element_guid
+		   and b.func_widget_guid = c.func_widget_guid
+		   and c.func_widget_guid = #{func_widget_guid}
+		 order by b.widget_guid,c.field_ordinal
+    </select>
+    
+    <!-- 根据功能组件ID查询JQGrid组件列信息 :用于作为报表或者弹窗参数的列 -->
+    <select id="getReportJQGridColumnList"  parameterType="string" resultType="com.woshidaniu.entities.PairModel">
+	    select c.field_name as key, c.field_label as value
+		  from niutal_designer_jqgrid_fields c
+		 where c.func_widget_guid = #{func_widget_guid}
+		   and decode(nvl(c.field_param,'0'),'0', decode(c.field_key, '1', '1', '0'),'1') = '1'
+		 order by c.field_ordinal
+    </select>
+    
+    <!-- 根据组件model查询JQGrid组件列名称  -->
+    <select id="getFuncJQGridColumnNameList"  parameterType="com.woshidaniu.designer.dao.entities.DesignFuncElementWidgetModel" resultType="string">
+	    select c.field_name 
+		  from niutal_designer_jqgrid_fields c
+		 where c.func_widget_guid = #{func_widget_guid}
+		 order by c.field_ordinal
+    </select>
+    
+    <!-- 向【功能代码+操作代码】对应功能的指定JQGrid组件添加【JQGrid组件列】信息 -->
+	<insert id="insertJQGridColumn" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncWidgetJQGridColumnModel" >
+	insert into niutal_designer_jqgrid_fields(
+			func_widget_guid,
+			field_align,
+			field_cellattr,
+			field_editable,
+			field_editoptions,
+			field_editrules,
+			field_edittype,
+			field_fixed,
+			field_formatter,
+            field_hidden,
+			field_index,
+            field_key,
+			field_label,
+			field_name,
+            field_resizable,
+            field_sortable,
+            field_width,
+            field_param,
+            field_ordinal)
+	values(	#{func_widget_guid},
+			#{field_align,jdbcType=VARCHAR},
+			#{field_cellattr,jdbcType=VARCHAR},
+			#{field_editable,jdbcType=VARCHAR},
+			#{field_editoptions,jdbcType=VARCHAR},
+			#{field_editrules,jdbcType=VARCHAR},
+			#{field_edittype,jdbcType=VARCHAR},
+			#{field_fixed,jdbcType=VARCHAR},
+			#{field_formatter,jdbcType=VARCHAR},
+			#{field_hidden,jdbcType=VARCHAR},
+			#{field_index},
+			#{field_key,jdbcType=VARCHAR},
+			#{field_label,jdbcType=VARCHAR},
+			#{field_name,jdbcType=VARCHAR},
+			#{field_resizable,jdbcType=VARCHAR},
+			#{field_sortable,jdbcType=VARCHAR},
+			#{field_width,jdbcType=VARCHAR},
+			#{field_param,jdbcType=VARCHAR},
+			#{field_ordinal,jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<!-- 删除【功能代码+操作代码】对应功能的指定JQGrid组件添加【JQGrid组件列】信息 -->
+	<delete id="deleteJQGridColumn" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncWidgetJQGridColumnModel" >
+	<![CDATA[
+		delete niutal_designer_jqgrid_fields t 
+		 where t.func_widget_guid 	= #{func_widget_guid} 
+    	   and t.field_guid			= #{field_guid}
+	]]>
+	</delete>
+  	
+	<!-- 更新【功能代码+操作代码】对应功能的指定JQGrid组件添加【JQGrid组件列】信息-->
+	<update id="updateJQGridColumn" parameterType="com.woshidaniu.designer.dao.entities.DesignFuncWidgetJQGridColumnModel">
+	 update niutal_designer_jqgrid_fields t
+		set t.field_align		= #{field_align,jdbcType=VARCHAR},
+			t.field_cellattr	= #{field_cellattr,jdbcType=VARCHAR},
+			t.field_editable   	= #{field_editable,jdbcType=VARCHAR},
+		  	t.field_editoptions	= #{field_editoptions,jdbcType=VARCHAR},
+		  	t.field_editrules	= #{field_editrules,jdbcType=VARCHAR},
+		  	t.field_edittype	= #{field_edittype,jdbcType=VARCHAR},
+		  	t.field_fixed		= #{field_fixed,jdbcType=VARCHAR},
+		  	t.field_formatter	= #{field_formatter,jdbcType=VARCHAR},
+            t.field_hidden		= #{field_hidden,jdbcType=VARCHAR},
+			t.field_index		= #{field_index},
+            t.field_key			= #{field_key,jdbcType=VARCHAR},
+			t.field_label		= #{field_label,jdbcType=VARCHAR},
+			t.field_name		= #{field_name,jdbcType=VARCHAR},
+            t.field_resizable	= #{field_resizable,jdbcType=VARCHAR},
+            t.field_sortable	= #{field_sortable,jdbcType=VARCHAR},
+            t.field_width		= #{field_width,jdbcType=VARCHAR},
+            t.field_param		= #{field_param,jdbcType=VARCHAR},
+            t.field_ordinal		= #{field_ordinal,jdbcType=VARCHAR}
+	  where t.func_widget_guid 	= #{func_widget_guid} 
+	    and t.field_guid		= #{field_guid}
+	</update>
+    
+    <select id="getWidgetDataListByScope" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+    ${querySQL}
+    </select>
+    
+    <select id="getPagedWidgetDataListByScope" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+    ${querySQL}
+    </select>
+    
+</mapper>

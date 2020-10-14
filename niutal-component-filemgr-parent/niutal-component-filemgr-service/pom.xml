@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal-component-filemgr-parent</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-component-filemgr-service</artifactId>
+	
+	<dependencies>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-ftpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-smbclient</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-metrics</artifactId>
+			<version>${niukit.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ryantenney.metrics</groupId>
+		    		<artifactId>metrics-spring</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-component-filemgr-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-component-filemgr-dao</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	
+</project>

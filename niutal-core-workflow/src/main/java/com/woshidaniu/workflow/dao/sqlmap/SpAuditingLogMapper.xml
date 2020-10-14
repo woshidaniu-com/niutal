@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="com.woshidaniu.workflow.dao.ISpAuditingLogDao">
+
+	<resultMap id="spAuditingLogMap" type="com.woshidaniu.workflow.model.SpAuditingLog">
+		<result property="logId" column="LOG_ID" />
+		<result property="logType" column="LOG_TYPE" />
+		<result property="logTime" column="LOG_TIME" />
+		<result property="wid" column="W_ID" />
+		<result property="btype" column="B_TYPE" />
+		<result property="ostatus" column="O_STATUS" />
+		<result property="otype" column="O_TYPE" />
+		<result property="oresult" column="O_RESULT" />
+		<result property="ocontent" column="O_CONTENT" />		
+		<result property="orole" column="O_ROLE" />
+		<result property="operator" column="OPERATOR" />
+		<result property="operatorCn" column="OPERATOR_CN" />
+		<result property="osuggestion" column="O_SUGGESTION" />
+		<result property="rNode" column="R_NODE" />
+		<result property="rNodeCn" column="R_NODE_CN" />
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="logId">
+		<![CDATA[
+			INSERT INTO SP_AUDITING_LOG
+			  (LOG_ID,
+			   LOG_TYPE,
+			   LOG_TIME,
+			   W_ID,
+			   B_TYPE,
+			   O_STATUS,
+			   O_TYPE,
+			   O_RESULT,
+			   O_CONTENT,
+			   O_ROLE,
+			   OPERATOR,OPERATOR_CN,
+			   O_SUGGESTION,
+			   USER_ID,
+			   ROLE_ID,
+			   NODE_ID,
+			   P_ID,
+			   NODE_BJ,
+			   R_NODE,
+			   R_NODE_CN)
+			VALUES
+			  (#{logId},
+			   #{logType,jdbcType=VARCHAR},
+			   sysdate,
+			   #{wid,jdbcType=VARCHAR},
+			   #{btype,jdbcType=VARCHAR},
+			   #{ostatus,jdbcType=VARCHAR},
+			   #{otype,jdbcType=VARCHAR},
+			   #{oresult,jdbcType=VARCHAR},
+			   #{ocontent,jdbcType=VARCHAR},
+			   #{orole,jdbcType=VARCHAR},
+			   #{operator,jdbcType=VARCHAR},
+			   #{operatorCn,jdbcType=VARCHAR},
+			   #{osuggestion,jdbcType=VARCHAR},
+			   #{userId,jdbcType=VARCHAR},
+			   #{roleId,jdbcType=VARCHAR},
+			   #{nodeId,jdbcType=VARCHAR},
+			   #{pId,jdbcType=VARCHAR},
+			   #{nodeBj,jdbcType=VARCHAR},
+			   #{rNode,jdbcType=VARCHAR},
+			   #{rNodeCn,jdbcType=VARCHAR})
+			   
+		]]>
+		
+		<selectKey resultType="java.lang.String" order="BEFORE" keyProperty="logId">
+			<![CDATA[
+			SELECT SYS_GUID() KHLC_ID FROM DUAL
+			]]>
+		</selectKey>
+	</insert>
+	
+	<select id="findAuditingLogByWid" resultMap="spAuditingLogMap">
+		SELECT LOG_ID,
+		       LOG_TYPE,
+		       LOG_TIME,
+		       W_ID,
+		       B_TYPE,
+		       O_STATUS,
+		       O_TYPE,
+		       O_RESULT,
+		       O_CONTENT,
+		       O_ROLE,
+		       OPERATOR,
+		       OPERATOR_CN,
+		       O_SUGGESTION,
+		       R_NODE,
+		       R_NODE_CN
+		  FROM SP_AUDITING_LOG
+		 WHERE W_ID = #{wid}
+		 ORDER BY LOG_TIME
+		
+	</select>
+	
+	<select id="findAuditingLog" resultMap="spAuditingLogMap">
+		SELECT LOG_ID,
+		      LOG_TYPE,
+		      LOG_TIME,
+		      W_ID,
+		      B_TYPE,
+		      O_STATUS,
+		      O_TYPE,
+		      O_RESULT,
+		      O_CONTENT,
+		      O_ROLE,
+		      OPERATOR,
+		      OPERATOR_CN,
+		      O_SUGGESTION,
+		      R_NODE,
+		      R_NODE_CN
+		FROM SP_AUDITING_LOG
+		WHERE W_ID = #{wid}
+		<if test="orole != null and orole != ''">
+			<![CDATA[ AND O_ROLE = #{orole} ]]>
+        </if>
+		ORDER BY LOG_TIME
+	</select>
+
+</mapper>

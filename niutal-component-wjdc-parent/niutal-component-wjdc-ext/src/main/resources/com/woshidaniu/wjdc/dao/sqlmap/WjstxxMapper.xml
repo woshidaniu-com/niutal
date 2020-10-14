@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.wjdc.dao.daointerface.IWjstxxDao">
+
+	<select id="queryWjstxx" resultType="com.woshidaniu.wjdc.dao.entites.WjstxxModel">
+		select 
+			a.WJID
+			,a.STID
+			,a.XXID
+			,a.XXMC
+			,a.XSSX
+		from 
+			niutal_wjdc_wjstxxb a 
+		where 
+			a.wjid = #{wjid}
+		order by to_number(a.XSSX) asc 
+	</select>
+</mapper>

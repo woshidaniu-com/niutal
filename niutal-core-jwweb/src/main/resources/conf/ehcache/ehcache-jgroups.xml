@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	http://www.cnblogs.com/yangy608/archive/2011/10/07/2200669.html
+	http://www.68idc.cn/help/mysqldata/20150608361562.html
+	http://blog.csdn.net/haiyang4988/article/details/53895269
+	http://blog.csdn.net/kindy1022/article/details/6681299 
+	http://blog.csdn.net/w329636271/article/details/46664063
+	http://blog.csdn.net/haiyang4988/article/details/53839815
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" name="zf_cache"
+	updateCheck="false" monitoring="autodetect">
+	
+	<!-- 
+	CacheManagerPeerListener配置是用来监听集群中缓存消息的分发的。
+	
+	通过CacheManagerEventListenerFactory可以实例化一个CacheManagerPeerProvider，
+	当我们从CacheManager中added和removed Cache时，将通知CacheManagerPeerProvider，
+	这样一来，我们就可以很方面的对CacheManager中的Cache做一些统计。 
+	注册到CacheManager的事件监听类名有： adding a Cache和removing a Cache 
+	<cacheManagerEventListenerFacotory class="" properties=""/> -->
+	
+	<!-- 单播方式配置：
+	<cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
+		properties="connect=TCP(start_port=7800):
+				TCPPING(initial_hosts=192.168.2.154[7800],192.168.2.23[7800];port_range=10;timeout=3000;num_initial_members=3;up_thread=true;down_thread=true):
+				VERIFY_SUSPECT(timeout=1500;down_thread=false;up_thread=false):
+				pbcast.NAKACK(down_thread=true;up_thread=true;
+				gc_lag=100;retransmit_timeout=3000):
+				pbcast.GMS(join_timeout=5000;join_retry_timeout=2000;shun=false;print_local_addr=false;down_thread=true;up_thread=true)"
+		propertySeparator="::" /> 
+		
+	<cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"  
+        properties="file=jgroups_tcp.xml" />   -->
+      
+    <!-- 多播方式配置：  -->  
+    
+    <!-- EhCache 的 Groups 集群模式还有另外一种节点发现方式，   
+	              就是通过多播（ multicast ）来维护集群中的所有有效节点。  
+	              这也是最为简单而且灵活的方式，与手工模式不同的是，  
+	              每个节点上的配置信息都相同，大大方便了节点的部署，  
+	              集群启动时会自动发现同一局域网的缓存服务器  
+	  以jgroups 多播方式配置集群，自动发现集节点 -->
+  
+	<cacheManagerPeerProviderFactory  
+        class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"  
+        properties="connect=UDP(mcast_addr=224.1.1.1;mcast_port=45678;ip_ttl=32;mcast_send_buf_size=120000;mcast_recv_buf_size=80000):   
+        PING(timeout=2000;num_initial_members=2):MERGE2(min_interval=5000;max_interval=10000):   
+        FD_SOCK:VERIFY_SUSPECT(timeout=1500):   
+        pbcast.NAKACK(retransmit_timeout=3000):
+        UNICAST(timeout=5000):
+        pbcast.STABLE(desired_avg_gossip=20000):
+        FRAG:pbcast.GMS(join_timeout=5000;print_local_addr=true)"  
+        propertySeparator="::" />  
+        
+	
+	<diskStore path="../temp/jeeplus/ehcache" />
+
+	<!-- 默认缓存配置. -->
+	<defaultCache maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" >
+		<cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+			properties="replicatePuts=false, replicateUpdatesViaCopy=false" />
+	</defaultCache>
+	
+	<!-- 系统缓存 -->
+	<cache name="Ini_Cache" maxEntriesLocalHeap="100" eternal="true" overflowToDisk="true">
+		<cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"/>
+	</cache>
+	
+	<!-- 用户缓存 -->
+	<cache name="User_Cache" maxEntriesLocalHeap="100" eternal="true" overflowToDisk="true">
+		<cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"/>
+	</cache>
+	
+	<!-- 工作流模块缓存 -->
+	<cache name="Act_Cache" maxEntriesLocalHeap="100" eternal="true" overflowToDisk="true">
+		<cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"/>
+	</cache>
+	
+	<!-- 系统活动会话缓存 -->
+	<cache name="Active_Sessions_Cache" maxEntriesLocalHeap="10000" overflowToDisk="true"
+			eternal="true" timeToLiveSeconds="0" timeToIdleSeconds="0"
+			diskPersistent="true" diskExpiryThreadIntervalSeconds="600">
+		<!-- 用于在初始化缓存，以及自动设置 -->
+		<bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoaderFactory" properties="bootstrapAsynchronously=false" /></span>  
+        <cacheDecoratorFactory class=""/>
+        <cacheEventListenerFactory class=""/>
+        <cacheExceptionHandlerFactory class=""/>
+        <cacheExtensionFactory class=""/>
+        <cacheLoaderFactory class=""/>
+        
+        <!-- 缓存复制监听
+	       replicateAsynchronously  对象同步是否异步完成，默认为true。如果比较紧急就设为false。 在一致性时间性要求不强的时候，设为异步可大大提供性能，因为它是异步立即返回的，而且可以批量提交。   
+	       replicateUpdatesViaCopy 是否将对象变更复制到所有节点，还是只是发送一个失效信息，让对方该缓存失效，当对方需要该缓存时重新计算载入。   
+			默认为true。鉴于对象复制的消耗挺大的，又有锁的问题，而且对方也未必需要该对象，所以此属性建议设为false。如果业务上真的需要设为true时，就可考虑使用Terracotta了。   
+	       replicatePuts、replicateUpdates、replicateRemovals  增删改是否同步，默认都为true。但因为我们前面选择了失效算法，所以replicatePuts 要设为false。   
+	    --> 
+		    
+		<cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+			properties="replicateAsynchronously=true, replicatePuts=true,replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />
+	</cache>
+			
+</ehcache>

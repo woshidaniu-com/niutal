@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.jcsj.dao.daointerface.IXsxxglDao">
+	<select id="getModel" parameterType="com.woshidaniu.jcsj.dao.entities.XsxxglModel"
+		resultType="com.woshidaniu.jcsj.dao.entities.XsxxglModel">
+		select  xh,xm,xbdm,mzdm,(select mc from dm_gb_b_zggmzmcdlmzmpxfhdm v_5 where v_5.dm = t1.mzdm) as mzmc,zzmmdm,sfzh,csrq,
+			   syszd, (select v_1.shengmc||''||v_1.shimc||''||v_1.xianmc from  dm_view_gb_xzqhdmb v_1 where v_1.dm = t1.syszd) as syszdmc,
+			   hkszd, (select v_2.shengmc||''||v_2.shimc||''||v_2.xianmc from  dm_view_gb_xzqhdmb v_2 where v_2.dm = t1.hkszd) as hkszdmc,
+			   jg,	  (select v_3.shengmc||''||v_3.shimc||''||v_3.xianmc from  dm_view_gb_xzqhdmb v_3 where v_3.dm = t1.jg) as jgmc,
+			   bjdm_id,xlcc,(select mc from dm_gb_b_xldm v_4 where v_4.dm = t1.xlcc) as xlmc,xjzt,sfzxs,xszt,sjhm,
+			   gddh,email,qqhm,jtdz,jtyb,jtdh,kzzd1,kzzd2,kzzd3,
+			   kzzd4,kzzd5,kzzd6,kzzd7,kzzd8,kzzd9,kzzd10,kzzd11,
+			   kzzd12,kzzd13,kzzd14,kzzd15,kzzd16,kzzd17,kzzd18,
+			   kzzd19,kzzd20,kzzd21,kzzd22,kzzd23,kzzd24,kzzd25,
+			   kzzd26,kzzd27,kzzd28,kzzd29,kzzd30,
+			   njdm_id,njmc,xbmc,zzmmmc,xjztmc,
+			   bmdm_id,bmmc,zydm_id zydm,zymc,bjdm_id bjdm,bjmc,bmdm_id xydm,bmmc xymc,njdm_id nj
+			    from view_niutal_xtgl_xsxxb t1
+		where t1.xh=#{xh}
+	</select>
+	
+	<select id="getModelSimple" parameterType="com.woshidaniu.jcsj.dao.entities.XsxxglModel"
+		resultType="com.woshidaniu.jcsj.dao.entities.XsxxglModel">
+		select  xh  from niutal_xtgl_xsxxb 
+		where 1=1
+		<if test="xh != null  and xh !='' "> 
+			and xh=#{xh}
+		</if>
+		<if test="sfzh != null  and sfzh !='' "> 
+			and sfzh=#{sfzh}
+		</if>
+	</select>    		
+	
+	<!-- 查询学生信息列表分页 -->
+	<select id="getPagedByScope" parameterType="com.woshidaniu.jcsj.dao.entities.XsxxglModel"
+		resultType="com.woshidaniu.jcsj.dao.entities.XsxxglModel">
+		select * from(
+		select  xh,xm,xbdm,mzdm,(select mc from dm_gb_b_zggmzmcdlmzmpxfhdm v_5 where v_5.dm = t1.mzdm) as mzmc,zzmmdm,sfzh,csrq,
+				syszd,(select v_1.shengmc||''||v_1.shimc||''||v_1.xianmc from  dm_view_gb_xzqhdmb v_1 where v_1.dm = t1.syszd) as syszdmc,
+				hkszd,(select v_2.shengmc||''||v_2.shimc||''||v_2.xianmc from  dm_view_gb_xzqhdmb v_2 where v_2.dm = t1.hkszd) as hkszdmc,
+				jg, (select v_3.shengmc||''||v_3.shimc||''||v_3.xianmc from  dm_view_gb_xzqhdmb v_3 where v_3.dm = t1.jg) as jgmc,
+				bjdm_id,xlcc,xjzt,sfzxs,xszt,sjhm,
+			    gddh,email,qqhm,jtdz,jtyb,jtdh,kzzd1,kzzd2,kzzd3,
+			    kzzd4,kzzd5,kzzd6,kzzd7,kzzd8,kzzd9,kzzd10,kzzd11,
+			    kzzd12,kzzd13,kzzd14,kzzd15,kzzd16,kzzd17,kzzd18,
+			    kzzd19,kzzd20,kzzd21,kzzd22,kzzd23,kzzd24,kzzd25,kzzd26,kzzd27,kzzd28,kzzd29,kzzd30,njdm_id,njmc,xbmc,zzmmmc,xjztmc,
+			    bmdm_id,bmdm_id bmdm,bmmc,zydm_id zydm,zymc,bjdm_id bjdm,bjmc,bmdm_id xydm,bmmc xymc,njdm_id nj
+			    from view_niutal_xtgl_xsxxb t1 
+			    where 1=1 
+					and {t1.bjdm_id in func("zfxg_view_njxyzybjb";"bjdmid";"bmdm,zydm,bjdmid";"bmdm_id,zydm_id,bjdm_id")}
+			    )
+			where 1=1 
+			
+    	<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+			${searchModel.querySQL}
+		</if>
+	</select>
+	
+	<!-- 增加学生信息-->
+	<insert id="insert" parameterType="com.woshidaniu.jcsj.dao.entities.XsxxglModel">
+		insert into niutal_xtgl_xsxxb
+			  (XH,XM,XBDM,MZDM,ZZMMDM,SFZH,CSRQ,SYSZD,
+			   HKSZD,JG,BJDM_ID,XLCC,XJZT,SFZXS,XSZT,SJHM,
+			   GDDH,EMAIL,QQHM,JTDZ,JTYB,JTDH,KZZD1,KZZD2,KZZD3,
+			   KZZD4,KZZD5,KZZD6,KZZD7,KZZD8,KZZD9,KZZD10,KZZD11,
+			   KZZD12,KZZD13,KZZD14,KZZD15,KZZD16,KZZD17,KZZD18,
+			   KZZD19,KZZD20,KZZD21,KZZD22,KZZD23,KZZD24,KZZD25,
+			   KZZD26,KZZD27,KZZD28,KZZD29,KZZD30,XSZP)
+			values
+			  (#{xh},#{xm,jdbcType=VARCHAR},#{xbdm,jdbcType=VARCHAR}
+			  ,#{mzdm,jdbcType=VARCHAR},#{zzmmdm,jdbcType=VARCHAR},#{sfzh,jdbcType=VARCHAR}
+			  ,#{csrq,jdbcType=VARCHAR},#{syszd,jdbcType=VARCHAR},#{hkszd,jdbcType=VARCHAR}
+			  ,#{jg,jdbcType=VARCHAR},#{bjdm_id,jdbcType=VARCHAR},#{xlcc,jdbcType=VARCHAR}
+			  ,#{xjzt,jdbcType=VARCHAR},#{sfzxs,jdbcType=VARCHAR},#{xszt,jdbcType=VARCHAR}
+			  ,#{sjhm,jdbcType=VARCHAR},#{gddh,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR}
+			  ,#{qqhm,jdbcType=VARCHAR},#{jtdz,jdbcType=VARCHAR},#{jtyb,jdbcType=VARCHAR}
+			  ,#{jtdh,jdbcType=VARCHAR},#{kzzd1,jdbcType=VARCHAR},#{kzzd2,jdbcType=VARCHAR}
+			  ,#{kzzd3,jdbcType=VARCHAR},#{kzzd4,jdbcType=VARCHAR},#{kzzd5,jdbcType=VARCHAR}
+			  ,#{kzzd6,jdbcType=VARCHAR},#{kzzd7,jdbcType=VARCHAR},#{kzzd8,jdbcType=VARCHAR}
+			  ,#{kzzd9,jdbcType=VARCHAR},#{kzzd10,jdbcType=VARCHAR},#{kzzd11,jdbcType=VARCHAR}
+			  ,#{kzzd12,jdbcType=VARCHAR},#{kzzd13,jdbcType=VARCHAR},#{kzzd14,jdbcType=VARCHAR}
+			  ,#{kzzd15,jdbcType=VARCHAR},#{kzzd16,jdbcType=VARCHAR},#{kzzd17,jdbcType=VARCHAR}
+			  ,#{kzzd18,jdbcType=VARCHAR},#{kzzd19,jdbcType=VARCHAR},#{kzzd20,jdbcType=VARCHAR}
+			  ,#{kzzd21,jdbcType=VARCHAR},#{kzzd22,jdbcType=VARCHAR},#{kzzd23,jdbcType=VARCHAR}
+			  ,#{kzzd24,jdbcType=VARCHAR},#{kzzd25,jdbcType=VARCHAR},#{kzzd26,jdbcType=VARCHAR}
+			  ,#{kzzd27,jdbcType=VARCHAR},#{kzzd28,jdbcType=VARCHAR},#{kzzd29,jdbcType=VARCHAR}
+			  ,#{kzzd30,jdbcType=VARCHAR}
+			  ,#{xszp,jdbcType=BLOB}
+			  )
+	</insert>
+	
+	<!-- 修改学生信息 -->
+	<update id="update" parameterType="com.woshidaniu.jcsj.dao.entities.XsxxglModel">
+			update niutal_xtgl_xsxxb a 
+				<set>
+					a.xh=#{xh} 
+					<if test="xm != null">,xm=#{xm}</if>
+					<if test="xbdm != null">,xbdm=#{xbdm}</if>
+					<if test="mzdm != null">,mzdm=#{mzdm}</if>
+					<if test="zzmmdm != null">,zzmmdm=#{zzmmdm}</if>
+					<if test="sfzh != null">,sfzh=#{sfzh}</if>
+					<if test="csrq != null">,csrq=#{csrq}</if>
+					<if test="syszd != null">,syszd=#{syszd}</if>
+					<if test="hkszd != null">,hkszd=#{hkszd}</if>
+					<if test="jg != null">,jg=#{jg}</if>
+					<if test="bjdm_id != null">,bjdm_id=#{bjdm_id}</if>
+					<if test="xlcc != null">,xlcc=#{xlcc}</if>
+					<if test="xjzt != null">,xjzt=#{xjzt}</if>
+					<if test="sfzxs != null">,sfzxs=#{sfzxs}</if>
+					<if test="xszt != null">,xszt=#{xszt}</if>
+					<if test="sjhm != null">,sjhm=#{sjhm}</if>
+					<if test="gddh != null">,gddh=#{gddh}</if>
+					<if test="email != null">,email=#{email}</if>
+					<if test="qqhm != null">,qqhm=#{qqhm}</if>
+					<if test="jtdz != null">,jtdz=#{jtdz}</if>
+					<if test="jtyb != null">,jtyb=#{jtyb}</if>
+					<if test="jtdh != null">,jtdh=#{jtdh}</if>
+					<if test="kzzd1 != null">,kzzd1=#{kzzd1}</if>
+					<if test="kzzd2 != null">,kzzd2=#{kzzd2}</if>
+					<if test="kzzd3 != null">,kzzd3=#{kzzd3}</if>
+					<if test="kzzd4 != null">,kzzd4=#{kzzd4}</if>
+					<if test="kzzd5 != null">,kzzd5=#{kzzd5}</if>
+					<if test="kzzd6 != null">,kzzd6=#{kzzd6}</if>
+					<if test="kzzd7 != null">,kzzd7=#{kzzd7}</if>
+					<if test="kzzd8 != null">,kzzd8=#{kzzd8}</if>
+					<if test="kzzd9 != null">,kzzd9=#{kzzd9}</if>
+					<if test="kzzd10 != null">,kzzd10=#{kzzd10}</if>
+					<if test="kzzd11 != null">,kzzd11=#{kzzd11}</if>
+					<if test="kzzd12 != null">,kzzd12=#{kzzd12}</if>
+					<if test="kzzd13 != null">,kzzd13=#{kzzd13}</if>
+					<if test="kzzd14 != null">,kzzd14=#{kzzd14}</if>
+					<if test="kzzd15 != null">,kzzd15=#{kzzd15}</if>
+					<if test="kzzd16 != null">,kzzd16=#{kzzd16}</if>
+					<if test="kzzd17 != null">,kzzd17=#{kzzd17}</if>
+					<if test="kzzd18 != null">,kzzd18=#{kzzd18}</if>
+					<if test="kzzd19 != null">,kzzd19=#{kzzd19}</if>
+					<if test="kzzd20 != null">,kzzd20=#{kzzd20}</if>
+					<if test="kzzd21 != null">,kzzd21=#{kzzd21}</if>
+					<if test="kzzd22 != null">,kzzd22=#{kzzd22}</if>
+					<if test="kzzd23 != null">,kzzd23=#{kzzd23}</if>
+					<if test="kzzd24 != null">,kzzd24=#{kzzd24}</if>
+					<if test="kzzd25 != null">,kzzd25=#{kzzd25}</if>
+					<if test="kzzd26 != null">,kzzd26=#{kzzd26}</if>
+					<if test="kzzd27 != null">,kzzd27=#{kzzd27}</if>
+					<if test="kzzd28 != null">,kzzd28=#{kzzd28}</if>
+					<if test="kzzd29 != null">,kzzd29=#{kzzd29}</if>
+					<if test="kzzd30 != null">,kzzd30=#{kzzd30}</if>
+					<if test="xszp != null">,xszp = #{xszp,jdbcType=BLOB} </if>			
+				</set>
+				<where>
+					a.xh=#{xh}		
+				</where>
+	</update>
+	
+	<!-- 批量删除学生信息 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+    	delete niutal_xtgl_xsxxb 
+			<where>
+				<foreach collection="list" item="item" index="index"
+				 open="(" separator="or" close=") " >
+					  xh = #{item.xh}
+				</foreach>
+			</where>
+    </delete>
+    
+    <delete id="batchDeleteForSf" parameterType="java.util.List">
+    	delete niutal_xtgl_xsxxb a
+			<where>
+				<foreach collection="list" item="item" index="index"
+				 open="(" separator="or" close=") " >
+					  xh = #{item.xh}
+				</foreach>
+				and not exists(select 1 from sf_ysgl_xsysbz_tf t where a.xh=t.xh)
+			</where>
+    </delete>
+    
+   	 <resultMap type="com.woshidaniu.jcsj.dao.entities.XsxxglModel" id="xszpMap">  
+        <result property="xszp" column="xszp"  javaType="byte[]" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler" />
+     </resultMap>
+     
+   	<select id="getXszp" parameterType="string"
+		resultMap="xszpMap">
+		select xszp from niutal_xtgl_xsxxb
+		<where>
+			xh=#{xh}
+		</where>
+	</select>
+	
+	<select id="getZydmByBjdm" parameterType="string" resultType="string">
+		select zydm_id from niutal_view_xskcsjqx where bjdm_id=#{bjdmId} 
+	</select>
+		
+</mapper>

@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal-component-zxzx-parent</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-component-zxzx-web-v5</artifactId>
+	<packaging>war</packaging>
+	<name>niutal Component Zxzx Web V5</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<!-- 
+						通过<packagingIncludes>或<packagingExcludes>参数对最终打包文件实现过滤、包含操作。
+						并且支持正则表达式实现过滤规则，多个过滤条件之间使用逗号","分隔，支持"*"通配符。 
+						此处为了减小war包体积，排除所有的jar依赖。
+					-->
+					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-core-sso</artifactId>
+
+	<dependencies>
+		
+		<!-- ###################### niutal核心组件 ###################### -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-shiro</artifactId>
+		</dependency>
+		
+		<!-- ###################### 各种单点登录依赖 ###################### -->
+
+		<!-- 我是大牛单点配置 -->
+		<dependency>
+			<groupId>com.woshidaniu</groupId>
+			<artifactId>niucaclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+		<!-- 金智门户单点认证 -->
+		<dependency>
+			<groupId>com.jzsoft</groupId>
+			<artifactId>idstar</artifactId>
+		</dependency>
+		<!-- 华中师范大学 单点认证 -->
+		<dependency>
+			<groupId>thauthall</groupId>
+			<artifactId>thauthall</artifactId>
+		</dependency>
+		<!-- 浙大单点登录 -->
+<!--		<dependency>-->
+<!--			<groupId>com.woshidaniu</groupId>-->
+<!--			<artifactId>validate</artifactId>-->
+<!--		</dependency>-->
+
+	</dependencies>
+
+</project>

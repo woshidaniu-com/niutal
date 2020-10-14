@@ -1,0 +1,32 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<div id="bigSelectDiv" class="more_block">
+	<div style="background-color: #ecf5ff;border: 1px solid #e1e1e8;height: 25px;line-height: 25px;border-top-right-radius: 6px;
+	border-top-left-radius: 6px;">
+	<span class="bigComboTipText" id="bigComboTipText"></span>
+	<a href="javascipt:void(0);" onclick="closeBigSelectDiv(this);return false;" style="float: right;" class="bigSelectDivcloseBut"></a>
+	<span id="bigComboTipSpan" style="float: right;margin-right: 10px;color:#E49203;"><img src=""/>右键可以直接选中</span>
+	</div>
+	<div style="background-color: #FFF;border: 1px solid #e1e1e8;border-top:0px;max-height: 250px;min-height: 200px;padding: 10px;padding-top: 2px;border-bottom-right-radius: 6px;border-bottom-left-radius: 6px;">
+		<ul class="bigComboTab">
+			<li id="shengSelectTab" class="curr" style="display: list-item;margin-left: 10px;" onclick="clickBigComboSelectTab('sheng')">
+				<a href="#none" class="hover"><em title="请选择">请选择</em><i></i></a>
+				<input type="hidden" id="checkShengId">
+			</li>
+			<li id="shiSelectTab" style="display: none;" onclick="clickBigComboSelectTab('shi')">
+				<a href="#none" class=""><em title="请选择">请选择</em><i></i></a>
+				<input type="hidden" id="checkShiId">
+			</li>
+			<li id="xianSelectTab" style="display: none;">
+				<a href="#none" class=""><em title="请选择">请选择</em><i></i></a>
+			</li>
+		</ul>
+		<div id="selectDataPanel" class="more-data-xzq" style="border: 0px;max-height: 200px;">
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+//屏蔽右键鼠标右键
+document.oncontextmenu=function(){
+	return false;
+}
+</script>

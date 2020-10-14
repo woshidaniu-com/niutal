@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.ILsxzDao">
+	
+	<!-- 查询老师信息分页 -->
+	<select id="getPagedList" parameterType="com.woshidaniu.dao.entities.LsxzModel"
+		resultType="com.woshidaniu.dao.entities.LsxzModel">
+		select * from (
+				select a.zgh, a.xm, a.lxdh, a.dzyx, a.sfqy, a.sjly from niutal_xtgl_yhb a
+			) a
+			<where>
+				a.zgh &lt;&gt; 'admin'
+				<if test="zgh != null and zgh != ''">
+					  and a.zgh like '%'||#{zgh}||'%'
+				</if>
+				<if test="xm != null and xm != ''">
+						and a.xm like '%'||#{xm}||'%'
+				</if>
+			</where>
+	</select>
+	
+	<!-- 获取老师信息 -->
+	<select id="getModel" parameterType="com.woshidaniu.dao.entities.LsxzModel"
+		resultType="com.woshidaniu.dao.entities.LsxzModel">
+		select a.zgh, a.xm, a.lxdh, a.dzyx, a.sfqy, a.sjly from niutal_xtgl_yhb a
+				<where>
+					a.zgh=#{zgh}
+				</where>
+	</select>
+	
+	
+	<!-- 获取老师信息 -->
+	<select id="getModelList" parameterType="hashMap"
+		resultType="com.woshidaniu.dao.entities.LsxzModel">
+		select a.zgh, a.xm, a.lxdh, a.dzyx, a.sfqy, a.sjly from niutal_xtgl_yhb a
+				<where>
+					a.zgh &lt;&gt; 'admin' 
+					<foreach collection="list" item="item" index="index"
+					 open=" and (" separator="or" close=") " >
+						  a.zgh=#{item.zgh}
+					</foreach>
+				</where>
+	</select>
+	
+	<!-- 获取老师信息 -->
+	<select id="getLsxxList" parameterType="com.woshidaniu.dao.entities.LsxzModel"
+		resultType="com.woshidaniu.dao.entities.LsxzModel">
+		select a.zgh, a.xm, a.lxdh, a.dzyx, a.sfqy, a.sjly from niutal_xtgl_yhb a
+				<where>
+					a.zgh &lt;&gt; 'admin' 
+					<if test="zgh != null and zgh != ''">
+					  and a.zgh like '%'||#{zgh}||'%'
+					</if>
+					<if test="xm != null and xm != ''">
+							and a.xm like '%'||#{xm}||'%'
+					</if>
+				</where>
+	</select>
+	
+	<!-- 获取老师信息【2015.10.16模糊查询】 -->
+	<select id="likeQueryLsxxList" parameterType="hashMap" resultType="hashMap">
+		select a.zgh dm, a.xm mc from niutal_xtgl_yhb a
+				<where>
+					a.zgh &lt;&gt; 'admin' 
+					and rownum &lt; #{showsize}
+					<if test="zgh != null and zgh != ''">
+					  and a.zgh like '%'||#{zgh}||'%'
+					</if>
+					<if test="xm != null and xm != ''">
+					  and a.xm like '%'||#{xm}||'%'
+					</if>
+				</where>
+	</select>
+	
+</mapper>

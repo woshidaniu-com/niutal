@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+	
+ 	<!-- 加载密码找回属性实例，可通过  @Value("#{monitorProps['key']}") 方式引用 -->
+	<util:properties id="monitorProps" location="classpath:niutal-monitor.properties"  local-override="true"/>
+	
+	<bean id="sigar" name="sigar" class="com.woshidaniu.monitor.api.factory.SigarBeanFactory"/>
+	
+	<!-- Oracle数据库配置数据提供者实现 -->
+	<bean id="wacthPropsProvider" class="com.woshidaniu.api.conf.def.OracleMultiPropertiesProvider">
+		<!-- props: 基于配置文件的默认配置 -->
+		<property name="defaultProps" ref="monitorProps"/>
+		<!-- propKeys: 指定从参数设置表提取的参数 -->
+		<property name="propKeys">
+			<list>
+				<value>MONITOR</value>
+			</list>
+		</property>
+   	</bean>
+
+	<!-- 调度任务类 -->
+	<bean id="memoryInfoTask" class="com.woshidaniu.monitor.service.task.MemoryInfoWatchTask">
+		<property name="interval" value="1"></property>
+	</bean>
+	<bean id="ehcacheInfoTask" class="com.woshidaniu.monitor.service.task.EhcacheInfoWatchTask">
+		<property name="interval" value="1"></property>
+	</bean>
+	
+	<!-- 定时器配置 
+	    task:executor/@pool-size：可以指定执行线程池的初始大小、最大大小 
+	    task:executor/@queue-capacity：等待执行的任务队列的容量 
+	    task:executor/@rejection-policy：当等待队已满时的策略，分为丢弃、由任务执行器直接运行等方式 
+    -->
+	<!-- 使用task配置定时任务线程池和执行器 -->
+    <!-- 
+	<task:scheduler id="monitorScheduler" pool-size="20" />  
+    <task:scheduled-tasks scheduler="monitorScheduler">
+        <task:scheduled ref="memoryInfoTask" method="memory" cron="* * * * * ?"/>
+        <task:scheduled ref="memoryInfoTask" method="usage" cron="* * * * * ?"/>
+        <task:scheduled ref="ehcacheInfoTask" method="percentage" cron="0/5 * * * * ?"/>
+    </task:scheduled-tasks>
+     -->
+   	
+    <!-- 监控数据服务提供者内部实现 -->
+	<bean id="memoryInfoInternalProvider" class="com.woshidaniu.monitor.service.provider.MemoryInfoInternalProvider">
+		<!-- propsProvider: 参数配置提供者实现 -->
+		<property name="propsProvider" ref="wacthPropsProvider"/>
+	</bean>
+	
+	<!-- 监控数据服务提供者数据库实现 -->
+	<bean id="memoryInfoDatabaseProvider" class="com.woshidaniu.monitor.service.provider.MemoryInfoDatabaseProvider">
+		<!-- propsProvider: 参数配置提供者实现 -->
+		<property name="propsProvider" ref="wacthPropsProvider"/>
+	</bean>
+    
+    <bean id="memoryInfoProviderManager" class="com.woshidaniu.monitor.api.factory.MemoryInfoProviderManagerFactory">
+	</bean>
+	  
+    <bean id="memoryInfoNoticeProvider" class="com.woshidaniu.monitor.service.provider.MemoryInfoNoticeProvider">
+	</bean>
+</beans>

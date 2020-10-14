@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="niutal_xtgl_njdmb_config" map-class="java.util.HashMap">
+		<entry key="table_name" value="年级代码维护"/>
+		<entry key="table_sortname" value="njdm"/>
+		<entry key="table_sortorder" value="asc"/>
+		<entry key="width" value="550"/>
+		<entry key="height" value="350"/>
+		<entry key="querySql">
+	       <value>
+                njdm_id,
+                njdm,
+                njmc,
+                decode(sfsy, '1', '是', '0', '否') sfsy
+	       </value>
+		</entry>
+		<!-- {0}号必须为表单中 key="primary_key"的字段-->
+		<entry key="delete_validate_sql" value="select njdm_id from jw_jh_pyfasynjb where njdm_id='{0}' and rownum=1 union all select njdm_id from jw_jh_jxzxjhxxb where njdm_id='{0}' and rownum=1"/>
+	</util:map>
+  	<util:list id="niutal_xtgl_njdmb_list" list-class="java.util.ArrayList" >
+		 <map>
+			<entry key="column_name" value="njdm_id"/>
+			<entry key="comments" value="年级代码id"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="primary_key" value="true"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="hidden"/>
+			<entry key="Nullable" value="false"/>
+			<!--说明：字段唯一验证必须加上表主键ID unique=true 才会验证字段唯一 -->
+			<entry key="unique" value="true"/>
+			<entry key="hidden" value="true"/>
+			<entry key="filedValidate" value="select njdm_id from niutal_xtgl_njdmb where njdm_id='${njdm_id}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="njdm"/>
+			<entry key="comments" value="年级代码"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="date"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="readonly" value="readonly"/>
+			<!-- 日期格式 -->
+			<entry key="dateFmt" value="yyyy"/>
+			<entry key="width" value="500"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select njdm_id from niutal_xtgl_njdmb where njdm='${njdm}'"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="4"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="chrnum" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="njmc"/>
+			<entry key="comments" value="年级名称"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="500"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select njdm_id from niutal_xtgl_njdmb where njmc='${njmc}'"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="20"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="chrnum" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="sfsy"/>
+			<entry key="comments" value="是否使用"/>
+			<entry key="align" value="center"/>
+			<entry key="transform" value="isNot"/>
+			<entry key="type" value="radio"/>
+			<entry key="width" value="100"/>
+		</map>
+		<map>
+			<entry key="column_name" value="zjr"/>
+			<entry key="comments" value="增加人"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+		<map>
+			<entry key="column_name" value="zjsj"/>
+			<entry key="comments" value="增加时间"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+		<map>
+			<entry key="column_name" value="xgr"/>
+			<entry key="comments" value="修改人"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+		<map>
+			<entry key="column_name" value="xgsj"/>
+			<entry key="comments" value="修改时间"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+	</util:list>
+</beans>

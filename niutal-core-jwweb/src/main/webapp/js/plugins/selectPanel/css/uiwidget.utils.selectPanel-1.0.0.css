@@ -1,0 +1,9 @@
+.selected-box {display:none; background:#fcf7d9; border:1px solid #a7bdd3; float:left; width:99.81%; width:99.73%\9; *width:99.81%; margin-bottom: 2px; }
+.selected-box dl { width:80%; padding:5px 0; float:left; }
+.selected-box h3 { margin-left:7px; display:inline; float:left; line-height:20px; padding:5px 0; font-weight:bold;font-size: 12px; }
+.selected-box dd { height:25px; margin:0 3px; display:inline; float:left; word-break:keep-all; word-wrap:normal; white-space:nowrap; }
+.selected-box dd a { border:1px solid #ff8040; padding:0 18px 0 3px; position:relative; background:#fff; text-decoration:none; color:#ff8040; word-break:keep-all; word-wrap:normal; float:left; line-height:19px; height:19px; }
+.selected-box dd a:hover { color:#d75b1c; }
+.selected-box dd h5 { display:inline; padding:0 2px; color:#808080; font-weight:normal; vertical-align:auto; }
+.selected-box .close-icon { background:#e49203 url(../images/close-icons.gif) repeat-x left bottom; height:13px; width:13px; position:absolute; right:2px; _right:2px; top:3px; cursor:pointer; }
+.ui-jqgrid{clear: both;}

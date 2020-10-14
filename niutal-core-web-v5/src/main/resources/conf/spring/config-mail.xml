@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:properties id="mailProps" location="classpath:mail.properties" />
+	
+	<bean id="mailConfig" class="com.woshidaniu.javamail.MailConfig">
+		<!-- 邮件服务开关 on:开，off:关 -->
+		<property name="onOff" value="mailProps['mail.on-off']}"></property>
+		<!-- smtp邮箱服务器 -->
+		<property name="hostName" value="mailProps['mail.smtp.host']}"></property>
+		<!-- 是否需要认证 -->
+		<property name="needAuth" value="mailProps['mail.needAuth']}"></property>
+		<!-- 用户名 -->
+		<property name="userName" value="mailProps['mail.userName']}"></property>
+		<!-- 密码 -->
+		<property name="password" value="mailProps['mail.password']}"></property>
+		<!-- 发件箱 -->
+		<property name="sendFrom" value="mailProps['mail.sendFrom']}"></property>
+		<!-- 端口号 -->
+		<property name="smtpPort" value="mailProps['mail.smtp.port']}"></property>
+		<property name="factoryPort" value="mailProps['mail.smtp.socketFactory.port']}"></property>
+    </bean>
+    
+    <bean id="mailServer" class="com.woshidaniu.javamail.impl.JavaxMailServer" scope="singleton">
+    	<property name="config" ref="mailConfig"></property>
+    </bean>
+    
+   
+</beans>

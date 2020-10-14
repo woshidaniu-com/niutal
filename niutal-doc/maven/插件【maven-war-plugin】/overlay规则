@@ -1,0 +1,29 @@
+‘overlays’是maven-war-plugin其中一个配置，主要是组装多个war包（war包依赖其他war包的形式），其中主要的规则如下：
+
+1.	‘overlays’ 采用的策略是：‘first-win strategy’，意思是先拷贝原则（如果一个文件已经被一个overlay拷贝，则这个文件不会被其他overlay拷贝）；
+2.  ‘overlays’ 执行的顺序是按在<overlays>中配置的顺序，从上到下，
+	但如果没有配置<overlays>,顺序是按POM文件的配置的顺序（注意：这个顺序要看具体情况，如果有依赖传递或者是混合配置模式），
+	没有配置的overlays的执行顺序在有overlays配置后执行；
+3.	当前版本（currentBuild）是一个特殊的‘overlay’，定义是不需要groupId, artifactId（即<overlay></overlay>这种方式定义）,
+	当前版本默认是处于‘overlays’的首位（也就是第一个执行），如果想在当前版本前执行，只需要配置overlay处于当前版本之前，举例：
+		<build>
+	     <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-war-plugin</artifactId>
+	        <version>2.6</version>
+	        <configuration>
+	          <overlays>
+	            <overlay>
+	              <groupId>com.example.projects</groupId>
+	              <artifactId>my-webapp</artifactId>
+	            </overlay>
+	            <overlay>
+	              <!-- empty groupId/artifactId represents the current build -->
+	              <!-- 即：表示当前项目-->
+	            </overlay>
+	          </overlays>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	  </build>   

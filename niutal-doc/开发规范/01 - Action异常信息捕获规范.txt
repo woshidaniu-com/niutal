@@ -1,0 +1,40 @@
+
+
+
+Action异常信息捕获规范：
+
+1、返回 ERROR页面：
+
+try {
+		 
+} catch (Exception e) {
+	logException(e);
+	return ERROR;
+}
+return SUCCESS;
+
+2、提示信息返回：
+
+try{
+	 
+	getValueStack().set(DATA, getText("I99007",new String[]{"停用"}));			
+}catch (Exception e) {
+	logStackException(e);
+	getValueStack().set(DATA, getText("I99008",new String[]{"停用"}));
+}
+
+
+3、JSON数据返回：
+
+try{
+	List<Map<String, String>> modelList =  service.getPagedBkxxkLsList(model);
+	QueryModel queryModel = model.getQueryModel();
+	queryModel.setItems(modelList);
+	getValueStack().set(DATA, queryModel);
+}catch(Exception e){
+	logStackException(e);
+	getValueStack().set(DATA, model.getQueryModel());
+}
+return DATA;
+
+

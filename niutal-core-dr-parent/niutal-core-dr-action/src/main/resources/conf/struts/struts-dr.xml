@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="niutal/dr" extends="configuration" namespace="/niutal/dr">
+		<action name="import_*" class="importAction" method="{1}">
+			<result name="import">/WEB-INF/pages/drdcsj/import.jsp
+			</result>
+			<result name="selectColumn">/WEB-INF/pages/drdcsj/selectColumn.jsp
+			</result>
+			<result name="showrulers">/WEB-INF/pages/drdcsj/showrulers.jsp
+			</result>
+			<result name="json" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="contentType">
+					text/html
+                </param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="drdcsj" extends="configuration" namespace="/dr">
+	  <!-- 单点登录ACTION -->
+	  <action name="out_*" class="drOutAction" method="{1}">
+	  	 <interceptor-ref name="defaultStack" />
+	  	 <result name="import" type="redirect">/niutal/dr/import_showImport.html?source=woshidaniu&amp;closeBtn=no&amp;drmkdm=${drmkdm}</result>
+	  </action>  	
+	</package>
+</struts>

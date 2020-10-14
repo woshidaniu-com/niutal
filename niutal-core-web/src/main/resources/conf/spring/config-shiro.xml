@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	
+	<!-- 缓存管理器 使用Ehcache实现 -->
+    <bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManager" ref="cacheManager"></property>
+    </bean>
+	
+	<!-- 配置自定义shiro Realm-->
+	<bean id="ZFRealm" class="com.woshidaniu.globalweb.shiro.ZFRealm">
+		<property name="shiroService" ref="defaultShiroService"/>
+		<property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="false"/>
+        <property name="authenticationCacheName" value="niutal_SHIRO"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <property name="authorizationCacheName" value="niutal_SHIRO"/>
+	</bean>
+	
+	<!--配置外部系统访问Realm -->
+	<bean id="OutAccountRealm" class="com.woshidaniu.globalweb.shiro.ext.OutAccountLoginRealm">
+		<property name="shiroService" ref="outAccountShiroService" />
+		<property name="credentialsMatcher">
+			<bean id="allowAllcredentialsMatcher" class="org.apache.shiro.authc.credential.AllowAllCredentialsMatcher"></bean>
+		</property>
+		<property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="false"/>
+        <property name="authenticationCacheName" value="niutal_SHIRO"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <property name="authorizationCacheName" value="niutal_SHIRO"/>
+	</bean>
+	
+	
+	<!-- 会话ID生成器 -->
+<!--     <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/> -->
+    
+    <!-- 会话Cookie模板 -->
+<!--     <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie"> -->
+<!--         <constructor-arg value="JSESSIONID"/> -->
+<!--         <property name="httpOnly" value="true"/> -->
+<!--         <property name="maxAge" value="1800000"/> -->
+<!--     </bean> -->
+    
+     <!-- 会话管理器 -->
+<!--     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager"> -->
+<!--         <property name="deleteInvalidSessions" value="true"/> -->
+<!--         <property name="sessionIdCookieEnabled" value="true"/> -->
+<!--         <property name="sessionIdCookie" ref="sessionIdCookie"/> -->
+<!--     </bean> -->
+
+	<!-- 如果需要启用tomcat集群，会话管理必须交由tomcat -->
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.ServletContainerSessionManager" />
+	
+	<!-- 配置shiro securityManager -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realms">
+			<list>
+				<ref bean="OutAccountRealm"/>
+				<ref bean="ZFRealm"/>
+			</list>
+		</property>
+        <property name="sessionManager" ref="sessionManager"/>
+        <property name="cacheManager" ref="shiroCacheManager"/>
+	</bean>
+	
+	<!-- 自定义验证拦截器 -->
+	<bean id="ZFFormAuthenticationFilter" class="com.woshidaniu.globalweb.shiro.ZFFormAuthenticationFilter" />
+	
+	<bean id="OutAccountAuthenticationFilter" class="com.woshidaniu.globalweb.shiro.ext.OutAccountAuthFilter" >
+		<property name="errorUrl" value="/err/auth_error.jsp"></property>
+	</bean>
+
+	<!-- Enable Shiro Annotations for Spring-configured beans.  Only run after -->
+	<!-- the lifecycleBeanProcessor has run: -->
+	<!-- 配置shiro注解方式 -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor" >
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+		
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+
+	<bean id="kickoutSessionControlFilter" 
+		class="com.woshidaniu.globalweb.shiro.KickoutSessionControlFilter">
+		  <property name="cacheManager" ref="shiroCacheManager"/>
+		  <property name="sessionManager" ref="sessionManager"/>
+		  <property name="kickoutAfter" value="false"/>
+		  <property name="maxSession" value="1"/>
+		  <property name="kickoutUrl" value="/xtgl/login_slogin.html?kickout=1"/>
+	</bean> 
+	
+	<bean id="sessionControFilter" class="com.woshidaniu.globalweb.shiro.sessoion.SessionControlFilter">
+		<property name="cacheManager" ref="shiroCacheManager"/>
+		<property name="loginUrl" value="/xtgl/login_slogin.html?kickout=1"></property>
+	</bean>
+	
+	<bean id="zflogoutFilter" class="com.woshidaniu.globalweb.shiro.ZFLogoutFilter"></bean>
+    
+	<!-- 配置Shiro拦截器 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- securityManager -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 登录路径 -->
+		<property name="loginUrl" value="/xtgl/login_slogin.html" />
+		<!-- 登录成功后跳转路径 -->
+		<property name="successUrl" value="/xtgl/index_initMenu.html" />
+		<property name="filters">
+			<util:map>
+				<entry key="authc" value-ref="ZFFormAuthenticationFilter" />
+				<entry key="outAuthc" value-ref="OutAccountAuthenticationFilter" />
+				<entry key="sessionControl" value-ref="sessionControFilter" />
+				<entry key="logout" value-ref="zflogoutFilter"></entry>
+			</util:map>
+		</property>
+		<!-- 过滤链定义 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/ = anon
+				/bootstrap/** = anon
+				/css/** = anon
+				/js/** = anon
+				/struts/** = anon
+				/err/** = anon
+				/logo/** = anon
+				/images/** = anon
+				/download/** = anon
+				/kaptcha* = anon
+				/tjcx/out_login.html* = outAuthc
+				/wjdc/out_login.html* = outAuthc
+				/dr/out_login.html* = outAuthc
+				/zxzx/web/myTopic.html* = authc
+				/zxzx/web/deleteMyTopic.html* = authc
+				/zxzx/web/** = anon
+				/xtgl/login_code.html* = anon
+				/xtgl/login_getPublicKey.html = anon
+				/xtgl/login_slogin.html* = authc
+				/xtgl/index_content.html* = authc
+				/druid/* = roles[admin]
+				/logout = logout
+				/** = sessionControl,authc
+			</value>
+		</property>
+	</bean>
+	
+</beans>

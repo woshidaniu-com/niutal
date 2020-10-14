@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.pwdmgr.dao.daointerface.CaptchaDao">
+	
+	<select id="getUUID" resultType="java.lang.String" flushCache="true" useCache="false">
+		SELECT sys_guid() FROM DUAL
+	</select>
+	
+	<select id="getDatetime" resultType="java.lang.String" flushCache="true" useCache="false">
+		SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:Mi:SS') FROM DUAL
+	</select>
+	
+	<insert id="insert" parameterType="com.woshidaniu.pwdmgr.dao.entities.CaptchaModel">
+		INSERT INTO niutal_PWD_CAPTCHA(OUT_UUID,CAPTCHA,OUT_TIME) VALUES(#{out_uuid},#{captcha},TO_CHAR(sysdate, 'yyyy-MM-dd HH24:MI:ss'))
+	</insert>
+	
+	<delete id="delete" parameterType="com.woshidaniu.pwdmgr.dao.entities.CaptchaModel">
+		DELETE FROM niutal_PWD_CAPTCHA WHERE　CAPTCHA＿ID = #{captcha_id} 
+	</delete>
+	 
+	<select id="getModel" parameterType="com.woshidaniu.pwdmgr.dao.entities.CaptchaModel" resultType="com.woshidaniu.pwdmgr.dao.entities.CaptchaModel">
+		SELECT captcha_id,captcha,out_time FROM niutal_PWD_CAPTCHA WHERE　OUT_UUID = #{out_uuid}
+	</select>
+	
+	<select id="getModelList" parameterType="com.woshidaniu.pwdmgr.dao.entities.CaptchaModel" resultType="com.woshidaniu.pwdmgr.dao.entities.CaptchaModel">
+		SELECT captcha_id,captcha,out_time FROM niutal_PWD_CAPTCHA
+	</select>
+	  
+</mapper>

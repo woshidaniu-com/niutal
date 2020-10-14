@@ -1,0 +1,40 @@
+package com.woshidaniu.taglibs.views.components;
+
+import java.io.Writer;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.views.annotations.StrutsTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.opensymphony.xwork2.util.ValueStack;
+
+/** strutsTag注解指明了该UIBean的名字和Tag类的类名 */
+@StrutsTag(name = "radio", tldTagClass = "com.woshidaniu.taglibs.views.tags.RadioTag", description = "根据指定参数生成统一的单选组")
+public class RadioComponent extends AbstractDatasetStrutsUIBean {
+	
+	protected static Logger LOG = LoggerFactory.getLogger(RadioComponent.class);
+		
+	public RadioComponent(ValueStack stack,
+			HttpServletRequest request, HttpServletResponse response) {
+		super(stack, request, response);
+	}
+
+	/**
+	 * getDefaultTemplate()方法用于返回模板的名字，Struts2会自动在后面加入.ftl扩展名以找到特定的模板文件
+	 */
+	@Override
+	protected String getDefaultTemplate() {
+		return "tag-radio";
+	}
+	
+	@Override
+	public boolean start(Writer writer) {
+		//调用父级方法
+		super.start(writer);
+		return false;
+	}
+
+}

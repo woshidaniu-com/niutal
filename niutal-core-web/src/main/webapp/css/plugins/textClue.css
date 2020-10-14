@@ -1,0 +1,5 @@
+.wrap{margin:0 auto;}
+.autoDis{border:1px solid #b0cbe0;position:absolute;overflow-x:hidden;overflow-y:auto;max-height:200px;z-index:9999; }
+.autoDis p{line-height:23px;cursor:default;padding:0 0px;}
+.autoDis li{line-height:20px;cursor:default;padding:0 2px;background-color:#fff; color:#0356a2}
+.autoDis .cur{background:#94C3EC;}

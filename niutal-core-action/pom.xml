@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-action</artifactId>
+	<name>业务框架-WEB逻辑代码（Struts2实现）</name>
+	<packaging>jar</packaging>
+
+	
+	<dependencies>
+		
+		<!-- ###################### Java Web 组件 ###################### -->
+			
+		<!-- Kaptcha是一个基于SimpleCaptcha的验证码开源项目  http://chenzhou123520.iteye.com/blog/1987636 -->
+		<dependency>
+			<groupId>com.github.penggle</groupId>
+			<artifactId>kaptcha</artifactId>
+		</dependency>
+		<!-- Java Image Processing Pages  -->
+		<dependency>
+			<groupId>com.jhlabs</groupId>
+			<artifactId>filters</artifactId>
+		</dependency>
+		
+		
+		<!-- ###################### 各种单点登录依赖 ###################### -->
+			
+		<!-- 我是大牛单点配置 -->
+		<dependency>
+			<groupId>com.woshidaniu</groupId>
+			<artifactId>niucaclient</artifactId>
+		</dependency>
+		<!-- 金智门户单点认证  -->
+		<dependency>
+			<groupId>com.jzsoft</groupId>
+			<artifactId>idstar</artifactId>
+		</dependency>
+		
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- niukit-web : Web快速调用组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-web-ext</artifactId>
+		</dependency>
+		
+		<!-- ###################### niutal核心组件  ###################### -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-struts2</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-export</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-shiro</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-dr-action</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		
+	</dependencies>
+
+</project>

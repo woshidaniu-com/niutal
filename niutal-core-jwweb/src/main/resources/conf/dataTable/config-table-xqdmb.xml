@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<util:map id="niutal_xtgl_xqdmb_config" map-class="java.util.HashMap">
+		<entry key="table_name" value="年级代码维护"/>
+		<entry key="table_sortname" value="xqh"/>
+		<entry key="table_sortorder" value="asc"/>
+		<entry key="width" value="550"/>
+		<entry key="height" value="350"/>
+		<entry key="querySql">
+	       <value>
+                xqh_id,
+                xqh,
+                xqmc,
+                xqdz,
+                xqyzbm,
+                xqfzrzgh
+	       </value>
+		</entry>
+	</util:map>
+  	<util:list id="niutal_xtgl_xqdmb_list" list-class="java.util.ArrayList" >
+		 <map>
+			<entry key="column_name" value="xqh_id"/>
+			<entry key="comments" value="校区号id"/>
+			<!-- 设置为主键  字段中只能设置一个主键-->
+			<entry key="primary_key" value="true"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="hidden"/>
+			<entry key="Nullable" value="false"/>
+			<!--说明：字段唯一验证必须加上表主键ID unique=true 才会验证字段唯一 -->
+			<entry key="unique" value="true"/>
+			<entry key="hidden" value="true"/>
+			<entry key="filedValidate" value="select xqh_id from niutal_xtgl_xqdmb where xqh_id='${xqh_id}'"/>
+		</map>
+		<map>
+			<entry key="column_name" value="xqh"/>
+			<entry key="comments" value="校区号"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="300"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select xqh_id from niutal_xtgl_xqdmb where xqh='${xqh}'"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="20"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="chrnum" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="xqmc"/>
+			<entry key="comments" value="校区名称"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="Nullable" value="false"/>
+			<entry key="width" value="300"/>
+			<entry key="unique" value="true"/>
+			<entry key="filedValidate" value="select xqh_id from niutal_xtgl_xqdmb where xqmc='${xqmc}'"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="50"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="xqdz"/>
+			<entry key="comments" value="校区地址"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="textarea"/>
+			<entry key="width" value="500"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="100"/>
+				 	 <!-- 必填验证 -->
+				 	 <entry key="required" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="xqyzbm"/>
+			<entry key="comments" value="校区邮政编码"/>
+			<entry key="align" value="center"/>
+			<entry key="type" value="text"/>
+			<entry key="width" value="300"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="6"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="zipCode" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="xqfzrzgh"/>
+			<entry key="comments" value="校区负责人职工号"/>
+			<entry key="align" value="left"/>
+			<entry key="type" value="text"/>
+			<entry key="width" value="300"/>
+			<!-- 验证规则 根据jquery.validate.methods.js-->
+			<entry key="validateMap">
+				 <map>
+				 	 <!-- 长度验证 -->
+				 	 <entry key="stringMaxLength" value="20"/>
+				 	  <!-- 只能输入字母或者数字验证 -->
+				 	 <entry key="chrnum" value="true"/>
+				 </map>
+			</entry>
+		</map>
+		<map>
+			<entry key="column_name" value="zjr"/>
+			<entry key="comments" value="增加人"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+		<map>
+			<entry key="column_name" value="zjsj"/>
+			<entry key="comments" value="增加时间"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+		<map>
+			<entry key="column_name" value="xgr"/>
+			<entry key="comments" value="修改人"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+		<map>
+			<entry key="column_name" value="xgsj"/>
+			<entry key="comments" value="修改时间"/>
+			<entry key="type" value="hidden"/>
+			<entry key="hidden" value="true"/>
+		</map>
+	</util:list>
+</beans>

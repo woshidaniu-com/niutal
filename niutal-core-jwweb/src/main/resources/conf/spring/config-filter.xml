@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- none filter -->
+	<bean id="noneFilter" class="com.woshidaniu.web.servlet.filter.impl.HttpServletRequestNoneFilter"></bean>
+	
+	<!-- http响应头安全配置拦截器 -->
+	<bean id="httpHeaderFilter" class="com.woshidaniu.safety.xss.HttpServletRequestHeaderFilter">
+		<property name="x_frame_options" value="SAMEORIGIN"></property>
+		<property name="x_xss_protection" value="1; mode=block"></property>
+		<property name="x_content_type_options" value="nosniff"></property>
+		<!-- Access-Control-Allow-Origin -->
+	</bean>
+	
+	<!-- http请求方法拦截器 -->
+	<bean id="httpMethodControlFilter" class="com.woshidaniu.safety.xss.HttpServletRequestMethodControlFilter">
+		<property name="allowedHTTPMethods">
+			<array value-type="java.lang.String">
+				<value>GET</value>
+				<value>POST</value>
+			</array>
+		</property>
+	</bean>
+	
+	<!-- 富文本过滤器 采用antiSamy
+	<bean id="antisamyPolicy" class="com.woshidaniu.safety.xss.integration.AntisamyPolicyFactoryBean">
+		<property name="policyConfigFilePath" value="classpath:conf/security/woshidaniu-antixss-policy.xml"></property>
+	</bean>
+	
+	<bean id="antisamyScanner" class="org.owasp.validator.html.AntiSamy">
+		<constructor-arg ref="antisamyPolicy"/>
+	</bean>
+	
+	<bean id="richTextHtmlFilter" class="com.woshidaniu.safety.xss.HttpServletRichTextHTMLFilter" init-method="init">
+		<property name="antiSamy" ref="antisamyScanner" />
+	</bean>-->
+	
+	<!-- 基于 AntiSamy组件的XSS(Cross Site Scripting)，即跨站脚本攻击请求过滤器（主要用于富文本） -->
+	<bean id="httpRichtextXssFilter" class="com.woshidaniu.safety.xss.HttpServletRequestRichTextXssFilter">
+		<!-- 扫描器类型，0：DOM类型扫描器,1:SAX类型扫描器；两者的区别如同XML解析中DOM解析与Sax解析区别相同，实际上就是对两种解析方式的实现 -->
+		<property name="scanType" value="1" />
+		<!-- 默认的防XSS攻击的规则配置 -->
+		<property name="defaultPolicy" value="classpath:conf/security/woshidaniu-antixss-policy.xml" />
+		<!-- 进行过滤请求路径的正则匹配表达式，匹配的路径会被检测XSS;多个表达式可以用",; \t\n"中任意字符分割
+		<property name="includePatterns" value="" /> -->
+		<!-- 不进行过滤请求路径的正则匹配表达式，匹配的路径不会被检测XSS;多个表达式可以用",; \t\n"中任意字符分割 -->
+		<property name="excludePatterns" value="/editor/*.html" />
+		<!-- XSS攻击的模块对应的规则配置:通过该配置可实现不同路径采用不同的处理规则 
+		<property name="filterChainDefinitions">
+			<value>
+				/ = classpath:conf/security/woshidaniu-antixss-policy.xml
+				/xtgl/** = classpath:conf/security/woshidaniu-antixss-policy2.xml
+				/** = classpath:conf/security/woshidaniu-antixss-policy3.xml
+			</value>
+		</property>
+		<property name="policyMappings">
+			<map>
+				<entry key="" value=""></entry>
+			</map>
+		</property>
+		-->
+	</bean>
+	
+	<!--  基于owasp-java-html-sanitizer的XSS(Cross Site Scripting)，即跨站脚本攻击请求过滤器 -->
+	<bean id="httpXssFilter" class="com.woshidaniu.safety.xss.HttpServletRequestXssFilter"/>
+	
+	
+	<!-- <bean id="csrfJavascriptFilter" class="com.woshidaniu.safety.csrf.CsrfJavascriptFilter" />
+	
+	<bean id="csrfFilter" class="com.woshidaniu.safety.csrf.CsrfFilter" >
+		<property name="verifyStrategy" ref="configPathMatchVerifyStrategy"></property>
+	</bean>
+	
+	csrf 过滤路径配置
+	<bean id="csrfVerifyPathConfig" abstract="true">
+		<property name="verifyPaths">
+			<set>
+				这里配置需要验证的路径，例如：/xtgl/xtsz_xtszXg.html
+				<value>/test.html</value>
+			</set>
+		</property>
+	</bean>
+
+	<bean id="configPathMatchVerifyStrategy" class="com.woshidaniu.safety.csrf.strategy.ConfigPathMatchVerfiyStrategy"
+		parent="csrfVerifyPathConfig" init-method="init">
+		<property name="verifyPaths">
+		<set merge="true">
+		这里配置需要验证的路径，例如：/xtgl/xtsz_xtszXg.html
+		也可以在WEB-INF/classes/conf/security/目录下配置文件，文件名称必须以csrf-verfiy-path-*.conf
+		<value>/test.html</value>
+		</set>
+		</property>
+	</bean>
+	csrf 过滤路径配置
+	富文本过滤器 -->
+	
+	<!-- 配置woshidaniu拦截器 -->
+	<bean id="woshidaniuFilter" class="com.woshidaniu.spring.web.filter.integration.ZFFilterFactoryBean">
+		<property name="filters">
+			<util:map>
+				<entry key="none" value-ref="noneFilter"></entry>
+				<entry key="httpHeaderControl" value-ref="httpHeaderFilter" />
+				<entry key="httpMethodControl" value-ref="httpMethodControlFilter"/>
+				<entry key="httpRichtextXssFilter" value-ref="httpRichtextXssFilter" />
+				<entry key="httpXssFilter" value-ref="httpXssFilter" />
+<!-- 				<entry key="csrfScriptGetter" value-ref="csrfJavascriptFilter" />
+				<entry key="csrfControl" value-ref="csrfFilter" />
+ -->		</util:map>
+		</property>
+		<!-- 过滤链定义 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/ = httpHeaderControl,httpMethodControl
+				/images/** = none
+				/logo/** = none
+				/js/** = none
+				/druid/** = none
+				/pwdmgr/retake/** = httpHeaderControl,httpRichtextXssFilter
+				/pwdmgr/update/** = httpHeaderControl,httpRichtextXssFilter
+				/xtgl/xwgl_zjBcXw.html* = httpHeaderControl,httpMethodControl,httpRichtextXssFilter
+				/xtgl/xwgl_xgBcXw.html* = httpHeaderControl,httpMethodControl,httpRichtextXssFilter
+				/** = httpHeaderControl,httpMethodControl
+			</value>
+		</property>
+	</bean>
+	
+</beans>

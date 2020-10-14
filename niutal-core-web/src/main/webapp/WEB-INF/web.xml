@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0">
+	
+	<!-- 关闭不安全的HTTP方法 -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>任意名称</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method>DELETE</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>OPTIONS</http-method>
+			<http-method>TRACE</http-method>
+			<http-method>PROPFIND</http-method>
+			<http-method>COPY</http-method>
+			<http-method>PATCH</http-method>
+			<http-method>MOVE</http-method>
+			<http-method>SEARCH</http-method>
+			<http-method>MKCOL</http-method>
+			<http-method>LOCK</http-method>
+			<http-method>UNLOCK</http-method>
+			<http-method>PROPPATCH</http-method>
+		</web-resource-collection>
+		<auth-constraint></auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	<!-- 关闭不安全的HTTP方法 -->
+	 
+	<!-- 全局返回页面 -->
+	<error-page>
+		<error-code>401</error-code>
+		<location>/err/401.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/err/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/err/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/err/500.jsp</location>
+	</error-page>
+	
+	<!-- niutal全局参数 -->
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>woshidaniu.root</param-value>
+	</context-param>
+
+	<!-- 多模块排序配置；模块加载顺序为web.xml >> web-fragment.xml -->
+	<absolute-ordering>  
+       	<!-- 我是大牛软件授权模块 : 各自业务系统需实现自己的授权功能进行配置 -->
+       	<!-- <name>niutal-license</name> -->
+       	<!-- 业务框架基础模块-->
+       	<name>niutal-basic</name>
+       	<!-- 会话,性能监控模块  -->
+       	<name>niutal-monitor</name>  
+       	<others/>  
+    </absolute-ordering>
+	
+	<mime-mapping>
+		<extension>rar</extension>
+		<mime-type>application/rar</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>woff</extension>
+		<mime-type>application/font-woff</mime-type>
+	</mime-mapping>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/pages/globalweb/login.jsp</welcome-file>
+	</welcome-file-list>
+	
+</web-app>

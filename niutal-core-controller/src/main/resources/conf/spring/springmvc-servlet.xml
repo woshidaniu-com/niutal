@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<description>Spring MVC Configuration</description>
+	
+	<!-- 加载runtime配置文件 --> 
+	<util:properties id="runtimeProps" location="classpath:runtime.properties"/>
+	
+	<!-- <mvc:annotation-driven /> 是一种简写形式，完全可以手动配置替代这种简写形式，简写形式可以让初学都快速应用默认配置方案。
+		 <mvc:annotation-driven /> 会自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 两个bean,
+		  是spring MVC为@Controllers分发请求所必须的。
+	-->
+	<mvc:annotation-driven />
+
+	<!-- ###########Spring MVC静态资源处理########### -->
+
+	<!-- 	<mvc:resources mapping="/css/**" location="/css/" /> -->
+	<!-- 	<mvc:resources mapping="/js/**" location="/js/" /> -->
+	<!-- 	<mvc:resources mapping="/logo/**" location="/logo/" /> -->
+	
+	<!-- ###########Spring MVC 主题支持########### -->
+	<!-- 参考 ： http://blog.csdn.net/wutbiao/article/details/7450281 -->
+	
+	<bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor">
+		<property name="paramName" value="theme"></property>
+	</bean>
+	
+	<bean id="themeSource" class="org.springframework.ui.context.support.ResourceBundleThemeSource">
+		<property name="basenamePrefix" value="/WEB-INF/themes/"></property>
+	</bean>
+	
+	<bean id="themeResolver" class="org.springframework.web.servlet.theme.CookieThemeResolver">
+		<property name="defaultThemeName">
+			<value>default</value>
+		</property>
+	</bean>
+	
+	<!-- ###########SpringMVC本地化支持########### -->
+	<!-- 参考 ： 
+		http://blog.csdn.net/wutbiao/article/details/7454345 
+		http://yvonxiao.iteye.com/blog/1005183 
+	-->
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<property name="paramName" value="language" />
+	</bean>
+	
+	<!-- 嵌套的Locale解析器 -->
+	<bean id="localeResolver" class="org.springframework.enhanced.web.servlet.i18n.NestedLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+		<property name="resolvers">
+			<list>
+				<ref bean="sessionLocaleResolver"/>
+				<ref bean="cookieLocaleResolver"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="cookieLocaleResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+	</bean>
+	<bean id="sessionLocaleResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+	</bean>
+	
+	<!-- ###########SpringMVC 全局映射########### -->
+	
+	<!-- 默认访问跳转到登录页面 -->
+	<!-- 	<mvc:view-controller path="/" view-name="/globalweb/login" /> -->
+	
+	<mvc:interceptors>
+		
+	    <!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->  
+	    <bean id="fileUploadAcceptInterceptor" class="com.woshidaniu.globalweb.interceptor.ZFFileUploadAcceptInterceptor"/>  
+        <!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->  
+	    <!-- <mvc:interceptor>
+	        <mvc:mapping path="/test/number.zf"/>  
+	        <bean class="com.woshidaniu.app.web.interceptor.LoginInterceptor"/>  
+	    </mvc:interceptor>  
+	    --> 
+	    <mvc:interceptor>
+	    	<mvc:mapping path="/setting/locale/change.zf"/>  
+	        <ref bean="localeChangeInterceptor"/>
+	    </mvc:interceptor>
+	    <mvc:interceptor>
+	    	<mvc:mapping path="/setting/theme/change.zf"/>  
+	        <ref bean="themeChangeInterceptor"/>
+	    </mvc:interceptor>
+	</mvc:interceptors>  
+	
+	<!-- ###########SpringMVC 异常处理 ########### -->
+	
+	<!-- 
+		ConversionNotSupportedException 		500 (Internal Server Error) 
+		HttpMediaTypeNotAcceptableException 	406 (Not Acceptable) 
+		HttpMediaTypeNotSupportedException 		415 (Unsupported Media Type) 
+		HttpMessageNotReadableException 		400 (Bad Request) 
+		HttpMessageNotWritableException 		500 (Internal Server Error) 
+		HttpRequestMethodNotSupportedException 	405 (Method Not Allowed) 
+		MissingServletRequestParameterException 400 (Bad Request) 
+		NoSuchRequestHandlingMethodException 	404 (Not Found) 
+		TypeMismatchException 					400 (Bad Request) 
+	-->
+	
+	<!-- 异常响应映射 -->
+	<mvc:view-controller path="/403.zf" view-name="/exception/403" />
+	<mvc:view-controller path="/404.zf" view-name="/exception/404" />
+	<mvc:view-controller path="/500.zf" view-name="/exception/500" />
+	<mvc:view-controller path="/error.zf" view-name="/exception/error" />
+
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.apache.shiro.authz.UnauthorizedException">/exception/403</prop>
+				<prop key="java.io.FileNotFoundException">/exception/404</prop>
+			</props>
+		</property>
+		<property name="defaultErrorView" value="/exception/error" />
+		<property name="defaultStatusCode" value="500" />
+	</bean>
+	
+	<!-- ###########SpringMVC 日志记录 ########### -->
+	
+	<bean id="businessLogAspect" class="com.woshidaniu.common.log.BusinessLogAspect"></bean>
+
+	<aop:config>
+		<aop:pointcut id="logPointcut"  expression="execution(* com.woshidaniu..controller.*.*(..)) and @annotation(com.woshidaniu.common.log.BusinessLog) and @annotation(businessLog)" />
+		<aop:aspect id="logAspect" ref="businessLogAspect">
+			<aop:after-returning method="afterReturing"  pointcut-ref="logPointcut" />
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- ###########SpringMVC Controller 自动注入 ########### -->
+	
+	<!-- 自动扫描controller目录下的Java Bean -->
+	<context:component-scan base-package="com.woshidaniu.**.controller" scoped-proxy="targetClass" />
+	
+	<!-- ###########SpringMVC Shiro集成 ########### -->
+
+	<bean id="typePatternClassFilter" class="org.springframework.aop.aspectj.TypePatternClassFilter">
+		<property name="typePattern" value="com.woshidaniu..controller..*" />
+	</bean>
+ 	
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	
+	<!-- Enable Shiro Annotations for Spring-configured beans.  Only run after -->  
+	<!-- the lifecycleBeanProcessor has run: --> 
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+		<property name="classFilter" ref="typePatternClassFilter" />
+	</bean>
+	
+</beans>

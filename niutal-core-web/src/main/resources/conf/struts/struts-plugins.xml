@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="zfxg!plugins" extends="configuration" namespace="/zfxg!plugins">
+		<!-- 站内信管理-->
+		<action name="znxgl_*" class="znxglAction" method="{1}">
+			<result name="sjxZnx">/WEB-INF/pages/zfxg/plugins/znxgl/sjxZnx.jsp</result>
+			<result name="fjxZnx">/WEB-INF/pages/zfxg/plugins/znxgl/fjxZnx.jsp</result>
+			<result name="zjZnx">/WEB-INF/pages/zfxg/plugins/znxgl/zjZnx.jsp</result>
+			<result name="ckSjxZnx">/WEB-INF/pages/zfxg/plugins/znxgl/ckSjxZnx.jsp</result>
+			<result name="ckFjxZnx">/WEB-INF/pages/zfxg/plugins/znxgl/ckFjxZnx.jsp</result>
+			<result name="hfZnx">/WEB-INF/pages/zfxg/plugins/znxgl/hfZnx.jsp</result>
+		</action>
+		
+		<!-- 与其它系统集成，路径跳转 -->
+		<action name="forward_*" class="forwardAction" method="{1}">
+			<result name="toSmp">/WEB-INF/pages/zfxg/plugins/forward/smp.jsp</result>
+		</action>
+		
+		<action name="xzqhAjax_*" class="xzqhAjaxAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		</action>
+		
+		<action name="sjbzAjax_*" class="sjbzAjaxAction" method="{1}">
+		</action>
+		
+		<action name="xsbmAjax_*" class="xsbmAjaxAction" method="{1}">
+		</action>
+		
+		<!-- 学生信息选择-->
+		<action name="xsxz_*" class="xsxzAction" method="{1}">
+			<result name="cxXsxz">/WEB-INF/pages/zfxg/plugins/xsxz/cxXsxz.jsp</result>
+			<result name="cxXsxzSjfw">/WEB-INF/pages/zfxg/plugins/xsxz/cxXsxzSjfw.jsp</result>
+		</action>
+		
+		<!-- 老师信息选择-->
+		<action name="lsxz_*" class="lsxzAction" method="{1}">
+			<result name="cxLsxz">/WEB-INF/pages/zfxg/plugins/lsxz/cxLsxz.jsp</result>
+		</action>
+		
+		<!-- 单位信息选择-->
+		<action name="dwxz_*" class="dwxzAction" method="{1}">
+			<result name="cxDwxz">/WEB-INF/pages/zfxg/plugins/dwxz/cxDwxz.jsp</result>
+			<result name="cxDwxx">/WEB-INF/pages/zfxg/plugins/dwxz/cxDwxx.jsp</result>
+			<result name="cxDwxzZjLsdw">/WEB-INF/pages/zfxg/plugins/dwxz/cxDwxzZjLsdw.jsp</result>
+		</action>
+
+		<!--  -->
+		
+		<!-- 文件上传  无需权限控制-->
+		<action name="fileUpload_*" class="fileUploadAction" method="{1}">
+			<interceptor-ref name="SimpleStack"></interceptor-ref>
+			<result name="fileUpload">/WEB-INF/pages/globalweb/comm/upload/fileUpload.jsp</result>
+		</action>
+		
+		<!-- 文件上传  权限控制-->
+		<action name="fileUploadPurview_*" class="fileUploadAction" method="{1}">
+			<result name="fileUpload">/WEB-INF/pages/globalweb/comm/upload/fileUpload.jsp</result>
+		</action>
+		
+		<!-- 金智单点登录-->
+		<action name="ssoLogin_*" class="jzSsoSession" method="{1}">
+			<interceptor-ref name="SimpleStack"></interceptor-ref>
+			<result name="jzLogin" type="redirect">/xtgl/index_initMenu.html</result>
+			<result name="xsjzLogin" type="redirect">/lxgl/zzfw/zzbl/main.html</result>
+			<result name="error">/WEB-INF/pages/ssoLoginError.jsp</result>
+		</action>
+		
+		<!-- 金智2014单点登录-->
+		<action name="jzssoLogin_*" class="jzSsoSessionAction" method="{1}">
+			<interceptor-ref name="SimpleStack"></interceptor-ref>
+			<result name="jzLogin" type="redirect">/xtgl/index_initMenu.html</result>
+			<result name="xsjzLogin" type="redirect">/lxgl/zzfw/zzbl/main.html</result>
+			<result name="error">/WEB-INF/pages/ssoLoginError.jsp</result>
+		</action>
+		
+		<!-- 缓存管理 -->
+		<action name="cache_*" class="cacheAction" method="{1}">
+			<result name="cacheUpdate">/WEB-INF/pages/zfxg/plugins/cache/cacheUpdate.jsp</result>
+		</action>
+				
+		<action name="bigComboSelectAjax_*" class="bigComboSelectAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<result name="loadNormalTypePage">/WEB-INF/pages/zfxg/plugins/bigcombo/loadNormalTypePage.htm</result>
+			<result name="loadXzqTypePage">/WEB-INF/pages/zfxg/plugins/bigcombo/loadXzqTypePage.htm</result>
+		</action>
+	</package>
+</struts>

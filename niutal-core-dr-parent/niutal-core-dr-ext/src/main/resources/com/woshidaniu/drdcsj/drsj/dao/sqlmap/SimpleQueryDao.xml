@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woshidaniu.drdcsj.drsj.dao.daointerface.SimpleQueryDao">
+
+	<!-- 以下是工具方法，提供给验证等组件使用 -->
+	<select id="querySingleIntegerByParamsSql" resultType="java.lang.Integer">
+		${sql}
+	</select>
+	
+	<select id="querySingleStringColumnListBySql" resultType="java.lang.String">
+		${sql}
+	</select>
+	
+	<select id="querySingleStringColumnListByParamsSql" resultType="java.lang.String">
+		${sql}
+	</select>
+	
+	<select id="querySingleIntegerColumnListByParamsSql" resultType="java.lang.Integer">
+		${sql}
+	</select>
+	
+	<select id="update" resultType="java.lang.Integer">
+		${sql}
+	</select>
+</mapper>

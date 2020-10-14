@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="i18n" namespace="/i18n" extends="configuration">
+		
+		<!-- 国际化资源文件管理 -->
+		<action name="i18n_*" class="com.woshidaniu.i18n.action.I18nAction" method="{1}">
+			 <result name="success">/WEB-INF/pages/globalweb/comp/xtgl/i18n/{1}${xxdm}.jsp</result>
+		</action>
+
+	</package>
+</struts>

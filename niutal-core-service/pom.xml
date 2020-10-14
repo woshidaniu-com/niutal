@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-service</artifactId>
+	<description>业务框架-基础功能Service层实现</description>
+	<packaging>jar</packaging>
+	
+	<dependencies>
+		
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- niukit-base : 快速开发基础工具组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-security</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastxls-jexcel</artifactId>
+		</dependency>
+		
+		<!-- ###################### niutal核心组件  ###################### -->
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-dao</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+	</dependencies>
+
+</project>

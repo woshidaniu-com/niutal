@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.BaseGbBasicDataDao" >
+
+	<select id="getMingZhuModelList" resultType="com.woshidaniu.dao.entities.GBMzModel">
+		SELECT * FROM DM_GB_B_ZGGMZMCDLMZMPXFHDM
+	</select>
+	
+	<select id="getXingBieModelList" resultType="com.woshidaniu.dao.entities.GBXbModel">
+		SELECT * FROM DM_GB_B_RDXBDM
+	</select>
+	
+	<select id="getXueLiModelList" resultType="com.woshidaniu.dao.entities.GBXlModel">
+		SELECT * FROM DM_GB_B_XLDM
+	</select>
+	
+	<select id="getXueWeiModelList" resultType="com.woshidaniu.dao.entities.GBXwModel">
+		SELECT * FROM DM_GB_B_ZHRMGHGXWDM
+	</select>
+	
+	<select id="getZhengZhiMianMaoModelList" resultType="com.woshidaniu.dao.entities.GBZzmmModel">
+		SELECT * FROM DM_GB_B_ZZMMDM
+	</select>
+	
+	<select id="getXingZhengQuModelList" resultType="com.woshidaniu.dao.entities.GBXzqModel">
+		select * from DM_VIEW_GB_XZQHDMHBB
+	</select>
+</mapper>

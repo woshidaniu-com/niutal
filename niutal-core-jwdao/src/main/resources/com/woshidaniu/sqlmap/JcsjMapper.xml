@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IJcsjDao" >
+
+	<!-- 查询基础数据列表（不分页） -->
+	<select id="cxJcsjList" parameterType="JcsjModel" resultType="JcsjModel">
+		select a.lx || '_' || a.dm pkValue, a.lx, a.dm, a.mc, a.ywmc, b.lxmc, b.xtjb
+		 from niutal_xtgl_jcsjb a,niutal_xtgl_jcsjlxb b 
+		 where a.lx = b.lxdm
+		<if test="lxdm != null and lxdm != ''">
+			and a.lx = #{lxdm}
+		</if>
+		<if test="dm != null and dm != ''">
+			and a.dm like '%'||#{dm}||'%'
+		</if>
+		<if test="mc != null and mc != ''">
+			and a.mc like '%'||#{mc}||'%'
+		</if>
+		order by a.lx,lpad(a.dm,10,'0')
+	</select>
+	
+	<!-- 查询基础数据列表 （分页）-->
+	<select id="getPagedList" parameterType="JcsjModel" resultType="JcsjModel">
+		select a.lx || '_' || a.dm pkValue, a.lx, a.dm, a.mc, a.ywmc, b.lxmc, b.xtjb
+		  from niutal_xtgl_jcsjb a,niutal_xtgl_jcsjlxb b 
+		 where a.lx = b.lxdm
+		<if test="lxdm != null and lxdm != ''">
+			and a.lx = #{lxdm}
+		</if>
+		<if test="dm != null and dm != ''">
+			and a.dm like '%'||#{dm}||'%'
+		</if>
+		<if test="mc != null and mc != ''">
+			and a.mc like '%'||#{mc}||'%'
+		</if>
+		<if test="xtjb != null and xtjb != ''">
+			and b.xtjb = #{xtjb} 
+		</if>
+	</select>
+	
+	<!-- 查询基础数据类型列表 -->
+	<select id="getModelList" parameterType="JcsjModel" resultType="JcsjModel">
+		select t.lxdm, t.lxmc from niutal_xtgl_jcsjlxb t where 1 = 1
+		<if test="xtjb != null and xtjb != ''">
+			and t.xtjb = #{xtjb} 
+		</if>
+		order by t.lxmc
+	</select>
+	
+    <!-- 保存基础数据 -->
+    <insert id="insert" parameterType="JcsjModel">
+    	insert into niutal_xtgl_jcsjb (lx,dm,mc,ywmc) values (#{lxdm},#{dm},#{mc},#{ywmc,jdbcType=VARCHAR})
+    </insert>
+    
+   	<!-- 查询单组基础数据信息 -->
+    <select id="getModel" parameterType="JcsjModel" resultType="JcsjModel">
+    select a.lx lxdm,
+	       a.dm,
+	       a.mc,
+	       a.ywmc,
+	       (select lxmc from niutal_xtgl_jcsjlxb b where a.lx = b.lxdm) lxmc
+	  from niutal_xtgl_jcsjb a
+	 where a.lx || '_' || a.dm = #{pkValue}
+    </select>
+    
+   	<!-- 修改基础数据 -->
+    <update id="update" parameterType="JcsjModel">
+    	update niutal_xtgl_jcsjb a
+    	<set>
+    		<if test="dm != null and dm != ''">
+    			a.dm = #{dm},
+    		</if>
+    		<if test="lx != null and lx !=''">
+    			a.lx = #{lx},
+    		</if>
+    		<if test="mc != null and mc != ''">
+    			a.mc = #{mc},
+    		</if>
+    		<if test="ywmc != null and ywmc != ''">
+    			a.ywmc = #{ywmc,jdbcType=VARCHAR}
+    		</if>
+    	</set> 
+    	where a.lx || '_' || a.dm =#{pkValue} 
+    </update>
+    
+     <!-- 删除基础数据 -->
+    <delete id="batchDelete" parameterType="hashMap" flushCache="false" statementType="PREPARED" timeout="20000">
+	    <if test="list != null and list.size() > 0 ">
+	    	delete niutal_xtgl_jcsjb a where
+    	 	<foreach collection="list" item="item" index="index" separator=" OR">
+				a.lx || '_' || a.dm = #{item.pkValue} 
+			</foreach>
+	    </if>
+    </delete>
+    
+    <!-- 查询基础数据列表 -->
+	<select id="getJcsjList" parameterType="string" resultType="JcsjModel">
+		select t.dm, decode(#{localeKey},'en_US',nvl(t.ywmc,t.mc),t.mc) as mc
+		    from niutal_xtgl_jcsjb t
+		   where t.lx = #{lxdm}
+		   order by lpad(t.dm,10,'0')
+	</select>
+	
+    <!-- 查询学期 -->
+    <select id="getXqList" resultType="JcsjModel" parameterType="string">
+       <if test="syxq!=0">
+       		 <![CDATA[
+		    	select a.dm,a.mc from niutal_xtgl_jcsjb a where lx = '0001' and not exists (select 'X' from (
+				select  bitand(m.dm,n.dm) dm  from niutal_xtgl_jcsjb n,niutal_xtgl_jcsjb m where n.lx = '0001' and n.lx = m.lx and 
+				n.dm <> m.dm and bitand(n.dm,m.dm)  > 0 ) b where a.dm = b.dm )
+				order by lpad(a.dm,10,'0')
+	    	]]>
+       </if>
+       <if test="syxq==0">
+        	 <![CDATA[
+		    	select a.dm,a.mc from niutal_xtgl_jcsjb a where lx = '0001' and not exists (select 'X' from (
+				select m.dm from niutal_xtgl_jcsjb n,niutal_xtgl_jcsjb m where n.lx = '0001' and n.lx = m.lx and 
+				n.dm <> m.dm and bitand(n.dm,m.dm)  > 0 group by m.dm having count(n.dm) >1 ) b where a.dm = b.dm ) 
+				order by lpad(a.dm,10,'0')
+	    	]]>
+       </if>
+    </select>
+    
+</mapper>

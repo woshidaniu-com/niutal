@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal-core-dr-parent</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>niutal-core-dr-ext</artifactId>
+	<packaging>jar</packaging>
+
+	<dependencies>
+
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- niukit-orm : ORM/持久层框架快速开发组件 -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-orm-mybatis</artifactId>
+		</dependency>
+		<!-- niukit-db : 数据库操作快速开发组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niukit-db-core</artifactId>
+		</dependency>
+		<!-- fastxls : 基于POI、JXL的Excel,Doc,PPT等快速生成组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastxls-poi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastxls-jexcel</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- 用于开发导入模块的测试依赖 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+  			<artifactId>ojdbc6</artifactId>
+  			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+</project>

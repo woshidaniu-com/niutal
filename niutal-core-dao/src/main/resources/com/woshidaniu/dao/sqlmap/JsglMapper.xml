@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IJsglDao" >
+
+    <!-- 增加角色信息 -->
+    <insert id="insert" parameterType="JsglModel">
+    	insert into niutal_xtgl_jsxxb(jsdm,jsmc,jssm,qyzt) values (#{jsdm},#{jsmc},#{jssm},#{qyzt})
+    </insert>
+    
+    <!-- 修改角色信息 -->
+    <update id="update" parameterType="JsglModel">
+    	update niutal_xtgl_jsxxb
+    	<set>
+    		<if test="jsmc != null">
+    			jsmc = #{jsmc},
+    		</if>
+    		<if test="jssm != null">
+    			jssm = #{jssm},
+    		</if>
+    		<if test="qyzt != null">
+    			qyzt = #{qyzt}
+    		</if>
+    	</set> 
+    	where jsdm=#{jsdm} 
+    </update>
+    
+    <!-- 删除角色信息 -->
+    <delete id="batchDelete" >
+   	 delete niutal_xtgl_jsxxb where 
+    	  <foreach collection="list" item="item" index="index"
+				separator=" OR">
+			   jsdm = #{item.pkValue} 
+		</foreach>
+    </delete>
+    
+    <!-- 查询角色信息列表（分页） -->
+    <select id="getPagedList" parameterType="JsglModel"  resultType="JsglModel">
+		select  t.* ,(select count(1) from niutal_xtgl_yhjsb t2 where  t.jsdm=t2.jsdm) yhs from niutal_xtgl_jsxxb t
+    	<where>
+    		<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				 ${searchModel.querySQL}
+			</if>
+		 </where>
+    </select>
+    
+    <!-- 查询可用全部角色 -->
+    <select id="getModelList"   resultType="JsglModel">
+		select  t.*  from niutal_xtgl_jsxxb t where qyzt='1'
+    </select>
+    
+
+	<!-- 角色功能权限列表 -->
+	<select id="getJsqxList" parameterType="string" resultType="string">
+		select t2.qxdm from niutal_xtgl_jsgnmkczb t1,niutal_xtgl_gnmkczb t2 where t1.gnczid=t2.gnczid and t1.jsdm=#{jsdm} and qxdm > ' '
+	</select>
+	
+	<!-- 菜单对象映射，最多支持三级 -->
+	<resultMap id="menuList" type="menu">  
+	    <id property="gnmkdm" column="topdm"/>  
+	    <result property="gnmkmc" column="topmc"/>  
+	    <result property="gnjc" column="topjc"/>  
+	    <collection property="childrens"  ofType="menu">  
+	        <id property="gnmkdm" column="fjgndm"/>  
+	    	<result property="gnmkmc" column="fjgnmc"/> 
+	    	<result property="gnjc" column="fjgnjc"/>   
+	    	<collection property="childrens"  ofType="menu">  
+		        <id property="gnmkdm" column="gnmkdm"/>  
+		    	<result property="gnmkmc" column="gnmkmc"/>  
+		    	<result property="xssx" column="xssx"/>  
+		    	<result property="dyym" column="dyym"/>  
+		    	<collection property="buttonList"  ofType="button">  
+			        <id property="gnczid" column="gnczid"/>  
+			    	<result property="czmc" column="czmc"/>  
+			    	<result property="czdm" column="czdm"/>  
+			    </collection>  
+		    </collection>  
+	    </collection>  
+	</resultMap>
+	
+	<!-- 角色功能菜单列表 -->
+	<select id="getGnqxByJsdm" parameterType="string"  resultMap="menuList">
+		 select  t1.czmc,t1.czdm,t2.gnczid,t3.gnmkdm,t3.gnmkmc,t3.dyym,t3.gnjc,t3.xssx,t3.fjgndm,     
+		       (select gnmkmc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnmc,
+		       (select xssx from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnxs,
+		       (select gnjc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnjc,
+		       (select fjgndm from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) topdm,
+		       (select gnmkmc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topmc,
+		       (select xssx from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topxs,
+		       (select gnjc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topjc
+		from niutal_xtgl_gnmkczb t2 
+   		left join niutal_xtgl_czdmb t1 on t2.czdm=t1.czdm
+		left join niutal_xtgl_jsgnmkdmb t3 on t2.gnmkdm=t3.gnmkdm 
+   		where 
+   		 t3.sfqy = '1' 
+   		 and exists (select 1 from niutal_xtgl_jsgnmkczb t4 where t2.gnczid=t4.gnczid and t4.jsdm=#{jsdm})
+		order by to_number(topxs),topdm,to_number(fjgnxs),fjgndm,to_number(t3.xssx),t3.gnmkdm,to_number(t2.xssx)
+	</select>
+	
+	<!-- 角色功能菜单（二级授权） -->
+	<select id="getGnqxByEjjs"  resultMap="menuList">
+		 select  t1.czmc,t1.czdm,t2.gnczid,t3.gnmkdm,t3.gnmkmc,t3.dyym,t3.gnjc,t3.xssx,t3.fjgndm,     
+		       (select gnmkmc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnmc,
+		       (select xssx from niutal_xtgl_jsgnmkdmb t where  t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnxs,
+		       (select gnjc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnjc,
+		       (select fjgndm from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) topdm,
+		       (select gnmkmc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topmc,
+		       (select xssx from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topxs,
+		       (select gnjc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topjc
+		from niutal_xtgl_gnmkczb t2 
+   		left join niutal_xtgl_czdmb t1 on t2.czdm=t1.czdm
+		left join niutal_xtgl_jsgnmkdmb t3 on t2.gnmkdm=t3.gnmkdm 
+   		where 
+   		 t3.sfqy = '1' 
+   		 and exists (select 1 from niutal_xtgl_jsgnmkczb t4 where t2.gnczid=t4.gnczid and t4.jsdm=#{jsdm} and exists (select 1 from niutal_xtgl_ejqxb t5 where t5.jsgnczid=t4.jsgnczid  and t5.sxz=#{sxz}))
+		order by to_number(topxs),topdm,to_number(fjgnxs),fjgndm,to_number(t3.xssx),t3.gnmkdm,to_number(t2.xssx)
+	</select>
+	
+	<!-- 查询所有的功能权限 -->
+	<select id="getAllGnqxList"   resultMap="menuList">
+			select  
+				t1.czmc,
+				t1.czdm,
+				t2.gnczid,
+				t3.gnmkdm,
+				t3.gnmkmc,
+				t3.dyym,
+				t3.gnjc,
+				t3.xssx,
+				t3.fjgndm,
+				t2.xssx gn_xssx,     
+			       (select gnmkmc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnmc,
+			       (select xssx from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnxs,
+			       (select gnjc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) fjgnjc,
+			       (select fjgndm from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=t3.fjgndm) topdm,
+			       (select gnmkmc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topmc,
+			       (select xssx from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topxs,
+			       (select gnjc from niutal_xtgl_jsgnmkdmb t where t.sfqy = '1' and t.gnmkdm=(select fjgndm from niutal_xtgl_jsgnmkdmb s where s.sfqy = '1' and s.gnmkdm=t3.fjgndm)) topjc
+			from niutal_xtgl_gnmkczb t2 
+	    	left join niutal_xtgl_czdmb t1 on t2.czdm=t1.czdm
+			left join niutal_xtgl_jsgnmkdmb t3 on t2.gnmkdm=t3.gnmkdm 
+			where 
+			 t3.sfqy = '1'
+			order by 
+		        topdm,
+		        to_number (topxs),
+		        fjgndm,
+		        to_number (fjgnxs),
+		        t3.gnmkdm,
+		        to_number (t3.xssx),
+		        to_number (t2.xssx)
+	</select>
+
+	<!-- 角色菜单按钮 -->
+	<select id="getButtonList"  resultType="ancdModel">
+		select t1.gnczid,t2.czdm,t3.czmc,t3.anys from niutal_xtgl_jsgnmkczb t1,niutal_xtgl_gnmkczb t2,niutal_xtgl_czdmb t3
+		 where t1.gnczid=t2.gnczid and t2.czdm=t3.czdm and t1.jsdm=#{jsdm} 
+		 <if test="gnmkdm != null and gnmkdm != ''">
+		 	and t2.gnmkdm=#{gnmkdm}
+		 </if>
+		 order by to_number(t2.xssx)
+	</select>
+	
+	<!-- 二级权限 -->
+	<select id="getEjqxButtonList"  resultType="ancdModel">
+		select t1.gnczid,t2.czdm,t3.czmc,t3.anys from niutal_xtgl_jsgnmkczb t1,niutal_xtgl_gnmkczb t2,niutal_xtgl_czdmb t3
+		where t1.gnczid=t2.gnczid and t2.czdm=t3.czdm and t1.jsdm=#{jsdm} and t2.gnmkdm=#{gnmkdm}
+		and exists (select 1 from niutal_xtgl_ejqxb t4 where t1.jsgnczid=t4.jsgnczid and t4.sxz=#{sxz})
+		order by to_number(t2.xssx)
+	</select>
+
+	<!-- 查询单条角色信息 -->
+    <select id="getModel" parameterType="JsglModel" resultType="JsglModel">
+    	select jsdm,jsmc,jssm,qyzt from niutal_xtgl_jsxxb a where jsdm = #{jsdm}
+    </select>
+
+
+	<!-- 用户角色列表 -->
+	<select id="getJsxxListByZgh" parameterType="string" resultType="JsglModel">
+    	select t1.jsdm,t1.jsmc,t1.jssm,t1.qyzt from niutal_xtgl_jsxxb t1 where exists (select 1 from niutal_xtgl_yhjsb t2 where t1.jsdm=t2.jsdm and t2.zgh=#{zgh}) and qyzt='1'
+    </select>
+
+	<!-- 删除角色信息 -->
+	<delete id="deleteJsxx" parameterType="string" >
+		delete from niutal_xtgl_jsxxb where jsdm=#{jsdm} and jsdj='1'
+	</delete>
+
+	<!-- 删除角色用户 -->
+	<delete id="deleteJsyh" parameterType="string" >
+		delete from niutal_xtgl_yhjsb t1 where t1.jsdm=#{jsdm} 
+	</delete>
+
+	<!-- 删除角色功能权限 -->
+	<delete id="deleteJsgn" parameterType="string" >
+		delete from niutal_xtgl_jsgnmkczb t1 where t1.jsdm=#{jsdm} 
+	</delete>
+    
+     <!-- 查询未分配用户信息列表 -->
+	<select id="getPagedWfpyhList" parameterType="JsglModel" resultType="YhglModel">
+		 select  zgh,xm,lxdh,dzyx,sfqy,jgdm,
+		 (select bmmc from niutal_xtgl_bmdmb where bmdm_id=t1.jgdm) jgmc
+		 from niutal_xtgl_yhb t1 where not exists (select 1 from niutal_xtgl_yhjsb t2 where t1.zgh=t2.zgh and t2.jsdm=#{jsdm}) 
+		 <if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+				and ${searchModel.querySQL}
+		 </if>
+	</select>
+    
+	<!-- 查询已分配用户信息列表 -->
+	<select id="getPagedYfpyhList" parameterType="JsglModel" resultType="YhglModel">
+		select  zgh,xm,lxdh,dzyx,sfqy,jgdm,
+		 (select bmmc from niutal_xtgl_bmdmb where bmdm_id=t1.jgdm) jgmc
+		from niutal_xtgl_yhb t1 where  exists (select 1 from niutal_xtgl_yhjsb t2 where t1.zgh=t2.zgh and t2.jsdm=#{jsdm}) 
+		<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+			and ${searchModel.querySQL}
+		</if>
+	</select>
+    
+    
+    <!-- 保存角色分配用户信息 -->
+    <insert id="insertYhfp" >
+	    insert into niutal_xtgl_yhjsb (zgh,jsdm) 
+	    <foreach collection="zghs" item="item" index="index" separator="union all">
+            select #{item},#{jsdm} from dual
+        </foreach>
+	</insert>
+    
+    <!-- 删除角色分配用户信息 -->
+    <delete id="deleteYhfp" >
+	    delete niutal_xtgl_yhjsb where jsdm=#{jsdm} and 
+	    <foreach collection="zghs" item="item" index="index" separator="or"  open="("  close=")">
+            zgh=#{item}
+        </foreach>
+	</delete>
+    
+    <!-- 查询角色数据资源 -->
+    <select id="getSjzyList"  resultType="SjzygzModel">
+		select t2.* from niutal_xtgl_jssjqxb t1
+		left join ztal_xtgl_sjzygz t2 on t1.gzid = t2.gzid
+		where t1.jsdm=#{jsdm} and 
+		<foreach collection="zyids" item="item" index="index" separator="or"  open="("  close=")">
+            t2.zyid=#{item}
+        </foreach>
+	</select>
+    
+     <!-- 保存角色功能权限 -->
+	<insert id="insertGnqx" >
+    	insert into niutal_xtgl_jsgnmkczb (jsdm,gnczid)  
+    	 <foreach collection="gnczids" item="item" index="index" separator="union all">
+            select #{jsdm},#{item} from dual
+        </foreach>
+	</insert>
+	
+	<!-- 删除角色功能权限 -->
+	<delete id="deleteGnqx" >
+	   delete from niutal_xtgl_jsgnmkczb where jsdm=#{jsdm}
+	</delete>
+	
+	<!-- 二级授权用户列表 -->
+	<select id="getPagedEjsqList" parameterType="EjqxModel" resultType="YhglModel">
+		select * from (
+			select 	zgh,xm,lxdh,dzyx,jgdm,
+					   (select bmmc from niutal_xtgl_bmdmb where bmdm_id=t1.jgdm) jgmc,
+					   case when exists (select 1 from niutal_xtgl_ejqxb t2 where t1.zgh=t2.sxz and gxz=#{gxz}
+				       and exists (select 1 from niutal_xtgl_jsgnmkczb t3 where t2.jsgnczid=t3.jsgnczid and t3.jsdm=#{jsdm})) then '1' else '0' end ejsq
+			from niutal_xtgl_yhb t1 where sfqy='1'
+		) where 1=1 
+		<if test="searchModel.querySQL != null and searchModel.querySQL !=''">
+			and ${searchModel.querySQL}
+		</if>
+	</select>
+	
+	<!-- 删除二级授权数据 -->
+	<delete id="deleteEjqx" parameterType="EjqxModel">
+		delete from niutal_xtgl_ejqxb t where exists (select 1 from niutal_xtgl_jsgnmkczb t2 where t.jsgnczid=t2.jsgnczid and t2.jsdm=#{jsdm}) and sxz=#{sxz}
+	</delete>
+	
+	<!-- 保存二级授权 -->
+	<insert id="insertEjqx"  parameterType="EjqxModel">
+    	insert into niutal_xtgl_ejqxb (gxz,sxz,jsgnczid)  
+    	 <foreach collection="gnczids" item="item" index="index" separator="union all">
+            select #{gxz},#{sxz},jsgnczid from niutal_xtgl_jsgnmkczb where jsdm=#{jsdm} and gnczid=#{item}
+        </foreach>
+	</insert>
+	
+	<!-- 角色菜单按钮 -->
+	<select id="getEjqxList"  parameterType="EjqxModel" resultType="ancdModel">
+		 select t1.gnczid,t2.czdm,t3.czmc,t3.anys from niutal_xtgl_jsgnmkczb t1,niutal_xtgl_gnmkczb t2,niutal_xtgl_czdmb t3
+		 where t1.gnczid=t2.gnczid and t2.czdm=t3.czdm and t1.jsdm=#{jsdm} and exists (select 1 from niutal_xtgl_ejqxb t4 where t1.jsgnczid=t4.jsgnczid and t4.gxz=#{gxz} and t4.sxz=#{sxz})
+		 order by to_number(t2.xssx)
+	</select>
+	
+	<!-- 二级授权角色 -->
+	<select id="getEjsqJsxxList" parameterType="string" resultType="JsglModel">
+		select * from niutal_xtgl_jsxxb t where qyzt='1' and exists (select 1 from niutal_xtgl_jsgnmkczb t1 where t.jsdm=t1.jsdm and exists (select 1 from niutal_xtgl_ejqxb t2 where t1.jsgnczid=t2.jsgnczid and t2.sxz=#{zgh}))
+	</select>
+	
+	<!-- 角色功能权限列表 -->
+	<select id="getUserEjqxList"  resultType="string">
+		select t2.qxdm from niutal_xtgl_jsgnmkczb t1,niutal_xtgl_gnmkczb t2 where t1.gnczid=t2.gnczid and t1.jsdm=#{jsdm} and qxdm > ' '
+     	and exists (select 1 from niutal_xtgl_ejqxb t3 where t1.jsgnczid=t3.jsgnczid  and t3.sxz=#{sxz})
+	</select>
+	
+	
+	<!-- 删除角色数据权限 -->
+	<delete id="deleteSjqx">
+		delete from niutal_xtgl_jssjqxb where jsdm=#{jsdm}
+	</delete>
+	
+	<!-- 保存角色数据权限 -->
+	<insert id="insertSjqx">
+		insert into niutal_xtgl_jssjqxb(jsdm,gzid)
+		<foreach collection="gzids" item="item" index="index" separator="union all">
+            select #{jsdm},#{item} from dual
+        </foreach>
+	</insert>
+	
+	<!-- 查询角色数据权限 -->
+	<select id="getSjqxByJsdm" parameterType="string" resultType="string">
+		select gzid from niutal_xtgl_jssjqxb where jsdm=#{jsdm}
+	</select>
+	
+	<delete id="deleteEjqxByJsdm" parameterType="string" >
+		delete from niutal_xtgl_ejqxb t1 where  exists (select 1 from niutal_xtgl_jsgnmkczb t2 where t1.jsgnczid=t2.jsgnczid and t2.jsdm=#{jsdm})
+	</delete>
+	
+	<delete id="deleteYhEjqx"  >
+		delete from niutal_xtgl_ejqxb t1 where not exists (select 1 from niutal_xtgl_yhb t2 where t1.gxz=t2.zgh or t1.sxz=t2.zgh)
+	</delete>
+	
+	
+	<select id="getPagedGnqxRole" resultType="JsglModel"  parameterType="gnqxModel" >
+		select t1.jsdm,t1.jsmc,t1.jssm,t1.qyzt from niutal_xtgl_jsxxb t1 where 
+	 	<foreach collection="gnczid" item="item" index="index" separator=" and ">
+            exists (
+		       select 1 from niutal_xtgl_jsgnmkczb t2 where t1.jsdm=t2.jsdm and t2.gnczid='${item}'
+		 )
+       </foreach>
+	</select>
+	
+	<select id="getPagedGnqxUser" resultType="YhglModel" parameterType="gnqxModel">
+		 select t1.zgh,t1.xm,t1.lxdh,t1.dzyx,t1.sfqy,t1.jgdm,t1.yhlx,
+		        (select bmmc from niutal_xtgl_bmdmb where bmdm_id=t1.jgdm) jgmc
+		 from niutal_xtgl_yhb t1
+		 where  exists (
+		       select 1 from niutal_xtgl_yhjsb t2 where t1.zgh=t2.zgh and 
+		       
+		       <foreach collection="gnczid" item="item" index="index" separator=" and ">
+		             exists (
+		              select 1 from niutal_xtgl_jsgnmkczb t3 where t3.jsdm=t2.jsdm and t3.gnczid='${item}'
+		       		)
+		       </foreach>
+		      
+		 )
+	</select>
+	
+	
+	<select id="getPagedEjqxUser" resultType="YhglModel" parameterType="gnqxModel">
+		 select t1.zgh,t1.xm,t1.lxdh,t1.dzyx,t1.sfqy,t1.jgdm,t1.yhlx,
+		        (select bmmc from niutal_xtgl_bmdmb where bmdm_id=t1.jgdm) jgmc
+		 from niutal_xtgl_yhb t1
+		 where 
+		 <foreach collection="gnczid" item="item" index="index" separator=" and ">
+            exists (
+		       select 1 from niutal_xtgl_ejqxb t2 where t1.zgh=t2.sxz and t2.jsgnczid=(select jsgnczid from niutal_xtgl_jsgnmkczb where gnczid='${item}' and rownum=1)
+		   )
+       </foreach>
+	</select>
+</mapper>

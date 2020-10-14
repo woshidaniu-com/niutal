@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 
+		<context:component-scan/>标签注意事项：
+		1、<context:component-scan>有一个use-default-filters属性，该属性值为true时表示会扫描指定包下的全部的标有
+			@Component、@Repository、@Service和@Controller的类并注册成bean;
+		2、因为base-package="com.woshidaniu"在这个目录下包含了Action,Service,Dao;
+			如果配置文件中<context:component-scan base-package="com.woshidaniu"/>未指定 use-default-filters="false" ，
+			 默认不仅仅扫描指定规则的Bean，还扫描标注有@Component、@Repository、@Service和@Controller的Bean，可能造成一些问题。
+			 原因可参见网络博客：http://jinnianshilongnian.iteye.com/blog/1762632
+		3、 仅仅指定base-package的扫描方式粒度比较，我们需要指定扫描和不扫描的规则，获得更好的扫描效率。此时子标签
+			<context:incluce-filter>和<context:include-filter> 就起到了勇武之地。
+		       如下所示：
+			<context:component-scan base-package="com.woshidaniu" use-default-filters="false">  
+				<context:include-filter type="regex" expression="com.woshidaniu.*.impl.*"/>
+				<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+			</context:component-scan>  
+		      备注：
+		    context:exclude-filter 子节点指定排除哪些指定表达式的组件
+    		context:include-filter 子节点指定包含哪些表达式的组件，该子节点需要use-default-filters="false"配合使用（如果use-default-filters="ture"
+    		则使用系统默认扫描所有带有@Component@Controller@Service@Repository的组件）
+		4、filter标签在Spring3有五个type，如下：
+		|	Filter Type |	Examples Expression 		|	Description														|
+		|	annotation 	|	org.example.SomeAnnotation 	|	符合SomeAnnoation的target class									|
+		|	assignable 	|	org.example.SomeClass 		|	指定class或interface的全名											|
+		|	aspectj 	|	org.example..*Service+ 		|	AspectJ语法														|
+		|	regex 		|	org\.example\.Default.* 	|	Regelar Expression												|
+		|	custom 		|	org.example.MyTypeFilter 	|	Spring3新增自訂Type，实作org.springframework.core.type.TypeFilter	|
+    
+	 -->
+	<!-- 根据指定规则扫描:这里主要是Service实现对象扫描 base-package="com.woshidaniu"-->
+	<context:component-scan base-package="com.woshidaniu" resource-pattern="**/service/**/*Impl.class" use-default-filters="false">
+		<context:include-filter type="aspectj" expression="com.woshidaniu..service..*.*"/>
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="regex" expression="com\.woshidaniu\.fast.*\..*\..*"/>
+		<context:exclude-filter type="regex" expression="com.fr.*\..*\..*"/>
+		<context:exclude-filter type="regex" expression="com.woshidaniu.component.bpm.*\..*\..*"/>
+		<context:exclude-filter type="assignable" expression="com.woshidaniu.service.impl.LogEngineImpl"/>
+		<context:exclude-filter type="assignable" expression="com.woshidaniu.export.service.impl.ExportExcelImpl"/> 
+		<context:exclude-filter type="assignable" expression="com.woshidaniu.export.service.impl.ExportWordImpl"/>
+	</context:component-scan>
+	<!-- 仅仅扫描带有@Component、@Repository、@Service注解标注的特殊Bean 
+	<context:component-scan base-package="com.woshidaniu" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>-->
+	
+	<!-- Spring3.0以上必须增加ignore-unresolvable="true"否则报错 
+	<context:property-placeholder location="classpath*:system.properties" ignore-unresolvable="true" />  -->
+	<util:properties id="dbProps" location="classpath:system.properties"/>
+	<util:properties id="runtimeProps" location="classpath:runtime.properties"/>
+	
+	<!-- https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE-wallfilter -->
+	<bean id="wall-filter-config" class="com.alibaba.druid.wall.WallConfig" init-method="init">
+		<!-- 指定配置装载的目录  -->
+		<property name="dir" value="META-INF/druid/wall/oracle" />
+		<!-- 是否允许语句中存在注释，Oracle的用户不用担心，Wall能够识别hints和注释的区别 -->
+		<property name="commentAllow" value="true" />
+	    <!-- 是否允许非以上基本语句的其他语句，缺省关闭，通过这个选项就能够屏蔽DDL。 -->
+	    <property name="noneBaseStatementAllow" value="true" />
+	    <!-- 是否允许一次执行多条语句，缺省关闭 -->
+	    <property name="multiStatementAllow" value="true" />
+	    <!-- 解除union关键字检查 -->
+	    <property name="selectUnionCheck" value="false" />
+	</bean>
+
+  	<bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+      	<property name="config" ref="wall-filter-config" />
+     	<!-- 对被认为是攻击的SQL进行LOG.error输出 
+	    <property name="logViolation" value="false" />-->
+	    <!-- 对被认为是攻击的SQL抛出SQLExcepton -->
+	    <property name="throwException" value="true" />
+    </bean>
+    
+	<!-- javamelody监控 数据安全库 数据源的 配置 ：如果启用打开注释 ，并替换 安全库名称为 _securityDataSource: 
+	<bean id="securityDataSource" class="net.bull.javamelody.SpringDataSourceFactoryBean">
+	    <property name="targetName" value="_securityDataSource" />
+	</bean>-->
+	
+	<!-- 数据安全库数据源 -->
+	<bean id="securityDataSource"  class="com.woshidaniu.db.core.datasource.NewDruidDataSource" init-method="init" destroy-method="close"  scope="singleton">
+		
+		<!--配置这个属性的意义在于，如果存在多个数据源，监控的时候可以通过名字来区分开来。如果没有配置，将会生成一个名字，格式是：”DataSource-” + System.identityHashCode(this)-->
+		<!-- <property name="name" value="dataSource-security" /> -->
+		<!--这一项可配可不配，如果不配置druid会根据url自动识别dbType，然后选择相应的driverClassName-->
+		<property name="driverClassName" value="#{runtimeProps['druid.driverClassName']}" />
+		<!--jdbcUrl: 连接数据库的url -->
+		<property name="url" value="#{dbProps['cj.jdbc.jdbcUrl']}" />
+		<!--username: 连接数据库的用户名 -->
+		<property name="username" value="#{dbProps['cj.jdbc.user']}" />
+		<!--password: 连接数据库的密码 -->
+		<property name="password" value="#{dbProps['cj.jdbc.password']}" />
+		<!--connectionProperties: 连接数据库的额外参数 -->
+		<property name="connectionProperties" value="#{runtimeProps['druid.connectionProperties']}" />
+		
+		<!-- druid 连接池参数 -->
+		
+		<!--配置初始化大小、最小、最大 连接池数量-->
+		<!--initialSize: 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时 -->
+		<property name="initialSize" value="#{runtimeProps['druid.initialSize']}"></property>
+		<!--minIdle: 连接池最小连接数量 -->
+		<property name="minIdle" value="#{runtimeProps['druid.minIdle']}" /> 
+		<!--maxActive: 连接池最大连接数量 -->
+		<property name="maxActive" value="#{runtimeProps['druid.maxActive']}"></property>
+	    <!-- 获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+	    <property name="maxWait" value="#{runtimeProps['druid.maxWait']}"></property> -->
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒;有两个含义：1) Destroy线程会检测连接的间隔时间 2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明 -->
+	    <property name="timeBetweenEvictionRunsMillis" value="#{runtimeProps['druid.timeBetweenEvictionRunsMillis']}"></property>
+	    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒  -->
+	    <property name="minEvictableIdleTimeMillis" value="#{runtimeProps['druid.minEvictableIdleTimeMillis']}"></property>
+	    <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="#{runtimeProps['druid.removeAbandoned']}" />
+        <!-- 超过时间限制多长，单位是毫秒 ，180000毫秒=3分钟 -->
+        <property name="removeAbandonedTimeout" value="#{runtimeProps['druid.removeAbandonedTimeout']}" />
+		<!-- 用来检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会其作用。-->
+	    <property name="validationQuery" value="#{runtimeProps['druid.validationQuery']}"></property>
+	    <!-- 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。 -->
+	    <property name="testWhileIdle" value="#{runtimeProps['druid.testWhileIdle']}"></property>
+	    <!-- 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 -->
+	    <property name="testOnBorrow" value="#{runtimeProps['druid.testOnBorrow']}"></property>
+	    <!-- 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 -->
+	    <property name="testOnReturn" value="#{runtimeProps['druid.testOnReturn']}"></property>
+	    <!-- 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。5.5及以上版本有PSCache，建议开启。 -->
+	    <property name="poolPreparedStatements" value="#{runtimeProps['druid.poolPreparedStatements']}"></property>
+	    <!-- 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100--> 
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="#{runtimeProps['druid.maxPoolPreparedStatementPerConnectionSize']}"></property>
+		<!-- Druid的监控统计功能:属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：                 
+			#监控统计用的filter:stat
+			#日志用的filter:slf4j
+			#防御SQL注入的filter:wall 
+		-->  
+		<property name="filters" value="#{runtimeProps['druid.filters']}"></property>
+		<!-- SQL安全过滤 -->
+		<property name="proxyFilters">
+          	<list>
+              	<ref bean="wall-filter"/>
+          	</list>
+     	</property>
+	</bean>
+     
+	<!-- 数据安全库：session工厂  --> 
+	<bean id="securitySessionFactory" class="com.woshidaniu.orm.mybatis.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="securityDataSource"/>
+		<property name="configLocation">
+			<value>classpath:conf/mybatis/securityMapConfig.xml</value>
+		</property>
+		<property name="mapperLocations" value="classpath*:com/woshidaniu/**/dao/**/sqlmap/dynamic/*.xml" />
+	</bean>
+	
+    <!-- 数据安全库：dao支持对象 -->
+    <bean id="securityDataSourceDao" class="com.woshidaniu.orm.mybatis.spring.support.MybatisSqlSessionDaoSupport">
+		<property name="sqlSessionFactory" ref="securitySessionFactory"/>
+	</bean>
+	
+	<!-- javamelody监控 主数据源 的 配置 ：如果启用打开注释 ，并替换 安全库名称为 _mainDataSource: 
+	<bean id="dataSource" class="net.bull.javamelody.SpringDataSourceFactoryBean">
+	    <property name="targetName" value="_mainDataSource" />
+	</bean>-->
+
+	<!-- 主数据源：数据库连接池  -->
+	<bean id="dataSource" class="com.woshidaniu.db.core.datasource.NewDruidDataSource" init-method="init" destroy-method="close" scope="singleton">
+		
+		<!-- 基本属性 url、user、password -->
+		
+		<!--配置这个属性的意义在于，如果存在多个数据源，监控的时候可以通过名字来区分开来。如果没有配置，将会生成一个名字，格式是：”DataSource-” + System.identityHashCode(this)-->
+		<!-- <property name="name" value="dataSource-main" /> -->
+		<!--这一项可配可不配，如果不配置druid会根据url自动识别dbType，然后选择相应的driverClassName-->
+		<property name="driverClassName" value="#{runtimeProps['druid.driverClassName']}" />
+		<!--jdbcUrl: 连接数据库的url，不同数据库不一样 -->
+		<property name="url" value="#{dbProps['db.jdbc.jdbcUrl']}" />
+		<!--username: 连接数据库的用户名 -->
+		<property name="username" value="#{dbProps['db.jdbc.user']}" />
+		<!--password: 连接数据库的密码 -->
+		<property name="password" value="#{dbProps['db.jdbc.password']}" />
+		<!--connectionProperties: 连接数据库的额外参数 -->
+		<property name="connectionProperties" value="#{runtimeProps['druid.connectionProperties']}" />
+		
+		<!-- druid 连接池参数 -->
+		
+		<!--配置初始化大小、最小、最大 连接池数量-->
+		<!--initialSize: 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时 -->
+		<property name="initialSize" value="#{runtimeProps['druid.initialSize']}"></property>
+		<!--minIdle: 连接池最小连接数量 -->
+		<property name="minIdle" value="#{runtimeProps['druid.minIdle']}" /> 
+		<!--maxActive: 连接池最大连接数量 -->
+		<property name="maxActive" value="#{runtimeProps['druid.maxActive']}"></property>
+	    <!-- 获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+	    <property name="maxWait" value="#{runtimeProps['druid.maxWait']}"></property> -->
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒;有两个含义：1) Destroy线程会检测连接的间隔时间 2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明 -->
+	    <property name="timeBetweenEvictionRunsMillis" value="#{runtimeProps['druid.timeBetweenEvictionRunsMillis']}"></property>
+	    <!-- 配置一个连接在池中最小生存的时间，单位是毫秒  -->
+	    <property name="minEvictableIdleTimeMillis" value="#{runtimeProps['druid.minEvictableIdleTimeMillis']}"></property>
+	    <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="#{runtimeProps['druid.removeAbandoned']}" />
+        <!-- 超过时间限制多长，单位是毫秒 ，180000毫秒=3分钟 -->
+        <property name="removeAbandonedTimeout" value="#{runtimeProps['druid.removeAbandonedTimeout']}" />
+		<!-- 用来检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会其作用。-->
+	    <property name="validationQuery" value="#{runtimeProps['druid.validationQuery']}"></property>
+	    <!-- 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。 -->
+	    <property name="testWhileIdle" value="#{runtimeProps['druid.testWhileIdle']}"></property>
+	    <!-- 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 -->
+	    <property name="testOnBorrow" value="#{runtimeProps['druid.testOnBorrow']}"></property>
+	    <!-- 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 -->
+	    <property name="testOnReturn" value="#{runtimeProps['druid.testOnReturn']}"></property>
+	    <!-- 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。5.5及以上版本有PSCache，建议开启。 -->
+	    <property name="poolPreparedStatements" value="#{runtimeProps['druid.poolPreparedStatements']}"></property>
+	    <!-- 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100--> 
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="#{runtimeProps['druid.maxPoolPreparedStatementPerConnectionSize']}"></property>
+		<!-- Druid的监控统计功能:属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：                 
+			#监控统计用的filter:stat
+			#日志用的filter:slf4j
+			#防御SQL注入的filter:wall 
+		-->  
+		<property name="filters" value="#{runtimeProps['druid.filters']}"></property>
+		<!-- SQL安全过滤 -->
+		<property name="proxyFilters">
+          	<list>
+              	<ref bean="wall-filter"/>
+          	</list>
+     	</property> 
+	</bean>
+	
+	<bean id="flyway" class="com.woshidaniu.db.core.flyway.FlywayWithoutClean" depends-on="dataSource" lazy-init="false">
+		<!-- 指定数据源   -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 指定SQL起始版本信息   -->
+		<property name="baselineVersionAsString" value="1.0.0"/>
+		<property name="baselineDescription" value="系统初始化基线"/>
+		<property name="baselineOnMigrate" value="true"/>
+		<!-- <property name="baselineVersion">
+			<bean class="org.flywaydb.core.api.MigrationVersion">  
+                    <constructor-arg>
+                    	<bean class="java.math.BigInteger.BigInteger">
+                    		指定数据库起始版本  
+                    		<constructor-arg value="1.0.0"/>
+                    	</bean>
+                    </constructor-arg>  
+                    <constructor-arg value="系统初始化基线"/>
+                </bean>  
+		</property> -->
+	    <!-- 禁止对数据库进行相关清除操作
+	    <property name="cleanDisabled" value="true"/> -->
+	    <!-- 如果已经有版本1和3，当发现新的版本2时，如果此参数为true,将会把版本2作为当前版本 -->
+	    <property name="outOfOrder" value="false"/>
+	    <!-- 在进行版本升级前是否进行SQL版本信息校验 -->
+	    <property name="validateOnMigrate" value="false"/>
+	    <!-- 指定记录SQL版本的表名称  
+	    <property name="table" value="niutal_schema_version"/>-->
+	    <!-- SQL脚步占位符所使用的替换值来源，即供SQL脚步中使用${}占位符取值的map  -->
+        <property name="placeholders">
+             <map>
+                 <entry key="table_pre" value="niutal_XTGL_"></entry>
+                 <entry key="table_names" value="'JW_JCDML_XTNZB','JW_XJGL_XSJBXXB','JW_XJGL_XSXJXXB','JW_JG_JZGXXB','ZFXG_ZDYBD_ZDDYB','ZFXG_ZDYBD_GNSZB','ZFXG_ZDYBD_FLSZB','ZFXG_DR_DRYZB','ZFXG_DR_DRBMPZB'"></entry>
+             </map>
+        </property>
+	</bean>
+	
+	<bean id="flywayMigration" class="com.woshidaniu.db.core.flyway.FlywayMigration" lazy-init="false" depends-on="flyway">
+	    <!-- 注入flyway对象 -->
+	    <property name="flyway" ref="flyway"/>
+	    <!-- 是否忽略版本升级 -->
+	    <property name="ignoreMigration" value="true"/>
+	    <!-- 是否版本升级完成后清除已升级的SQl文件 -->
+	    <property name="clearMigrated" value="false"/>
+	    <!-- 是否版本升级完成后重命名已升级的SQl文件,该参数在 clearMigrated = true 时无作用-->
+	    <property name="renameMigrated" value="true"/>
+	    <!-- 是否版本升级完成后重命名已升级的SQl使用的后缀名称,默认.back -->
+	    <property name="sqlRenameSuffix" value=".back"/>
+	</bean>
+
+	<!-- 主数据库：管理事务管理对象 -->
+	<bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		 <!-- 可以看到和 普通的dataSource用法一样 --> 
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 支持事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 主数据库：管理事务操作 -->
+ 	<aop:config>
+	  	<aop:pointcut id="servicesPointcut" expression="execution(* com.woshidaniu..service..*.*(..)) " />
+	  	<aop:advisor advice-ref="txAdvice" pointcut-ref="servicesPointcut" />
+ 	</aop:config>
+
+	<!-- 主数据库：事务控制 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager" >
+		<tx:attributes>
+          
+          <tx:method name="batch*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="bc*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="choose*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="cancel*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="dc*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="delete*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="del*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="dr*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="jkzg*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="jc*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="insert*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="inherit*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="pl*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="reback*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="release*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="save*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="sc*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="set*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="sfty*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="sfjdkc*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="sjzb*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="sh*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="sx*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="tj*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="tksq*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="ty*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="qy*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="qyty*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="qr*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="update*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="xg*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          <tx:method name="xz*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="xzsxrs*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="zd*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="zj*" propagation="REQUIRED" rollback-for="Throwable" timeout="180"/> 
+          
+          <tx:method name="get*" propagation="SUPPORTS" read-only="true" rollback-for="Throwable" timeout="180"/>  
+          <tx:method name="cx*" propagation="SUPPORTS" read-only="true" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="query*" propagation="SUPPORTS" read-only="true" rollback-for="Throwable" timeout="180"/>
+          <tx:method name="*" propagation="SUPPORTS" timeout="180"/> 
+        </tx:attributes> 
+     </tx:advice>
+
+	<!-- 主数据库：session工厂  --> 
+	<bean id="sqlSessionFactory" class="com.woshidaniu.orm.mybatis.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation">
+			<value>classpath:conf/mybatis/sqlMapConfig.xml</value>
+		</property>
+		<property name="mapperLocations">
+		  	<array>
+		   		<value>classpath*:com/woshidaniu/**/dao/**/sqlmap/*.xml</value>
+		   		<value>classpath*:com/woshidaniu/**/bpm/**/sqlmap/**/*.xml</value>
+		  	</array>
+		 </property>
+		<!-- <property name="mapperLocations" value="classpath*:com/woshidaniu/**/dao/**/sqlmap/*.xml" /> -->
+		<!-- <property name="transactionFactory">
+	        <bean class="org.mybatis.spring.transaction.SpringManagedTransactionFactory" />
+      	</property> 
+      	-->
+		<!-- typeAliasesPackage包路径配置
+    	<property name="typeAliasesPackage" value="com.woshidaniu.**.entities" /> -->
+		<!-- 配置Mybatis的插件plugin-->
+       	<!-- 此处配置需要特别注意：拦截器执行的顺序是配置顺序的倒叙执行 ：因为代理的dao对象无法获取，此处无法使用service注入对象-->
+	    <!-- <property name="plugins">
+	        <array>
+	        	<bean class="com.woshidaniu.service.common.plugin.LOGAspectInterceptor"></bean>
+	        	<bean class="com.woshidaniu.i18n.plugin.DataI18nInterceptor">
+	            	<property name="dialect" value="oracle"/>
+	                
+	                <property name="properties">
+	                    <value>
+	                        property-key=property-value
+	                    </value>
+	                </property> 
+	               
+	            </bean>
+	        	<bean class="com.woshidaniu.service.common.plugin.SQLWrapInterceptor">
+	        		<property name="dialect" value="oracle"/>
+					<property name="methodRegexp" value=".*Wrap*.*"/>SQL封装匹配方法,mapper.xml中需要拦截的ID(正则匹配)
+	        	</bean>
+				<bean class="com.woshidaniu.service.common.plugin.PartitionPaginationInterceptor">
+					<property name="dialect" value="oracle"/>
+					<property name="methodRegexp" value=".*getPaged*.*"/>分页拦截,配置以*getPaged*开始的Id
+				</bean>
+				<bean class="DataRangeInterceptor">
+		    		<property name="dialect" value="oracle"/>
+					<property name="methodRegexp" value=".*ByScope*.*"/>数据范围拦截,配置以*byScope*开始的Id
+					<property name="limitId" value="jgdm"/>默认数据范围字段Id
+				</bean>
+	        </array>
+	    </property> -->
+	</bean>
+    
+    <!-- Dao接口扫描 -->
+    <bean class="com.woshidaniu.orm.mybatis.spring.mapper.MybatisMapperScannerConfigurer">
+    	<!-- 记得加注解 @Repository 
+    	<property name="annotationClass" value="org.springframework.stereotype.Repository" />-->
+    	<!-- 自动扫描Dao的根目录，多个使用,分割 -->
+	 	<property name="basePackage" value="com.woshidaniu.**.daointerface,com.woshidaniu.component.bpm.**.dao"/>
+   	 	<!-- 在单数据源情况下的可以不写,如果要配置多数据源,必须加上 -->
+     	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+    <!-- memcached 不使用时可注释掉
+    <import resource="memcached.xml"/>-->
+	<!-- Bean 工厂-->
+    <bean id="serviceFactory" class="com.woshidaniu.common.factory.ServiceFactory"/>
+    <!-- 基础常量 工厂-->
+    <bean id="baseConstantFactory" class="com.woshidaniu.service.common.factory.BaseConstantFactory"/>
+    
+</beans>

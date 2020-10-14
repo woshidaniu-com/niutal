@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.woshidaniu</groupId>
+		<artifactId>niutal-component-drdc-parent</artifactId>
+		<version>1.3.21-SNAPSHOT</version>
+	</parent>
+	<artifactId>niutal-component-drdc-core</artifactId>
+	
+	<dependencies>
+	
+		<!-- ###################### 我是大牛软件快速快发组件 ###################### -->
+		
+		<!-- fastxls : 基于POI、JXL的Excel,Doc,PPT等快速生成组件  -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>fastxls-jexcel</artifactId>
+		</dependency>
+
+		<!-- ###################### niutal核心组件 ###################### -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-jwdao</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-jwservice</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>niutal-core-struts2</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+	</dependencies>
+	
+	
+</project>

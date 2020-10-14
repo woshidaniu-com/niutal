@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IFuncMenuDao">
+
+	<!--功能模块代码临时视图-->
+	<sql id="gnmkdm_temp">
+		with gnmkdm_temp as
+		(
+		/*当前角色拥有的功能*/
+		select
+			distinct t2.gnmkdm gnmkdm
+		from
+			niutal_xtgl_jsgnmkczb t1,
+			niutal_xtgl_gnmkczb   t2,
+			niutal_xtgl_yhjsb     t3
+		where
+			t1.gnczid = t2.gnczid
+			and t1.jsdm = t3.jsdm
+		    and t3.zgh = #{yhm}
+		    and t3.jsdm = #{jsdm}
+
+		union
+
+		 /*二级授权被授予的功能*/
+        select
+         	distinct t2.gnmkdm gnmkdm
+        from
+        	niutal_xtgl_jsgnmkczb t1,
+        	niutal_xtgl_gnmkczb t2,
+         	niutal_xtgl_czdmb t3
+        where
+        	t1.gnczid = t2.gnczid
+        	and t2.czdm = t3.czdm
+        	and t1.jsdm = #{jsdm}
+        	and
+        		exists (
+        			select
+        				1
+            		from
+                    	niutal_xtgl_ejqxb t4
+                    where
+                    	t1.jsgnczid = t4.jsgnczid
+                        and t4.gxz = #{jsdm}
+                        and t4.sxz = #{yhm}
+                    )
+		)
+	</sql>
+
+	<!-- 通过功能代码查询功能代码名称-->
+ 	<select id="getValue" parameterType="string" resultType="string">
+ 		select (select a.gnmkmc
+		          from niutal_xtgl_jsgnmkdmb a
+		         where a.gnmkdm = t.fjgndm) || ' - ' || t.gnmkmc as gnmkmc
+		  from niutal_xtgl_jsgnmkdmb t
+		 where t.gnmkdm = #{key}
+ 	</select>
+
+ 	<!-- 根据 用户ID、角色代码 、Locale 获取 一级菜单 -->
+    <select id="getTopNavMenuList" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+		<include refid="gnmkdm_temp" />
+    	select
+    		temp.fjgndm,
+    		temp.gnmkdm,
+    		temp.gnmkmc,
+    		temp.xssx,
+    		temp.dyym,
+    		temp.sfgnym,
+    		temp.tblj
+    	from
+    	(
+    	select distinct t.fjgndm,
+		                t.gnmkdm,
+		                t.gnmkmc,
+		                t.xssx,
+		                nvl(t.dyym, '#') dyym,
+		                (case when t.gnmkdm = 'N' then
+				          '0'
+				          when t.dyym is not null then 
+				          	decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm),0,'1','0')
+				         else
+				          '0' end) sfgnym,
+				          t.tblj
+		  from niutal_xtgl_jsgnmkdmb t
+		 where 
+		  t.sfqy = '1' 
+		  and t.fjgndm = 'N' or t.fjgndm is null
+		 start with t.gnmkdm in (
+									select gnmkdm from gnmkdm_temp
+		                         )
+		connect by prior t.fjgndm = t.gnmkdm
+		)temp 
+		 order by to_number(temp.xssx) asc
+    </select>
+ 	
+ 	 <!-- 根据 用户ID、角色代码 、父级功能代码、Locale 获取 父级菜单下的功能菜单  -->
+    <select id="getChildNavMenuList" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+		<include refid="gnmkdm_temp" />
+       select 
+    		temp.fjgndm,
+    		temp.gnmkdm,
+    		temp.gnmkmc,
+    		temp.xssx,
+    		temp.dyym,
+    		temp.sfgnym,
+    		temp.tblj
+    	from
+    	(
+    	select distinct t.fjgndm,
+		                t.gnmkdm,
+		                t.gnmkmc,
+		                t.xssx,
+		                nvl(t.dyym, '#') dyym,
+		                (case when t.gnmkdm = 'N' then
+				          '0'
+				          when t.dyym is not null then 
+				          	decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm),0,'1','0')
+				         else
+				          '0' end) sfgnym,
+				          t.tblj
+		  from niutal_xtgl_jsgnmkdmb t
+		 where
+		  t.sfqy = '1' 
+		  and t.fjgndm = #{gnmkdm}
+		 start with t.gnmkdm in (
+		 							select gnmkdm from gnmkdm_temp
+		                         )
+		connect by prior t.fjgndm = t.gnmkdm
+		)temp
+		order by to_number(temp.xssx) asc
+    </select>
+    
+    <!-- 根据 用户ID、角色代码 、父级功能代码、Locale 获取 所有的功能菜单  -->
+    <select id="getNavMenuTreeList" parameterType="string" resultType="com.woshidaniu.common.query.BaseMap">
+		<include refid="gnmkdm_temp" />
+        select 
+    		temp.fjgndm,
+    		temp.gnmkdm,
+    		temp.gnmkmc,
+    		temp.xssx,
+    		temp.dyym,
+    		temp.sfgnym,
+    		temp.tblj
+    	from
+    	(
+    	select distinct t.fjgndm,
+		                t.gnmkdm,
+		                t.gnmkmc,
+		                t.xssx,
+		                nvl(t.dyym, '#') dyym,
+		                (case when t.gnmkdm = 'N' then
+				          '0'
+				          when t.dyym is not null then 
+				          	decode((select count('1') from niutal_xtgl_jsgnmkdmb x where x.fjgndm = t.gnmkdm),0,'1','0')
+				         else
+				          '0' end) sfgnym,
+				          t.tblj
+		  from niutal_xtgl_jsgnmkdmb t 
+		  where 
+		  t.sfqy = '1'
+		  <if test="gnmkdm != null and gnmkdm != '' ">
+		      and exists (select '1'
+	          from (select distinct t.gnmkdm
+	                  from niutal_xtgl_jsgnmkdmb t
+	                 start with t.fjgndm = #{gnmkdm}
+	                connect by prior t.gnmkdm = t.fjgndm
+	               ) z
+	          where t.gnmkdm = z.gnmkdm )
+	      </if>
+		 start with t.gnmkdm in (
+									select gnmkdm from gnmkdm_temp
+		                         ) 
+		                        
+		connect by prior t.fjgndm = t.gnmkdm
+		)temp
+		order by temp.fjgndm,to_number(temp.xssx) asc
+    </select>
+    
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+ 	<!-- 加载消息服务属性实例，可通过  @Value("#{msProps['key']}") 方式引用 -->
+	<util:properties id="msProps" location="classpath:niutal-ms.properties"  local-override="true"/>
+	
+	<!-- Oracle数据库邮件服务配置数据提供者实现 -->
+	<bean id="oracleEmailPropsProvider" class="com.woshidaniu.ms.provider.OracleEmailPropertiesProvider">
+		<!-- props: 基于配置文件的默认配置 -->
+		<property name="defaultProps" ref="msProps"/>
+		<!-- propKeys: 指定从参数设置表提取的参数 -->
+		<property name="propKeys">
+			<list>
+				<value>mail.from.desc</value>
+				<value>pwd.mail.subject</value>
+				<value>pwd.mail.content</value>
+			</list>
+		</property>
+   	</bean>
+   	
+   	<!-- Oracle数据库短信服务配置数据提供者实现 -->
+	<bean id="oracleSmsPropsProvider" class="com.woshidaniu.ms.provider.OracleSmsPropertiesProvider">
+		<!-- props: 基于配置文件的默认配置 -->
+		<property name="defaultProps" ref="msProps"/>
+		<!-- propKeys: 指定从参数设置表提取的参数 -->
+		<property name="propKeys">
+			<list>
+				<!-- 指定根据所属模块批量获取对应的值 -->
+				<value>MS-SMS</value>
+			</list>
+		</property>
+   	</bean>
+   	
+    <!-- 邮件发送者，Spring实现 -->
+	<bean id="springMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    </bean>
+    
+	<!-- 邮件发送客户端 -->
+	<bean id="mailClient" class="com.woshidaniu.javamail.impl.SpringMailClientImpl">
+		<property name="mailSender" ref="springMailSender"/>
+		<property name="propsProvider" ref="oracleEmailPropsProvider"/>
+	</bean>
+	
+	<!-- <bean id="mailClient" class="com.woshidaniu.javamail.impl.JavaMailClientImpl">
+		<property name="propsProvider" ref="oracleEmailPropsProvider"/>
+	</bean> -->
+	
+	<!-- 邮件发送服务提供实现 -->
+	<bean name="emailMessageOutputProvider" class="com.woshidaniu.ms.api.provider.def.EmailMessageOutputProvider">
+		<!-- mailClient: Email客户端实现 -->
+		<property name="mailClient" ref="mailClient"/>
+	</bean>
+	
+	<!-- 短消息发送客户端:工厂模式 -->
+	<bean name="smsClientFactory" id="smsClientFactory" class="com.woshidaniu.sms.client.factory.SmsClientFactory">
+		<!-- propsProvider: props属性配置提供对象-->
+		<property name="propsProvider" ref="oracleSmsPropsProvider"/>
+	</bean>
+	
+	<!-- smsClients: 短信发送客户端实现集合，方便根据配置参数实现不同的客户端实现切换-->
+	<bean class="com.woshidaniu.sms.client.def.ZdtSmsClient"/>
+	<bean class="com.woshidaniu.sms.client.def.Baidu106SmsClient"/>
+				
+	<!-- 短消息发送客户端:客户端模式 -->
+	<!-- 
+	<bean id="smsClient" class="com.woshidaniu.sms.client.def.ZdtSmsClient">
+		smsurl: SMS服务商调用地址
+		<property name="smsurl" value="#{msProps['sms.tdt.smsurl']}"/>
+		appid: SMS服务商提供的appid
+		<property name="appid" value="#{msProps['sms.tdt.appid']}"/>
+		password: SMS服务商提供的appid对应的password
+		<property name="password" value="#{msProps['sms.tdt.password']}"/>
+		token: SMS服务商提供的appid对应的token
+		<property name="token" value="#{msProps['sms.tdt.token']}" />
+		source: 调用SMS接口的来源，即请求方标记
+		<property name="source" value="#{msProps['sms.tdt.source']}" />
+		propsProvider: props属性配置提供对象
+		<property name="propsProvider" ref="oracleSmsPropsProvider"/>
+	</bean> -->
+	
+	<!-- 短信发送服务提供实现 -->
+	<bean name="smsMessageOutputProvider" class="com.woshidaniu.ms.api.provider.def.SMSMessageOutputProvider">
+		<!-- smsClient: SMS客户端实现
+		<property name="smsClient" ref="smsClient"/> -->
+		<!-- smsClientFactory: SMS客户端工厂实现 -->
+		<property name="smsClientFactory" ref="smsClientFactory"/>
+	</bean>
+			
+	
+</beans>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.jcsj.dao.daointerface.IZydmDao">
+
+	<select id="getCount" parameterType="com.woshidaniu.jcsj.dao.entities.ZydmModel" resultType="java.lang.Integer">
+		select count(1) from niutal_xtgl_zydmb t where t.zydm = #{zydm,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 查询专业列表 -->
+	<select id="getPagedList" parameterType="com.woshidaniu.jcsj.dao.entities.ZydmModel"
+			resultType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+			select a.zydm_id ,a.zydm,a.zymc,a.xz,a.cydm_id_gbzydm,b.bmmc from niutal_xtgl_zydmb a 
+	      	left join niutal_xtgl_bmdmb b on a.bmdm_id_lsbm = b.bmdm_id
+			<where>
+    		<if test="zydm != null and zydm !=''">
+    			and zydm like '%'||#{zydm}||'%'
+    		</if>
+    		<if test="zymc != null and zymc !=''">
+    			and zymc like '%'||#{zymc}||'%'
+    		</if>
+    		<if test="bmdm_id_lsbm != null and bmdm_id_lsbm !=''">
+    			and bmdm_id_lsbm = #{bmdm_id_lsbm}
+    		</if>
+    		</where>		
+	</select>
+	
+	<select id="getModel" parameterType="com.woshidaniu.jcsj.dao.entities.ZydmModel" 
+			resultType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+    	select zydm_id ,zydm,zymc,bmdm_id_lsbm,cydm_id_gbzydm,xz from niutal_xtgl_zydmb where zydm_id = #{zydm_id}
+    </select>
+	
+	 <!-- 保存信息 -->
+    <insert id="insert" parameterType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+    	insert into niutal_xtgl_zydmb (zydm_id,zydm,zymc,bmdm_id_lsbm,xz,cydm_id_gbzydm) values (#{zydm},#{zydm},#{zymc},#{bmdm_id_lsbm},#{xz},#{cydm_id_gbzydm})
+    </insert>
+	
+	 <!-- 修改学院代码 -->
+    <update id="update" parameterType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+    	update niutal_xtgl_zydmb 
+    	<set>
+    		<if test="zymc != null and zymc != ''">
+    			zymc = #{zymc},
+    		</if>
+    		<if test="bmdm_id_lsbm != null and bmdm_id_lsbm != ''">
+    			bmdm_id_lsbm = #{bmdm_id_lsbm},
+    		</if>
+    		<if test="cydm_id_gbzydm != null and cydm_id_gbzydm != ''">
+    			cydm_id_gbzydm = #{cydm_id_gbzydm},
+    		</if>
+    		<if test="xz != null and xz != ''">
+    			xz = #{xz}
+    		</if>
+    	</set> 
+    	where zydm=#{zydm} 
+    </update>
+    
+    <!-- 删除专业  -->
+	<delete id="batchDelete" parameterType="java.util.Map">
+		delete from niutal_xtgl_zydmb a where(
+		<foreach collection="zydm" item="item" index="index"
+				separator=" OR">
+			   a.zydm_id = #{item} 
+		</foreach>
+		) and not exists (select 1 from niutal_xtgl_bjdmb t2 where a.zydm_id=t2.zydm_id)
+	</delete>	
+	
+	 <!-- 查询专业列表 -->
+	<select id="cxZydmList" parameterType="java.lang.String" resultType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+		select zydm_id,zymc from niutal_xtgl_zydmb where bmdm_id_lsbm = #{item}
+	</select>
+	
+	 <!-- 查询专业列表 -->
+	<select id="cxZydm" parameterType="java.lang.String" resultType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+		select zydm_id,zymc,bmdm_id_lsbm from niutal_xtgl_zydmb 
+	</select>
+	
+	<select id="valideZydm" parameterType="com.woshidaniu.jcsj.dao.entities.ZydmModel" resultType="com.woshidaniu.jcsj.dao.entities.ZydmModel">
+    	select zydm_id ,zydm,zymc,bmdm_id_lsbm,cydm_id_gbzydm,xz from niutal_xtgl_zydmb where zydm = #{zydm}
+    </select>	
+	
+</mapper>

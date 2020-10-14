@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.daointerface.IJcdmDao">
+  	<!-- 基础 代码(分页) -->
+    <select id="getPagedByScope" parameterType="com.woshidaniu.entities.JcdmModel" resultType="com.woshidaniu.common.query.BaseMap">
+    	<if test="table != null and table_fields !=null">
+    		select ${table_fields} from ${table}
+    	</if>
+    	<if test="queryWhere!=null and queryWhere!=''">
+    		<where>
+    			<![CDATA[${queryWhere}]]>
+    		</where>
+    	</if>
+    </select>
+    
+	 <!-- 保存基础代码-->
+    <insert id="insert" parameterType="com.woshidaniu.entities.JcdmModel">
+    	 insert into ${table} (${table_fields}) values(${values})
+    </insert>
+    
+    <!-- 查询单个实体 -->
+    <select id="getObject" parameterType="com.woshidaniu.entities.JcdmModel" resultType="com.woshidaniu.common.query.BaseMap">
+    	 select ${table_fields} from ${table} where ${primary_key} = #{primary_value}
+    </select>
+    
+    <!-- 执行验证SQL -->
+    <select id="getValidateList" parameterType="com.woshidaniu.entities.JcdmModel" resultType="com.woshidaniu.common.query.BaseMap">
+    	${validateSql}
+    </select>
+    
+     <!-- 停用/启用-->
+    <update id="handle" parameterType="com.woshidaniu.entities.JcdmModel">
+    	 update ${table} set ${table_fields}=${values} where ${primary_key} in
+	   	 <foreach collection="pks" item="item" open="(" separator="," close=")">
+		   #{item}
+		 </foreach>	 
+    </update>
+    
+     <!-- 修改基础代码-->
+    <update id="update" parameterType="com.woshidaniu.entities.JcdmModel">
+    	 update ${table} set ${table_fields} where ${primary_key} = #{primary_value}
+    </update>
+    
+    <!-- 删除基础代码 -->
+    <delete id="delete" parameterType="com.woshidaniu.entities.JcdmModel">
+    	delete ${table} where 
+	   	<foreach collection="pks" item="item" separator=" OR">
+		   	${primary_key} = #{item}
+		</foreach>  
+    </delete>
+    
+    <!-- 传入需要查询的SQL，返回List -->
+    <select id="getList" parameterType="string" resultType="hashMap">
+    		${_parameter}
+    </select>
+    
+    <!--  根据传入格式返回相应格式的时间值 -->
+	<select id="getNowDate" resultType="string" parameterType="string">
+		select to_char(sysdate,#{dataFormat}) nowDate from dual
+	</select>
+</mapper>

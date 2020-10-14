@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.search.dao.daointerface.IDataDao">
+
+	<select id="getLinkageList" parameterType="com.woshidaniu.search.dao.entities.SearchLinkageModel"
+		resultType="com.woshidaniu.search.dao.entities.SearchLinkageModel">
+		select t1.cxbz searchSign,
+		t1.ldzd linkageName,
+		t1.bldzd nextName,
+		t1.glzd relatingName,
+		t2.sjly valueSource
+		from zfxg_gjcx_ldpzb t1 left join zfxg_gjcx_cxpzb t2
+		on t1.bldzd=t2.cxzd and t1.cxbz=t2.cxbz
+		<where>
+			t1.cxbz=#{searchSign}
+			<if test="nextName != null">
+				and t1.bldzd = #{nextName}
+			</if>
+			<if test="searchName != null">
+				and t1.bldzd = #{searchName}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询数据 -->
+	<select id="getData" parameterType="java.util.Map"
+		resultType="com.woshidaniu.search.data.SourceDataItem">
+		select * from (
+		select t1.*,rownum r from (
+		select distinct
+		${columnKey} columnKeyValue,
+		${columnLabel} columnLabelValue,
+		<if test="dataSource == 'niutal_xtgl_bjdmb'">
+			substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+		</if>
+		<if test="dataSource != 'niutal_xtgl_bjdmb'">
+			F_PINYIN_V2(${columnLabel}) columnInitialValue
+		</if>
+		from ${dataSource}
+		where ${columnKey} is not null <if test="linkageSQL != null"> and ${linkageSQL} </if>
+		order by columnInitialValue
+		) t1
+		)
+		where
+		<if test="isMore == 'yes'">
+			r &gt; #{maxRows}
+	    </if>
+	   <if test="isMore == null">
+			r &lt;= #{maxRows}
+	    </if>
+	</select>
+	<!-- 查询数据  带数据范围-->
+	<select id="getDataByScope" parameterType="java.util.Map"
+		resultType="com.woshidaniu.search.data.SourceDataItem">
+		select * from (
+		select t1.*,rownum r from (
+		select distinct
+		${columnKey} columnKeyValue,
+		${columnLabel} columnLabelValue,
+		<if test="dataSource == 'niutal_xtgl_bjdmb'">
+			substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+		</if>
+		<if test="dataSource != 'niutal_xtgl_bjdmb'">
+			F_PINYIN_V2(${columnLabel}) columnInitialValue
+		</if>
+		from ${dataSource}
+		where ${columnKey} is not null 
+		<if test="linkageSQL != null"> and ${linkageSQL} </if>
+		<!-- 数据范围控制 -->
+		<if test="dataSource == 'niutal_xtgl_bmdmb' or dataSource == 'niutal_view_xtgl_bmdmb'"> and {bmdm_id in func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_zydmb'"> and {zydm in func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_bjdmb'"> and {bjdm in func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_njdmb'"> and {njdm_id in func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+		<!-- 数据范围控制 -->	  
+		order by columnInitialValue
+		) t1
+		)
+		where
+		<if test="isMore == 'yes'">
+			r &gt; #{maxRows}
+	    </if>
+	   <if test="isMore == null">
+			r &lt;= #{maxRows}
+	    </if>
+	</select>
+
+	<select id="getDataWithInitalLabel"  parameterType="java.util.Map" resultType="com.woshidaniu.search.data.SourceDataItem">
+		select * from (
+		select t1.*,rownum r from (
+		select distinct
+		${columnKey} columnKeyValue,
+		${columnLabel} columnLabelValue,
+		<if test="dataSource == 'niutal_xtgl_bjdmb'">
+			substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+		</if>
+		<if test="dataSource != 'niutal_xtgl_bjdmb'">
+			F_PINYIN_V2(${columnLabel}) columnInitialValue
+		</if>
+		from ${dataSource}
+		where ${columnKey} is not null  <if test="linkageSQL != null"> and ${linkageSQL} </if>
+		order by columnInitialValue
+		) t1
+		)
+		where r &gt; #{maxRows} 
+		<if test="initalLabelValue == 'NUMBERIC'">
+			and (REGEXP_LIKE(columnInitialValue, '^[[:digit:]]+$'))
+		</if>
+		<if test="initalLabelValue == 'OTHER'">
+			and (NOT REGEXP_LIKE(columnInitialValue, '^[[:alnum:]]+$')  OR columnInitialValue IS NULL OR TRIM(columnInitialValue) = '' )
+		</if>
+		<if test="initalLabelValue != 'OTHER' and initalLabelValue!= 'NUMBERIC'">
+			and (columnInitialValue = #{initalLabelValue} )
+		</if>
+	</select>
+
+	<select id="getDataWithInitalLabelByScope"  parameterType="java.util.Map" resultType="com.woshidaniu.search.data.SourceDataItem">
+		select * from (
+		select t1.*,rownum r from (
+		select distinct
+		${columnKey} columnKeyValue,
+		${columnLabel} columnLabelValue,
+		<if test="dataSource == 'niutal_xtgl_bjdmb'">
+			substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+		</if>
+		<if test="dataSource != 'niutal_xtgl_bjdmb'">
+			F_PINYIN_V2(${columnLabel}) columnInitialValue
+		</if>
+		from ${dataSource}
+		where ${columnKey} is not null  
+		<if test="linkageSQL != null"> and ${linkageSQL} </if>
+		<!-- 数据范围控制 -->
+		<if test="dataSource == 'niutal_xtgl_bmdmb' or dataSource == 'niutal_view_xtgl_bmdmb'"> and {bmdm_id in func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_zydmb'"> and {zydm in func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_bjdmb'"> and {bjdm in func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_njdmb'"> and {njdm_id in func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+		<!-- 数据范围控制 -->	  
+		order by columnInitialValue
+		) t1
+		)
+		where r &gt; #{maxRows} 
+		<if test="initalLabelValue == 'NUMBERIC'">
+			and (REGEXP_LIKE(columnInitialValue, '^[[:digit:]]+$'))
+		</if>
+		<if test="initalLabelValue == 'OTHER'">
+			and (NOT REGEXP_LIKE(columnInitialValue, '^[[:alnum:]]+$')  OR columnInitialValue IS NULL OR TRIM(columnInitialValue) = '' )
+		</if>
+		<if test="initalLabelValue != 'OTHER' and initalLabelValue!= 'NUMBERIC'">
+			and (columnInitialValue = #{initalLabelValue} )
+		</if>
+	</select>
+	
+
+	<select id="getInitialLabelCount" parameterType="java.util.Map" resultType="com.woshidaniu.search.data.InitialLabelCount">
+		select columnInitialValue, count(1) columnInitialLabelCount
+          from (
+			select * from (select t1.*, rownum r
+          		from (select distinct ${columnKey} columnKeyValue,             
+                    <if test="dataSource == 'niutal_xtgl_bjdmb'">
+						substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+					</if>
+					<if test="dataSource != 'niutal_xtgl_bjdmb'">
+						F_PINYIN_V2(${columnLabel}) columnInitialValue
+					</if>
+                  from ${dataSource}
+                 where ${columnKey} is not null <if test="linkageSQL != null"> and ${linkageSQL} </if>
+                 order by columnInitialValue) t1) where r &gt; #{maxRows} ) 
+              group by columnInitialValue order by columnInitialValue
+	</select>
+
+	<select id="getInitialLabelCountByScope" parameterType="java.util.Map" resultType="com.woshidaniu.search.data.InitialLabelCount">
+		select columnInitialValue, count(1) columnInitialLabelCount
+          from (
+			select * from (select t1.*, rownum r
+          		from (select distinct ${columnKey} columnKeyValue,             
+                    <if test="dataSource == 'niutal_xtgl_bjdmb'">
+						substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+					</if>
+					<if test="dataSource != 'niutal_xtgl_bjdmb'">
+						F_PINYIN_V2(${columnLabel}) columnInitialValue
+					</if>
+                  from ${dataSource}
+                 where ${columnKey} is not null 
+                 <if test="linkageSQL != null"> and ${linkageSQL} </if>
+                 <!-- 数据范围控制 -->
+				<if test="dataSource == 'niutal_xtgl_bmdmb' or dataSource == 'niutal_view_xtgl_bmdmb'"> and {bmdm_id in func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+			    <if test="dataSource == 'niutal_xtgl_zydmb'"> and {zydm in func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+			    <if test="dataSource == 'niutal_xtgl_bjdmb'"> and {bjdm in func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+			    <if test="dataSource == 'niutal_xtgl_njdmb'"> and {njdm_id in func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+				<!-- 数据范围控制 -->	  
+                 order by columnInitialValue) t1) where r &gt; #{maxRows} ) 
+              group by columnInitialValue order by columnInitialValue
+	</select>
+
+	<!-- 查询总记录数 -->
+	<select id="getDataTotalCount" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(distinct ${columnKey}) totalCount from ${dataSource} where ${columnKey} is not null <if test="linkageSQL != null"> and ${linkageSQL} </if>
+	</select>
+
+	<!-- 查询总记录数 带数据范围 -->
+	<select id="getDataTotalCountByScope" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(distinct ${columnKey}) totalCount from ${dataSource} where ${columnKey} is not null 
+		<if test="linkageSQL != null"> and ${linkageSQL} </if>
+		<!-- 数据范围控制 -->
+		<if test="dataSource == 'niutal_xtgl_bmdmb' or dataSource == 'niutal_view_xtgl_bmdmb'"> and {bmdm_id in func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_zydmb'"> and {zydm in func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_bjdmb'"> and {bjdm in func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_njdmb'"> and {njdm_id in func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+		<!-- 数据范围控制 -->	
+	</select>
+	
+
+	<select id="getInitialListByScope" parameterType="com.woshidaniu.search.dao.entities.DataSourceModel"
+		resultType="com.woshidaniu.search.dao.entities.DataSourceModel">
+		select * from (
+		select t1.* , rownum r from (
+		select distinct
+		${key} key,
+		${label} label,
+		substr(F_PINYIN(${label}),0,1) initialName
+		from ${sourceTable}
+		where ${key} is not null
+
+		<if test="sourceTable == 'niutal_xtgl_bmdmb'">
+			and {bmdm_id in
+			func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			  </if>
+
+		<if test="sourceTable == 'niutal_xtgl_zydmb'">
+			and {zydm in
+			func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			  </if>
+
+		<if test="sourceTable == 'niutal_xtgl_bjdmb'">
+			and {bjdm in
+			func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			  </if>
+
+		<if test="sourceTable == 'niutal_xtgl_njdmb'">
+			and {njdm_id in
+			func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			  </if>
+		order by ${key}
+		) t1
+		)
+		where r &gt; #{pageNumber} * #{pageSize} and r &lt;= #{pageSize} *
+		(#{pageNumber}+1)
+	</select>
+
+
+	<select id="getLinkageData" parameterType="java.util.Map"
+		resultType="com.woshidaniu.search.dao.entities.DataSourceModel">
+		select * from (
+		select t1.* ,rownum r from (
+		select
+		distinct ${datasource.key} key,
+		${datasource.label} label,
+		substr(F_PINYIN(${datasource.label}) ,0,1) initialName
+		from ${datasource.sourceTable} where ( 1=1 ${linkage_sql})
+		order by ${datasource.key}
+		) t1
+		)
+		where r &gt; #{pageNumber} * #{pageSize} and r &lt;= #{pageSize} *
+		(#{pageNumber}+1)
+	</select>
+
+	<select id="getLinkageDataByScope" parameterType="java.util.Map"
+		resultType="com.woshidaniu.search.dao.entities.DataSourceModel">
+		select * from (
+		select t1.*,rownum r from (
+		select
+		distinct ${datasource.key} key,
+		${datasource.label} label,
+		substr(F_PINYIN(${datasource.label}) ,0,1) initialName
+		from ${datasource.sourceTable} where ( 1=1 ${linkage_sql})
+		<if test="datasource.sourceTable == 'niutal_xtgl_bmdmb'">
+			and {bmdm_id in
+			func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			    </if>
+
+		<if test="datasource.sourceTable == 'niutal_xtgl_zydmb'">
+			and {zydm in
+			func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			   </if>
+
+		<if test="datasource.sourceTable == 'niutal_xtgl_bjdmb'">
+			and {bjdm in
+			func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			   </if>
+
+		<if test="datasource.sourceTable == 'niutal_xtgl_njdmb'">
+			and {njdm_id in
+			func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")}
+			   </if>
+
+		order by ${datasource.key}
+		) t1
+		) where r &gt; #{pageNumber} * #{pageSize} and r &lt;= #{pageSize} *
+		(#{pageNumber}+1)
+	</select>
+
+	<select id="getDefaultConditionDataByScope"  parameterType="java.util.Map" resultType="com.woshidaniu.search.data.SourceDataItem">
+		select * from (
+		select t1.*,rownum r from (
+		select distinct
+		${columnKey} columnKeyValue,
+		${columnLabel} columnLabelValue,
+		<if test="dataSource == 'niutal_xtgl_bjdmb'">
+			substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+		</if>
+		<if test="dataSource != 'niutal_xtgl_bjdmb'">
+			F_PINYIN_V2(${columnLabel}) columnInitialValue
+		</if>
+		from ${dataSource}
+		where ${columnKey} is not null  and ${columnKey} in 
+		<foreach collection="defaultConditionData" item="item"  open="(" separator="," close=")">  
+        	#{item}  
+     	</foreach> 
+		<!-- 数据范围控制 -->
+		<if test="dataSource == 'niutal_xtgl_bmdmb' or dataSource == 'niutal_view_xtgl_bmdmb'"> and {bmdm_id in func("zfxg_view_njxyzybjb";"bmdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_zydmb'"> and {zydm in func("zfxg_view_njxyzybjb";"zydm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_bjdmb'"> and {bjdm in func("zfxg_view_njxyzybjb";"bjdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+	    <if test="dataSource == 'niutal_xtgl_njdmb'"> and {njdm_id in func("zfxg_view_njxyzybjb";"njdm";"bmdm,zydm,bjdm";"bmdm_id,zydm_id,bjdm_id")} </if>
+		<!-- 数据范围控制 -->	  
+		order by columnInitialValue
+		) t1
+		)
+		where 1=1
+	</select>
+
+	<select id="getDefaultConditionData"  parameterType="java.util.Map" resultType="com.woshidaniu.search.data.SourceDataItem">
+		select * from (
+		select t1.*,rownum r from (
+		select distinct
+		${columnKey} columnKeyValue,
+		${columnLabel} columnLabelValue,
+		<if test="dataSource == 'niutal_xtgl_bjdmb'">
+			substr(F_PINYIN(${columnLabel}),0,1) columnInitialValue
+		</if>
+		<if test="dataSource != 'niutal_xtgl_bjdmb'">
+			F_PINYIN_V2(${columnLabel}) columnInitialValue
+		</if>
+		from ${dataSource}
+		where ${columnKey} is not null  and ${columnKey} in 
+		<foreach collection="defaultConditionData" item="item"  open="(" separator="," close=")">  
+        	#{item}  
+     	</foreach> 	  
+		order by columnInitialValue
+		) t1
+		)
+		where 1=1
+	</select>
+</mapper>

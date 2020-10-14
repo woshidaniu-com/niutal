@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.woshidaniu.licenseManagement.dao.daointerface.ILicenseDao" >
+ 
+  <resultMap id="BaseResultMap" type="com.woshidaniu.licenseManagement.dao.entities.LicenseModel" >
+    <id column="AUTH_ID" property="authId" jdbcType="VARCHAR" />
+    <result column="AUTH_USER" property="authUser" jdbcType="VARCHAR" />
+    <result column="AUTH_USER_CODE" property="authUserCode" jdbcType="VARCHAR" />
+    <result column="AUTH_DATE" property="authDate" jdbcType="VARCHAR" />
+    <result column="START_DATE" property="startDate" jdbcType="VARCHAR" />
+    <result column="EXPIRE_DATE" property="expireDate" jdbcType="VARCHAR" />
+    <result column="USAGE" property="usage" jdbcType="VARCHAR" />
+    <result column="USAGE_COUNT" property="usageCount" jdbcType="VARCHAR" />
+    <result column="ALERT" property="alert" jdbcType="VARCHAR" />
+    <result column="BZXX" property="bzxx" jdbcType="VARCHAR" />
+    <result column="DEV_MODE" property="devMode" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <sql id="Base_Where_Clause">
+  	<where>
+  	  <trim prefixOverrides="and" >
+	  	  <if test="authUser != null and authUser != ''" >
+	        and AUTH_USER like '%'||#{authUser,jdbcType=VARCHAR}||'%'
+	      </if>
+	      <if test="authUserCode != null and authUserCode != ''" >
+	        and AUTH_USER_CODE like '%'||#{authUserCode,jdbcType=VARCHAR}||'%'
+	      </if>
+      </trim>
+  	</where>
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    AUTH_ID, AUTH_USER, AUTH_USER_CODE, AUTH_DATE, START_DATE, EXPIRE_DATE, USAGE, USAGE_COUNT, ALERT, BZXX, DEV_MODE, PRODUCT_NAME
+  </sql>
+  
+  
+  <select id="getPagedList" resultMap="BaseResultMap" parameterType="com.woshidaniu.licenseManagement.dao.entities.LicenseModel" >
+   	select 
+    <include refid="Base_Column_List" />
+    from niutal_LICENSE
+    <include refid="Base_Where_Clause" />
+  </select>
+  
+  <select id="getModel" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from niutal_LICENSE
+    where AUTH_ID = #{authId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from niutal_LICENSE
+    where AUTH_ID = #{authId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.woshidaniu.licenseManagement.dao.entities.LicenseModel" >
+    insert into niutal_LICENSE (AUTH_ID, AUTH_USER, AUTH_USER_CODE, 
+      AUTH_DATE, START_DATE, EXPIRE_DATE, 
+      USAGE, USAGE_COUNT, ALERT, BZXX, DEV_MODE, PRODUCT_NAME)
+    values (#{authId,jdbcType=VARCHAR}, 
+    		#{authUser,jdbcType=VARCHAR}, 
+    		#{authUserCode,jdbcType=VARCHAR}, 
+      		#{authDate,jdbcType=VARCHAR}, 
+      		#{startDate,jdbcType=VARCHAR}, 
+      		#{expireDate,jdbcType=VARCHAR}, 
+      		#{usage,jdbcType=VARCHAR}, 
+      		#{usageCount,jdbcType=VARCHAR}, 
+      		#{alert,jdbcType=VARCHAR}, 
+      		#{bzxx,jdbcType=VARCHAR},
+      		#{devMode,jdbcType=VARCHAR},
+      		#{productName,jdbcType=VARCHAR})
+  </insert>
+ 
+  <update id="update" parameterType="com.woshidaniu.licenseManagement.dao.entities.LicenseModel" >
+    update niutal_LICENSE
+    <set >
+      <if test="authUser != null and authUser != ''" >
+        AUTH_USER = #{authUser,jdbcType=VARCHAR},
+      </if>
+      <if test="authUserCode != null and authUserCode != ''" >
+        AUTH_USER_CODE = #{authUserCode,jdbcType=VARCHAR},
+      </if>
+      <if test="authDate != null and authDate != ''" >
+        AUTH_DATE = #{authDate,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null and startDate != ''" >
+        START_DATE = #{startDate,jdbcType=VARCHAR},
+      </if>
+      <if test="expireDate != null and expireDate != ''" >
+        EXPIRE_DATE = #{expireDate,jdbcType=VARCHAR},
+      </if>
+      <if test="usage != null and usage != ''" >
+        USAGE = #{usage,jdbcType=VARCHAR},
+      </if>
+      <if test="usageCount != null and usageCount != ''" >
+        USAGE_COUNT = #{usageCount,jdbcType=VARCHAR},
+      </if>
+      <if test="alert != null and alert != ''" >
+        ALERT = #{alert,jdbcType=VARCHAR},
+      </if>
+      <if test="bzxx != null and bzxx != ''" >
+        BZXX = #{bzxx,jdbcType=VARCHAR},
+      </if>
+       <if test="devMode != null and devMode != ''" >
+        DEV_MODE = #{devMode,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null and productName != ''">
+      	PRODUCT_NAME = #{productName,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where AUTH_ID = #{authId,jdbcType=VARCHAR}
+  </update>
+</mapper>

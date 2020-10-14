@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IDocImportDao" >
+	<!-- 查询导入模板列表根据 -->
+	<select id="getImportTableListByDrmkdm" parameterType="string"
+		resultType="com.woshidaniu.dao.entities.ImportModel">
+			select t1.* from (
+				select t1.drmkdm, t1.drbm, t1.drbzwmc,min(to_number(t1.xssx)) xssx
+					  from zfxg_dr_drbmpzb t1
+					 where t1.drmkdm = #{drmkdm}
+					group by t1.drmkdm, t1.drbm, t1.drbzwmc
+			) t1 order by to_number(t1.xssx) asc 
+	</select>
+	
+	<!-- 查询验证列字段 列表-->
+	<select id="getValidateColumnListByDrmkdmAndDrbm" parameterType="com.woshidaniu.dao.entities.ImportModel"
+		resultType="com.woshidaniu.dao.entities.ImportModel">
+			select t1.* from (
+				select t1.drmkdm, t1.drmkmc, t1.drbm, t1.drbzwmc, t1.drmbzdmc,t1.zdm,t1.zdmc,t1.zdlx,min(to_number(t1.xssx)) xssx
+				  from zfxg_dr_drbmpzb t1
+				 where t1.drmkdm = #{drmkdm}
+				   and t1.drbm = #{drbm}
+				    <if test="isThreadImport==1">
+					   and t1.dryzbh not like 'EXTEND%'
+			        </if>
+				 group by t1.drmkdm, t1.drmkmc, t1.drbm, t1.drbzwmc, t1.drmbzdmc,t1.zdm,t1.zdmc,t1.zdlx
+		    ) t1 order by to_number(t1.xssx) asc
+	</select>
+	
+	<!-- 查询获取列验证列表-->
+	<select id="getColumnValidateListByDrmkdmAndDrbm" parameterType="com.woshidaniu.dao.entities.ImportModel"
+		resultType="com.woshidaniu.dao.entities.ImportModel">
+				select t1.*, t2.yzmc, t2.yzlmc,t2.yzsm,t2.yzlbm
+				  from zfxg_dr_drbmpzb t1
+				  left join zfxg_dr_dryzb t2
+				    on t1.dryzbh = t2.dryzbh
+				  where t1.drmkdm = #{drmkdm}
+				   and t1.drbm = #{drbm}
+				 	<if test="isThreadImport==1">
+					   and t1.dryzbh not like 'EXTEND%'
+			        </if>
+				  order by to_number(t1.xssx) asc
+	</select>
+	
+	<!-- 查询获取列验证列表
+	<select id="getColumnListByDrmkdmAndDrbm" parameterType="com.woshidaniu.dao.entities.ImportModel"
+		resultType="com.woshidaniu.dao.entities.ImportModel">
+			select t1.*
+			  from (select t1.drmkdm,
+			               t1.drbm,
+			               t1.zdm,
+			               t1.drmkmc,
+			               t1.zdmc,
+			               t1.drbzwmc,
+			               min(t1.xssx) xssx
+			          from (select t1.*, t2.yzmc, t2.yzlmc,t2.yzsm
+			                  from zfxg_dr_drbmpzb t1
+			                  left join zfxg_dr_dryzb t2
+			                    on t1.dryzbh = t2.dryzbh
+			                  where t1.drmkdm = #{drmkdm}
+				   					and t1.drbm = #{drbm}) t1
+			         group by t1.drmkdm, t1.drbm, t1.zdm, t1.drmkmc, t1.zdmc, t1.drbzwmc) t1
+			 order by to_number(t1.xssx) asc
+	</select>-->
+	
+	<!-- 批量插入业务数据 -->
+	<insert id="batchInsertData" parameterType="hashMap">
+		insert into ${tableName}(
+			<foreach collection="columnList" item="itemColumn" index="index"
+				 open="" separator=" , " close=" " >
+					  ${itemColumn.zdm}
+			</foreach>
+		)
+		<foreach collection="dataList" item="itemData" index="index"
+			   separator=" from dual union all select"  
+	           open="select" close=" from dual" >
+					<foreach collection="itemData" item="data" index="index"
+						 open="" separator=" , " close=" " >
+						 <if test="data.zdlx == 'VARCHAR2'">
+						 	 #{data.value,jdbcType=VARCHAR}
+						 </if>
+						 <if test="data.zdlx == 'VARCHAR'">
+						 	 #{data.value,jdbcType=VARCHAR}
+						 </if>
+						 <if test="data.zdlx == 'DATE'">
+						 	 #{data.value,jdbcType=DATE}
+						 </if>
+						 <if test="data.zdlx == 'NUMBER'">
+						 	<!-- jdbcType没有NUMBER型 -->
+						 	 #{data.value,jdbcType=VARCHAR}
+						 </if>
+						 <!-- 其它类型此处可以扩展 -->
+					</foreach>
+		</foreach>
+	</insert>
+	
+	<!-- 更新业务数据 -->
+	<update id="batchUpdate" parameterType="hashMap">
+		update ${tableName} 
+		<set>
+			<foreach collection="columnValueList" item="itemColumn" index="index"
+				 open="" separator="," close=" " >
+					  ${itemColumn.zdm}=#{itemColumn.value}
+			</foreach>
+		</set>
+		<where>
+			<foreach collection="uniqueValueList" item="itemColumn" index="index"
+				 open="" separator="," close=" " >
+					  ${itemColumn.zdm}=#{itemColumn.value}
+			</foreach>
+		</where>	
+	</update>
+	
+	
+	<!-- 查询获取列验证列表-->
+	<select id="getValidateValueList" parameterType="hashMap"
+		resultType="hashMap">
+			select ${columnName} from ${tableName}
+	</select>
+	
+	<!-- 查询获取列验证单个-->
+	<select id="getValidateValueMap" parameterType="hashMap"
+		resultType="hashMap">
+			select ${columnName} COLUMNNAME from ${tableName}
+	</select>
+	
+	<!-- 查询导入字段 列表-->
+	<select id="getImportColumnListByDrmkdmAndDrbm" parameterType="com.woshidaniu.dao.entities.ImportModel"
+		resultType="com.woshidaniu.dao.entities.ImportModel">
+			select t1.* from (
+				select t1.drmkdm, t1.drmkmc, t1.drbm, t1.drbzwmc, t1.zdm, t1.zdmc,min(to_number(t1.xssx)) xssx,count(1) hbdrs from (
+					select t1.drmkdm, t1.drmkmc, t1.drbm, t1.drbzwmc, t1.zdm, t1.zdmc,t1.drmbzdmc,min(to_number(t1.xssx)) xssx
+					  from zfxg_dr_drbmpzb t1
+					 where t1.drmkdm = #{drmkdm}
+					   and t1.drbm = #{drbm}
+					 group by t1.drmkdm, t1.drmkmc, t1.drbm, t1.drbzwmc, t1.zdm, t1.zdmc,t1.drmbzdmc
+					
+				) t1  group by t1.drmkdm, t1.drmkmc, t1.drbm, t1.drbzwmc, t1.zdm, t1.zdmc
+		    ) t1 order by to_number(t1.xssx) asc
+	</select>
+	
+	<!-- 获取表字段及字段长度等属性-->
+	<select id="getTableColumns" parameterType="string"
+		resultType="hashMap">
+			select COLUMN_NAME,DATA_TYPE,DATA_LENGTH from USER_TAB_COLUMNS where TABLE_NAME=#{tableName}
+	</select>	
+	<!-- 获取配置信息 -->
+	<select id="getPzxx" parameterType="com.woshidaniu.dao.entities.ImportModel"
+		resultType="hashMap">
+			select drmkyzsm,drbm,drbzwmc,zdm,zdmc,zdlx,yzcs,xssx from zfxg_dr_drbmpzb where 1=1 and dryzbh like '%'||#{dryzbh} and drmkdm=#{drmkdm} and drbm=#{drbm}
+	</select>	
+	<select id="getPzxxValue" parameterType="hashMap"
+		resultType="hashMap">
+			${sql}
+	</select>	
+</mapper>

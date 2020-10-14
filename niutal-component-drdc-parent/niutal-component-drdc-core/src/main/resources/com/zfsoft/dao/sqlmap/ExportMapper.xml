@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.dao.daointerface.IDocExportDao" >
+
+	<!-- 查询用人单位 -->
+    <select id="getExportConfig" parameterType="com.woshidaniu.dao.entities.ExportModel"
+			resultType="com.woshidaniu.dao.entities.ExportConfigModel">
+			select * from niutal_gtgl_dczdpzb where dcclbh=#{dcclbh} and zgh=#{zgh} order by to_number(xssx)
+	</select>
+	
+	<!-- 插入用户导出配置 -->
+	<insert id="insertConfig" parameterType="list">
+		insert into niutal_gtgl_dczdpzb(dcclbh,dcclmc,zd,zdmc,xssx,zgh,sfmrzd,zt)
+		<foreach collection="list" item="item" index="index"
+				separator=" from dual union select"  
+                open="select" close=" from dual">
+			#{item.dcclbh},'',#{item.zd},#{item.zdmc},#{item.xssx},#{item.zgh},'',#{item.zt} 
+		</foreach>
+	</insert>
+	
+	<!-- 删除用户导出配置 -->
+	<delete id="deleteConfig" parameterType="com.woshidaniu.dao.entities.ExportModel">
+		delete from niutal_gtgl_dczdpzb where dcclbh=#{dcclbh} and zgh=#{zgh}
+	</delete>
+	
+	<update id="updateCshpz" parameterType="com.woshidaniu.dao.entities.ExportModel">
+		declare
+			v_dcclbh varchar2(300);
+		begin
+			v_dcclbh := #{dcclbh,jdbcType=VARCHAR};
+			delete from niutal_gtgl_dczdpzb where dcclbh = v_dcclbh and zgh='public';
+			
+			delete from niutal_gtgl_dczdpzb where dcclbh = v_dcclbh and zd not in
+			<foreach collection="colConfig" item="item" index="index" separator="," open=" (" close=") ">
+				#{item.zd}
+			</foreach>;
+			
+			<foreach collection="colConfig" item="item" index="index">
+				insert into niutal_gtgl_dczdpzb(dcclbh,zd,zdmc,xssx,zgh,sfmrzd,zt)
+				values(v_dcclbh,#{item.zd,jdbcType=VARCHAR},#{item.zdmc,jdbcType=VARCHAR},#{item.xssx,jdbcType=VARCHAR},'public','1','1');
+			</foreach>
+		end;
+	</update>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.component.bpm.management.biz.dao.daointerface.IProcessBizDao">
+	<resultMap id="bizModelResultType"
+		type="com.woshidaniu.component.bpm.management.biz.dao.entities.ProcessBizModel">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+		<result property="description" column="DESCRIPTION_" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getModel" parameterType="string"
+		resultMap="bizModelResultType">
+		SELECT a.*
+		FROM ACT_RE_BIZ a
+		WHERE a.ID_ = #{id}
+	</select>
+	
+	<select id="getPagedList"
+		parameterType="com.woshidaniu.component.bpm.management.biz.dao.entities.ProcessBizModel"
+		resultMap="bizModelResultType">
+		SELECT a.*
+		FROM ACT_RE_BIZ a
+		<where>
+			<if test="name != null and name !=''">
+				and a.NAME_ like '%'||#{name}||'%'
+			</if>
+		</where>
+		ORDER BY a.NAME_
+	</select>
+
+</mapper>

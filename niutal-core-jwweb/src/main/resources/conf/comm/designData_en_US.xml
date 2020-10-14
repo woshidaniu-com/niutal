@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 基础数据XML,修改后请重新启动服务器 -->
+<root>
+
+	<!-- 系统自定义功能类型； -->
+	<data id="funtTypeList">
+		<option key="1">数据展示</option>
+		<option key="2">数据维护</option>
+		<option key="3">预览打印</option>
+		<option key="41">快速打印(Applet模式)</option>
+		<option key="42">快速打印(Flash模式)</option>
+		<option key="43">快速打印(PDF模式)</option>
+		<option key="5">数据导出</option>
+		<option key="6">数据删除</option>
+	</data>
+
+	<!-- 系统自定义功能:功能按钮点击前JQGrid列表选择数据行检查类型 -->
+	<data id="preCheckList">
+		<option key="0">Not check</option>
+		<option key="1">Can only choose one line</option>
+		<option key="2">Select at least one line</option>
+	</data>
+	
+	<!-- 元素类型 -->
+	<data id="elementTypeList">
+		<option key="1">Query Term</option>
+		<option key="2">Script Control</option>
+		<option key="3">Normal Field</option>
+	</data>
+	
+	<!-- 功能所属对象 -->
+	<data id="funcRoleList">
+		<option key="all">All</option>
+		<option key="gl">Admin</option>
+		<option key="js">Teacher</option>
+		<option key="xs">Student</option>
+	</data>
+	
+	<!-- 筛选条件类型 -->
+	<data id="queryTypeList">
+		<option key="0">Non Query</option>
+		<option key="1">Normal Query</option>
+		<option key="2">Advanced Query</option>
+	</data>
+	
+	<!-- 功能编辑状态 -->
+	<data id="editStatusList">
+		<option key="0">noneditable</option>
+		<option key="1">editable</option>
+	</data>
+	
+	<!-- 是否显示-->
+	<data id="isSfxs">
+		<option key="1">visible</option>
+		<option key="0">invisible</option>
+	</data>
+	
+	<!-- 是/否标签 -->
+	<data id="isNot">
+		<option key="0">No</option>
+		<option key="1">Yes</option>
+	</data>
+	
+	<!-- 是否分页 -->
+	<data id="isPagination">
+		<option key="0">Non paging</option>
+		<option key="1">Paging</option>
+	</data>
+	
+	<!-- 是否使用 -->
+	<data id="isUsed">
+		<option key="1">Use</option>
+		<option key="0">Nonuse</option>
+	</data>
+	
+</root>

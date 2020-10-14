@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 基础dao -->
+	<bean id="tjcxBaseDao" name="tjcxBaseDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.ITjcxBaseDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 统计项目 -->
+	<bean id="tjxmDao" name="tjxmDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.ITjxmDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 报表列定义 -->
+	<bean id="bbldyDao" name="bbldyDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.IBbldyDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 特殊项定义 -->
+	<bean id="tsxdyDao" name="tsxdyDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.ITsxdyDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 查询字段 -->
+	<bean id="cxzdDao" name="cxzdDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.ICxzdDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 快照设置 -->
+	<bean id="kzszDao" name="kzszDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.IKzszDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 源数据 -->
+	<bean id="ysjDao" name="ysjDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.IYsjDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 统计报表 -->
+	<bean id="tjbbDao" name="tjbbDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.ITjbbDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+		
+	<!-- 统计查询 -->
+	<bean id="tjcxDao" name="tjcxDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean" scope="singleton">
+		<property name="mapperInterface" value="com.woshidaniu.tjcx.dao.daointerface.ITjcxDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	
+	
+	   	 	
+</beans>

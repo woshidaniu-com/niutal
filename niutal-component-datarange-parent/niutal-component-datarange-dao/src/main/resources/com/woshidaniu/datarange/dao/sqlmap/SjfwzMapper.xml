@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.datarange.dao.daointerface.ISjfwzDao" >
+
+	<!-- 查询用户角色数据范围信息 -->
+	<select id="cxSjfwzYhjs" parameterType="hashMap" resultType="SjfwzModel">
+		select a.sjfwztj
+  		from niutal_xtgl_sjfwzb a, niutal_xtgl_yhsjfwb b
+ 		where a.sjfwz_id = b.sjfwz_id
+		  and b.yhm = #{yh_id,jdbcType=VARCHAR}
+		  and b.js_id = #{jsdm,jdbcType=VARCHAR}
+		  and a.kzdx is not null
+		   <!--<foreach collection="list" item="item" index="index"  open=" and (" separator="or" close=")">
+			  b.js_id = #{item} 
+		   </foreach>  
+		order by a.sjfwztj
+	--></select>
+ 
+    
+</mapper>

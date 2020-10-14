@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.designer.dao.daointerface.IDesignZdybdDao">
+
+	<!-- 根据功能代码获取分类列表数据 -->
+	<select id="getFlszListByGndm" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignZdybdFlszModel">
+		select a.flszid,
+		       a.gndm,
+		       a.flflszid,
+		       a.flmc,
+		       a.flsm,
+		       a.bdls,
+		       a.bdms,
+		       a.sfqy,
+		       a.sfzk,
+		       a.bdszz,
+		       a.xsxx,
+		       b.bhmk,
+		       b.gnlx,
+		       b.yzsz
+		  from zfxg_zdybd_flszb a, 
+		  	   zfxg_zdybd_gnszb b
+		 where a.gndm = b.gndm
+		   and a.gndm = #{func_code}
+		   <if test="func_type != null and func_type == 3">
+		   and ( a.sfqy='1' or a.sfqy='3' ) 
+		   </if>
+		   <if test="func_type != null and  func_type != 3">
+		   and a.sfqy = '1'
+		   </if>
+		 order by a.flflszid, to_number(a.xsxx)
+	</select> 
+	
+	<!-- 根据功能代码获取所有分类下的字段列表 -->
+	<select id="getZdyzdListByGndm" parameterType="string" resultType="com.woshidaniu.designer.dao.entities.DesignZdybdZddyModel">
+		select a.zddyid,
+		       a.fjzddyid,
+		       a.flszid,
+		       lower(a.zd) zd,
+		       a.bdmc,
+		       a.zdsm,
+		       a.zdlx,
+		       a.szlx,
+		       a.yzlx,
+		       a.szz,
+		       a.zbwz,
+		       a.szls,
+		       a.kdbl,
+		       b.bdms,
+		       b.bdls,
+		       b.bdszz,
+		       nvl(c.sfkxg, '0') sfkg,
+		       nvl(c.sfysh, '0') sfsh,
+		       nvl(c.sfbxws, '0') sfbt
+		  from zfxg_zdybd_zddyb a,
+		       zfxg_zdybd_flszb b,
+		       (select js, zdm, sfkc, sfkxg, sfysh, sfbxws
+		          from jw_xjgl_xsxxxgcxzdsqb a
+		         where a.js = #{jsdm}
+		       ) c
+		 where a.flszid = b.flszid
+		   and a.zd = c.zdm(+)
+		   and b.sfqy = '1'
+		   and b.gndm = #{func_code}
+		   and (a.zdlx in ('0', '98', '99') or (a.zdlx not in ('0','98','99') and c.sfkc = '1'))
+		 order by b.xsxx, b.flszid, to_number(nvl(a.zbwz,0))
+	</select> 
+	
+	
+ 
+</mapper>
+

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woshidaniu.component.bpm.management.process.definition.dao.daointerface.IAssignmentQueryDao">
+
+	<!-- USER SELECT -->
+
+	<resultMap id="userResultMap"
+		type="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentUserEntity">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="revision" column="REV_" jdbcType="INTEGER" />
+		<result property="firstName" column="FIRST_" jdbcType="VARCHAR" />
+		<result property="lastName" column="LAST_" jdbcType="VARCHAR" />
+		<result property="email" column="EMAIL_" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="assignedUserResultMap"
+		type="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentUserEntity">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="revision" column="REV_" jdbcType="INTEGER" />
+		<result property="firstName" column="FIRST_" jdbcType="VARCHAR" />
+		<result property="lastName" column="LAST_" jdbcType="VARCHAR" />
+		<result property="email" column="EMAIL_" jdbcType="VARCHAR" />
+		<result property="assignmentId" column="ASSI_ID_" jdbcType="VARCHAR" />
+	</resultMap>
+
+	
+
+	<select id="getPagedUnassignedUserList"
+		parameterType="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentUserEntity"
+		resultMap="userResultMap">
+		select DISTINCT RES.*
+		from ACT_ID_USER RES
+		<where>
+			NOT exists (select ID_ from ACT_RE_ASSIGNMENT where PROC_DEF_ID_ =
+			#{procDefId} and TASK_DEF_ID_ = #{taskDefId} and USER_ID_=RES.ID_)
+			<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+
+	<select id="getPagedAssignedUserList"
+		parameterType="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentUserEntity"
+		resultMap="assignedUserResultMap">
+		SELECT * FROM (select RES.*, ASSI.ID_ AS ASSI_ID_
+		from ACT_ID_USER RES inner join ACT_RE_ASSIGNMENT ASSI on ASSI.USER_ID_=RES.ID_
+		<where> 
+		ASSI.PROC_DEF_ID_ = #{procDefId} and ASSI.TASK_DEF_ID_ = #{taskDefId} 
+		</where>
+		)
+		<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+			<where>
+			${searchModel.querySQL}
+			</where>
+		</if>
+	</select>
+
+	<resultMap id="groupResultMap"
+		type="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentGroupEntity">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="revision" column="REV_" jdbcType="INTEGER" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+		<result property="type" column="TYPE_" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="assignmentGroupResultMap"
+		type="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentGroupEntity">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="revision" column="REV_" jdbcType="INTEGER" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+		<result property="type" column="TYPE_" jdbcType="VARCHAR" />
+		<result property="assignmentId" column="ASSI_ID_" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getPagedUnassignedGroupList"
+		parameterType="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentGroupEntity"
+		resultMap="groupResultMap">
+		select RES.*
+		from ACT_ID_GROUP RES
+		<where>
+			NOT exists (select ID_ from ACT_RE_ASSIGNMENT where PROC_DEF_ID_ =
+			#{procDefId} and TASK_DEF_ID_ = #{taskDefId} and GROUP_ID_=RES.ID_)
+			<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+				and ${searchModel.querySQL}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getPagedAssignedGroupList"
+		parameterType="com.woshidaniu.component.bpm.management.process.definition.dao.entities.AssignmentGroupEntity"
+		resultMap="assignmentGroupResultMap">
+		SELECT * FROM (select RES.*, ASSI.ID_ AS ASSI_ID_
+		from ACT_ID_GROUP RES inner join ACT_RE_ASSIGNMENT ASSI  on ASSI.GROUP_ID_ = RES.ID_ 
+		<where>
+			ASSI.PROC_DEF_ID_ = #{procDefId} and ASSI.TASK_DEF_ID_ = #{taskDefId}
+		</where>
+		) 
+		<if test="searchModel.querySQL != null and searchModel.querySQL != ''">
+			<where>
+			${searchModel.querySQL}
+			</where>
+		</if>
+	</select>
+
+	
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+
+	<!-- description用来添加对taglib(标签库)的描述 -->
+	<description>组件功能标签库</description>
+	<display-name>niutal Component Tags</display-name>
+	<!--taglib(标签库)的版本号 -->
+	<tlib-version>2.0.0</tlib-version>
+	<short-name>zfc</short-name>
+	<!--
+		为自定义标签库设置一个uri，uri以/开头，/后面的内容随便写，如这里的/niutal-tags ， 在Jsp页面中引用标签库时，需要通过uri找到标签库
+		在Jsp页面中就要这样引入标签库： <%@taglib prefix="zf" uri="/niutal-tags" %>
+	-->
+	<uri>/niutal-tags</uri>
+	<!--一个taglib(标签库)中包含多个自定义标签，每一个自定义标签使用一个tag标记来描述  -->
+	<tag>
+		<description><![CDATA[Get module resource bundle and place it on the value stack; output an i18n js url ]]></description>
+		<name>i18n</name>
+		<tag-class>com.woshidaniu.taglibs.views.tags.I18nTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[模块名称：通常指功能模块代码；多个可用,分割]]></description>
+			<name>modules</name>
+			<required>false</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[国际化资源路径表达式]]></description>
+			<name>expression</name>
+			<required>false</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[国际化数据提供者对象名称：用于从Spring上下文获取该对象实例]]></description>
+			<name>provider</name>
+			<required>false</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
+	</tag>
+	<tag>
+		<!-- 为标签处理器类配一个标签名，在Jsp页面中使用标签时是通过标签名来找到要调用的标签处理器类的-->
+		<name>func-i18n</name>
+		<!-- 定义标签对应的处理器类-->
+		<tag-class>com.woshidaniu.taglibs.views.tags.JavascriptI18nTag</tag-class>
+		<!-- 定义标签体为JSP -->
+		<body-content>JSP</body-content>
+		<description>功能js国际化标签</description>
+		<!-- 原js文件url,相对于web根目录的路径标签属性 -->
+		<attribute>
+			<!-- jsp标签使用的属性名称-->
+			<name>fileURL</name>
+			<!-- 属性是否必填，默认为false非必填-->
+			<required>false</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+			<!-- 关于文本描述-->
+			<description>标准文件路径</description>
+		</attribute>
+		<attribute>
+			<name>vstyle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description>是否是v5样式</description>
+		</attribute>
+		<attribute>
+			<name>i18nKeys</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>国际化key,仅在标准文件当前对应的国际化js文件不存在的情况下，key才会被使用来生成一个国际化js文件</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>toolbar</name>
+		<tag-class>com.woshidaniu.taglibs.views.tags.ToolbarTag</tag-class>
+		<body-content>empty</body-content>
+		<!-- 定义标签属性 -->
+		<attribute>
+			<!-- jsp标签使用的属性名称-->
+			<name>func_code</name>
+			<!-- 属性是否必填，默认为false非必填-->
+			<required>true</required>
+			<!-- 属性支持表达式 -->
+			<rtexprvalue>true</rtexprvalue>
+			<!-- 关于文本描述-->
+			<description>功能代码</description>
+		</attribute>
+		<attribute>
+			<name>opt_code</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>操作代码</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>navbar</name>
+		<tag-class>com.woshidaniu.taglibs.views.tags.NavbarTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+	<tag>
+		<name>navtabs</name>
+		<tag-class>com.woshidaniu.taglibs.views.tags.NavtabsTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+</taglib>

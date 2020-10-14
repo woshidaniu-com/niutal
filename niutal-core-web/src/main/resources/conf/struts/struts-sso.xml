@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 外部系统访问 -->
+	<package name="sso" extends="configuration" namespace="/sso">
+	  <!-- 导入模块 -->
+	  <action name="dr_*" class="ssoAction" method="{1}">
+	  	 <interceptor-ref name="defaultStack" />
+	     <result name="import" type="redirect">/zfxg/drdcsj/import_showImport.html?source=woshidaniu&amp;closeBtn=no&amp;drmkdm=${drmkdm}</result>
+	  </action>
+	</package>
+</struts>
